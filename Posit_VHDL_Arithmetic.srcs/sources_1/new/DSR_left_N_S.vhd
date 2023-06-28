@@ -24,7 +24,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
+use IEEE.NUMERIC_STD.ALL;
 
 -- Uncomment the following library declaration if instantiating
 -- any Xilinx leaf cells in this code.
@@ -32,12 +32,34 @@ use IEEE.STD_LOGIC_1164.ALL;
 --use UNISIM.VComponents.all;
 
 entity DSR_left_N_S is
---  Port ( );
+
+-- ChatGPT
+  generic (
+    N : integer := 16;
+    S : integer := 4
+  );
+  port (
+    a : in std_logic_vector(N-1 downto 0);
+    b : in std_logic_vector(S-1 downto 0);
+    c : out std_logic_vector(N-1 downto 0)
+  );
+  
 end DSR_left_N_S;
 
 architecture Behavioral of DSR_left_N_S is
 
+-- ChatGPT
+  signal tmp : std_logic_vector(N-1 downto 0)(S-1 downto 0);
+
 begin
 
+-- ChatGPT
+  tmp(0) <= b(0) when b(0) = '1' else a(0) & a(N-2 downto 0);
+  
+  loop_blk: for i in 1 to S-1 generate
+    tmp(i) <= b(i) when b(i) = '1' else tmp(i-1)(0) & tmp(i-1)(N-2 downto 0);
+  end generate loop_blk;
+  
+  c <= tmp(S-1);
 
 end Behavioral;

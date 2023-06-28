@@ -32,12 +32,66 @@ use IEEE.STD_LOGIC_1164.ALL;
 --use UNISIM.VComponents.all;
 
 entity data_extract is
---  Port ( );
+
+-- ChatGPT
+  generic (
+    N : integer := 16;
+    Bs : integer := 4;
+    es : integer := 2
+  );
+  port (
+    in : in std_logic_vector(N-1 downto 0);
+    rc : out std_logic;
+    regime : out std_logic_vector(Bs-1 downto 0);
+    Lshift : out std_logic_vector(Bs-1 downto 0);
+    exp : out std_logic_vector(es-1 downto 0);
+    mant : out std_logic_vector(N-es-1 downto 0)
+  );
+
+
 end data_extract;
 
 architecture Behavioral of data_extract is
 
+-- ChatGPT
+  function log2(value : integer) return integer is
+    variable tmp : integer := value - 1;
+    variable result : integer := 0;
+  begin
+    while tmp > 0 loop
+      tmp := tmp srl 1;
+      result := result + 1;
+    end loop;
+    return result;
+  end function log2;
+
+  signal xin : std_logic_vector(N-1 downto 0);
+  signal xin_tmp : std_logic_vector(N-1 downto 0);
+  signal k0, k1 : std_logic_vector(Bs-1 downto 0);
+
 begin
+
+-- ChatGPT
+  xin <= in;
+  rc <= xin(N-2);
+
+  LOD_N_inst : entity work.LOD_N
+    generic map (N => N)
+    port map (in => xin(N-2 downto 0) & '0', out => k0);
+
+  LZD_N_inst : entity work.LZD_N
+    generic map (N => N)
+    port map (in => xin(N-3 downto 0) & "00", out => k1);
+
+  regime <= k0 when xin(N-2) = '0' else k1;
+  Lshift <= k0 when xin(N-2) = '0' else k1 + "1";
+
+  DSR_left_N_S_inst : entity work.DSR_left_N_S
+    generic map (N => N, S => Bs)
+    port map (a => xin(N-3 downto 0) & "00", b => Lshift, c => xin_tmp);
+
+  exp <= xin_tmp(N-1 downto N-es);
+  mant <= xin_tmp(N-es-1 downto 0);
 
 
 end Behavioral;

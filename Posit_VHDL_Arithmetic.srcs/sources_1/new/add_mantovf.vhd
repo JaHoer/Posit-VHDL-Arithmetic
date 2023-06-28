@@ -24,7 +24,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
+use IEEE.NUMERIC_STD.ALL;
 
 -- Uncomment the following library declaration if instantiating
 -- any Xilinx leaf cells in this code.
@@ -32,12 +32,24 @@ use IEEE.STD_LOGIC_1164.ALL;
 --use UNISIM.VComponents.all;
 
 entity add_mantovf is
---  Port ( );
+
+-- ChatGPT
+  generic (
+    N : integer := 10
+  );
+  port (
+    a : in std_logic_vector(N downto 0);
+    mant_ovf : in std_logic;
+    c : out std_logic_vector(N downto 0)
+  );
+
 end add_mantovf;
 
 architecture Behavioral of add_mantovf is
 
 begin
 
+-- ChatGPT
+  c <= std_logic_vector(unsigned(a) + unsigned(mant_ovf & (N downto 1 => '0')));
 
 end Behavioral;
