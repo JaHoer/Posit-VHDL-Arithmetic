@@ -25,6 +25,8 @@ use IEEE.STD_LOGIC_1164.ALL;
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
 use IEEE.NUMERIC_STD.ALL;
+use IEEE.std_logic_misc.all;
+use ieee.math_real.all;
 
 -- Uncomment the following library declaration if instantiating
 -- any Xilinx leaf cells in this code.
@@ -48,19 +50,22 @@ end LOD_N;
 architecture Behavioral of LOD_N is
 
 -- ChatGPT
-  function log2(value : integer) return integer is
-    variable temp : integer := value;
-    variable result : integer := 0;
-  begin
-    temp := temp - 1;
-    while temp > 0 loop
-      temp := temp / 2;
-      result := result + 1;
-    end loop;
-    return result;
-  end function log2;
+--  function log2(value : integer) return integer is
+--    variable temp : integer := value;
+--    variable result : integer := 0;
+--  begin
+--    temp := temp - 1;
+--    while temp > 0 loop
+--     temp := temp / 2;
+--      result := result + 1;
+--    end loop;
+--    return result;
+--  end function log2;
 
 begin
+
+
+  
 
 -- ChatGPT
   process(input_vector)
@@ -69,19 +74,32 @@ begin
     variable out_vl, out_vh : std_logic;
     variable l : LOD_N;
     variable h : LOD_N;
+    
+    
+    
+    
   begin
+  
+    
+  
+  
+  
     if N = 2 then
-      vld <= or input_vector;
+    
+      -- vld <= |input_vector;  <-- or-reduction
+      vld <= OR_REDUCE(input_vector);
       output_vector <= not input_vector(1) & input_vector(0);
-    elsif (N and (N-1)) /= 0 then
+    -- elsif (N and (N-1)) /= 0 then  <-- and not for integer defined
+    elsif (unsigned(N) and unsigned(N-1)) /= 0 then
+    
+    -- Hier wird eine Entity abhängig von N dynamisch generiert
+    -- Nicht klar ob sowas in VHDL möglich ist !!!                                  !!!
+     
       l: entity work.LOD_N(behavioral)
         generic map (
           N => 1 << log2(N)
         );
-      l: entity work.LOD_N(behavioral)
-        generic map (
-          N => 1 << log2(N)
-        );
+      
       l.input_vector <= (1 << log2(N)) & (others => '0') or input_vector;
       l.output_vector <= output_vector;
       l.vld <= vld;

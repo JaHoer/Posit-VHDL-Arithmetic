@@ -73,15 +73,16 @@ begin
     if N = 2 then
       vld <= not (input_vector(1) and input_vector(0));
       output_vector <= input_vector(1) & not input_vector(0);
-    elsif (N and (N-1)) /= 0 then
+    elsif (unsigned(N) and unsigned(N-1)) /= 0 then
+    
+    -- Hier wird eine Entity abhängig von N dynamisch erzeugt
+    -- Nicht klar ob in VHDL überhaupt möglich !!!                          !!!
+    
       l: entity work.LZD_N(behavioral)
         generic map (
           N => 1 << log2(N)
         );
-      l: entity work.LZD_N(behavioral)
-        generic map (
-          N => 1 << log2(N)
-        );
+      
       l.input_vector <= (1 << log2(N)) & (others => '0') or input_vector;
       l.output_vector <= output_vector;
       l.vld <= vld;

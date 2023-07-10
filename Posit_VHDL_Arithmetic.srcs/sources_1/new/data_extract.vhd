@@ -24,7 +24,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
+use IEEE.NUMERIC_STD.ALL;
 
 -- Uncomment the following library declaration if instantiating
 -- any Xilinx leaf cells in this code.
@@ -40,7 +40,7 @@ entity data_extract is
     es : integer := 2
   );
   port (
-    in : in std_logic_vector(N-1 downto 0);
+    in_i : in std_logic_vector(N-1 downto 0);
     rc : out std_logic;
     regime : out std_logic_vector(Bs-1 downto 0);
     Lshift : out std_logic_vector(Bs-1 downto 0);
@@ -59,7 +59,8 @@ architecture Behavioral of data_extract is
     variable result : integer := 0;
   begin
     while tmp > 0 loop
-      tmp := tmp srl 1;
+    -- srl nicht mehr vernünftig unterstützt
+      tmp := to_integer(shift_right(unsigned(tmp), 1));
       result := result + 1;
     end loop;
     return result;
@@ -72,14 +73,14 @@ architecture Behavioral of data_extract is
 begin
 
 -- ChatGPT
-  xin <= in;
+  xin <= in_i;
   rc <= xin(N-2);
 
-  LOD_N_inst : entity work.LOD_N
+  LOD_N_inst_2 : entity work.LOD_N
     generic map (N => N)
     port map (in => xin(N-2 downto 0) & '0', out => k0);
 
-  LZD_N_inst : entity work.LZD_N
+  LZD_N_inst_3 : entity work.LZD_N
     generic map (N => N)
     port map (in => xin(N-3 downto 0) & "00", out => k1);
 

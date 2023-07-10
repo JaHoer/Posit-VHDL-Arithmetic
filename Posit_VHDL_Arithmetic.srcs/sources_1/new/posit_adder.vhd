@@ -47,7 +47,7 @@ entity posit_adder is
     in1 : in std_logic_vector(N-1 downto 0);
     in2 : in std_logic_vector(N-1 downto 0);
     start : in std_logic;
-    out : out std_logic_vector(N-1 downto 0);
+    out_val : out std_logic_vector(N-1 downto 0);
     inf : out std_logic;
     zero : out std_logic;
     done : out std_logic
@@ -65,7 +65,7 @@ architecture Behavioral of posit_adder is
     variable result : integer := 0;
   begin
     while tmp > 0 loop
-      tmp := tmp srl 1;
+      tmp := to_integer(shift_right(unsigned(tmp), 1));
       result := result + 1;
     end loop;
     return result;
@@ -131,7 +131,7 @@ architecture Behavioral of posit_adder is
   signal add_m : std_logic_vector(N downto 0);
   signal mant_ovf : std_logic_vector(1 downto 0);
   signal LOD_in : std_logic_vector(N-1 downto 0);
-  signal left_shift : std_logic_vector(Bs-1 downto 0);
+  signal left_shift_val : std_logic_vector(Bs-1 downto 0);
   signal DSR_left_out_t : std_logic_vector(N-1 downto 0);
   signal DSR_left_out : std_logic_vector(N-1 downto 0);
   signal lr_N : std_logic_vector(Bs downto 0);
@@ -298,7 +298,7 @@ begin
     )
     port map (
       in => LOD_in,
-      out => left_shift
+      out => left_shift_val
     );
   
   -- DSR Left Shifting of mantissa result
@@ -309,7 +309,7 @@ begin
     )
     port map (
       a => add_m(N-1 downto 1),
-      b => left_shift,
+      b => left_shift_val,
       c => DSR_left_out_t
     );
   
@@ -346,7 +346,7 @@ begin
   tmp1_oN <= tmp_o(N-1) & tmp_o(N-1 downto 0);
   
   -- Output
-  out <= tmp1_oN(2*N-1 downto N);
+  out_val <= tmp1_oN(2*N-1 downto N);
   inf <= (r_o(Bs-1) and (not r_o(Bs-2))) or (r_o(Bs-2) and (r_o(Bs-3 downto 0) = (Bs-3)'("0"))) or ((not r_o(Bs-1)) and (not r_o(Bs-2)) and (tmp1_oN(N-1 downto 0) = (N-1)'("0"))) or ((not r_o(Bs-1)) and (r_o(Bs-2)) and (tmp1_oN(N-1 downto 0) = (N-1)'("1")));
   zero <= (r_o(Bs-1) and (not r_o(Bs-2)) and (tmp1_oN(N-1 downto 0) = (N-1)'("0"))) or ((not r_o(Bs-1)) and (not r_o(Bs-2)) and (tmp1_oN(N-1 downto 0) = (N-1)'("0")));
   done <= start0;
