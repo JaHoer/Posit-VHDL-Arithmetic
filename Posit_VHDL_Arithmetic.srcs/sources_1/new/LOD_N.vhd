@@ -42,10 +42,39 @@ entity LOD_N is
   port (
     input_vector : in std_logic_vector(N-1 downto 0);
     output_vector : out std_logic_vector(log2(N)-1 downto 0);
-    vld : out std_logic
+--    vld : out std_logic
   );
 
 end LOD_N;
+
+
+
+
+--module LOD (in, out, vld);
+
+--  function [31:0] log2;
+--    input reg [31:0] value;
+--    begin
+--      value = value-1;
+--      for (log2=0; value>0; log2=log2+1)
+--  	value = value>>1;
+--    end
+--  endfunction
+
+entity LOD is
+    generic (
+        N : integer := 64;
+        S : integer := 8  
+    );
+    port(
+        in_val  : in std_logic_vector(N-1 downto 0);
+        out_val : out std_logic_vector(S-1 downto 0);
+        vld     : out std_logic
+    );
+
+end LOD
+
+
 
 architecture Behavioral of LOD_N is
 

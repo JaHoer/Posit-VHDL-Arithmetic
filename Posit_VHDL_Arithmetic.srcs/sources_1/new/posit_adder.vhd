@@ -30,6 +30,12 @@ use IEEE.NUMERIC_STD.ALL;
 -- ChatGPT
 use ieee.math_real.all;
 
+
+
+-- Eigen
+use ieee.std_logic_misc.all;
+
+
 -- Uncomment the following library declaration if instantiating
 -- any Xilinx leaf cells in this code.
 --library UNISIM;
@@ -80,8 +86,8 @@ architecture Behavioral of posit_adder is
   signal inf2 : std_logic := s2 and (not zero_tmp2);
   signal zero1 : std_logic := not (s1 or zero_tmp1);
   signal zero2 : std_logic := not (s2 or zero_tmp2);
-  signal inf : std_logic := inf1 or inf2;
-  signal zero : std_logic := zero1 and zero2;
+  signal inf_sig : std_logic := inf1 or inf2;
+  signal zero_sig : std_logic := zero1 and zero2;
 
   -- Data Extraction
   signal rc1, rc2 : std_logic;
@@ -98,7 +104,7 @@ architecture Behavioral of posit_adder is
       es : integer
     );
     port (
-      in : in std_logic_vector(N-1 downto 0);
+      in_val : in std_logic_vector(N-1 downto 0);
       rc : out std_logic;
       regime : out std_logic_vector(Bs-1 downto 0);
       Lshift : out std_logic_vector(Bs-1 downto 0);
@@ -118,6 +124,7 @@ architecture Behavioral of posit_adder is
   signal le : std_logic_vector(es-1 downto 0);
   signal se : std_logic_vector(es-1 downto 0);
   signal lm : std_logic_vector(N-es downto 0);
+  signal sm : std_logic_vector(N-es downto 0); -- <-- von ChatGPT vergessen
   signal in1_gt_in2 : std_logic;
   signal r_diff11, r_diff12, r_diff2 : std_logic_vector(Bs downto 0);
   signal r_diff : std_logic_vector(Bs downto 0);
@@ -153,7 +160,7 @@ begin
       es => es
     )
     port map (
-      in => xin1,
+      in_val => xin1,
       rc => rc1,
       regime => regime1,
       Lshift => Lshift1,
@@ -168,7 +175,7 @@ begin
       es => es
     )
     port map (
-      in => xin2,
+      in_val => xin2,
       rc => rc2,
       regime => regime2,
       Lshift => Lshift2,
@@ -177,7 +184,11 @@ begin
     );
 
   -- Large Checking and Assignment
-  in1_gt_in2 <= xin1(N-2 downto 0) >= xin2(N-2 downto 0);
+  
+  -- wire in1_gt_in2 = xin1[N-2:0] >= xin2[N-2:0] ? 1'b1 : 1'b0;
+  -- in1_gt_in2 <= xin1(N-2 downto 0) >= xin2(N-2 downto 0);
+  in1_gt_in2 <= '1' when xin1(N-2 downto 0) >= xin2(N-2 downto 0)
+            else '0';
   
   ls <= in1_gt_in2 when s1 = '1' else s2;
   op <= s1 xor s2;
@@ -195,48 +206,48 @@ begin
   sm <= m2 when in1_gt_in2 = '1' else m1;
 
   -- Exponent Difference: Lower Mantissa Right Shift Amount
-  uut_sub1 : sub_N
+  uut_sub1 : work.sub_N     --  <-- work. vergessen
     generic map (
       N => Bs
     )
     port map (
       a => lr,
       b => sr,
-      result => r_diff11
+      c => r_diff11         -- <-- c statt result
     );
     
-  uut_add1 : add_N
+  uut_add1 : work.add_N     --  <-- work. vergessen
     generic map (
       N => Bs
     )
     port map (
       a => lr,
       b => sr,
-      result => r_diff12
+      c => r_diff12         -- <-- c statt result
     );
     
-  uut_sub2 : sub_N
+  uut_sub2 : work.sub_N     --  <-- work. vergessen
     generic map (
       N => Bs
     )
     port map (
       a => sr,
       b => lr,
-      result => r_diff2
+      c => r_diff2         -- <-- c statt result
     );
     
   r_diff <= r_diff11 when lrc = '1' and src = '1' else
              r_diff12 when lrc = '1' and src = '0' else
              r_diff2;
   
-  sub3 : sub_N
+  sub3 : work.sub_N     --  <-- work. vergessen
     generic map (
       N => es+Bs+1
     )
     port map (
       a => r_diff & le,
       b => (Bs+1)'(others => '0') & se,
-      result => diff
+      c => diff                             -- <-- c statt result
     );
 
   exp_diff <= exp_diff when diff(es+Bs) = '0' else Bs'("1") & diff(Bs-1 downto 0);

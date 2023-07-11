@@ -40,7 +40,7 @@ entity data_extract is
     es : integer := 2
   );
   port (
-    in_i : in std_logic_vector(N-1 downto 0);
+    in_val : in std_logic_vector(N-1 downto 0);
     rc : out std_logic;
     regime : out std_logic_vector(Bs-1 downto 0);
     Lshift : out std_logic_vector(Bs-1 downto 0);
@@ -73,19 +73,19 @@ architecture Behavioral of data_extract is
 begin
 
 -- ChatGPT
-  xin <= in_i;
+  xin <= in_val;
   rc <= xin(N-2);
 
   LOD_N_inst_2 : entity work.LOD_N
     generic map (N => N)
-    port map (in => xin(N-2 downto 0) & '0', out => k0);
+    port map (input_vector => xin(N-2 downto 0) & '0', output_vector => k0);
 
   LZD_N_inst_3 : entity work.LZD_N
     generic map (N => N)
-    port map (in => xin(N-3 downto 0) & "00", out => k1);
+    port map (input_vector => xin(N-3 downto 0) & "00", output_vector => k1);
 
   regime <= k0 when xin(N-2) = '0' else k1;
-  Lshift <= k0 when xin(N-2) = '0' else k1 + "1";
+  Lshift <= k0 when xin(N-2) = '0' else std_logic_vector(unsigned(k1) + 1);
 
   DSR_left_N_S_inst : entity work.DSR_left_N_S
     generic map (N => N, S => Bs)
