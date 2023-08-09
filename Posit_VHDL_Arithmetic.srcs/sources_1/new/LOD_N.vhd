@@ -35,14 +35,15 @@ use ieee.math_real.all;
 
 entity LOD_N is
 
--- ChatGPT
+
   generic (
     N : integer := 64
   );
   port (
+    clk : std_logic;
     input_vector : in std_logic_vector(N-1 downto 0);
-    output_vector : out std_logic_vector(log2(N)-1 downto 0);
---    vld : out std_logic
+    output_vector : out std_logic_vector(natural(log2(real(N)))-1 downto 0)
+
   );
 
 end LOD_N;
@@ -50,106 +51,31 @@ end LOD_N;
 
 
 
---module LOD (in, out, vld);
-
---  function [31:0] log2;
---    input reg [31:0] value;
---    begin
---      value = value-1;
---      for (log2=0; value>0; log2=log2+1)
---  	value = value>>1;
---    end
---  endfunction
-
-entity LOD is
-    generic (
-        N : integer := 64;
-        S : integer := 8  
-    );
-    port(
-        in_val  : in std_logic_vector(N-1 downto 0);
-        out_val : out std_logic_vector(S-1 downto 0);
-        vld     : out std_logic
-    );
-
-end LOD
-
-
 
 architecture Behavioral of LOD_N is
 
--- ChatGPT
---  function log2(value : integer) return integer is
---    variable temp : integer := value;
---    variable result : integer := 0;
---  begin
---    temp := temp - 1;
---    while temp > 0 loop
---     temp := temp / 2;
---      result := result + 1;
---    end loop;
---    return result;
---  end function log2;
+
 
 begin
 
-
-  
-
--- ChatGPT
   process(input_vector)
-    variable out_l : std_logic_vector(log2(N)-2 downto 0);
-    variable out_h : std_logic_vector(log2(N)-2 downto 0);
-    variable out_vl, out_vh : std_logic;
-    variable l : LOD_N;
-    variable h : LOD_N;
-    
-    
-    
-    
+
   begin
   
-    
+    if rising_edge(clk) then
   
-  
-  
-    if N = 2 then
-    
-      -- vld <= |input_vector;  <-- or-reduction
-      vld <= OR_REDUCE(input_vector);
-      output_vector <= not input_vector(1) & input_vector(0);
-    -- elsif (N and (N-1)) /= 0 then  <-- and not for integer defined
-    elsif (unsigned(N) and unsigned(N-1)) /= 0 then
-    
-    -- Hier wird eine Entity abhängig von N dynamisch generiert
-    -- Nicht klar ob sowas in VHDL möglich ist !!!                                  !!!
-     
-      l: entity work.LOD_N(behavioral)
-        generic map (
-          N => 1 << log2(N)
-        );
+        -- itariere durch Vector und breche bei erster 1 ab
+        for i in N-1 to 0 loop
       
-      l.input_vector <= (1 << log2(N)) & (others => '0') or input_vector;
-      l.output_vector <= output_vector;
-      l.vld <= vld;
-    else
-      l: entity work.LOD_N(behavioral)
-        generic map (
-          N => N >> 1
-        );
-      h: entity work.LOD_N(behavioral)
-        generic map (
-          N => N >> 1
-        );
-      l.input_vector <= input_vector(N >> 1 - 1 downto 0);
-      l.output_vector <= out_l;
-      l.vld <= out_vl;
-      h.input_vector <= input_vector(N - 1 downto N >> 1);
-      h.output_vector <= out_h;
-      h.vld <= out_vh;
-      vld <= out_vl or out_vh;
-      output_vector <= std_logic_vector(resize(unsigned(out_l), log2(N-1) + 1)) when out_vh = '1' else std_logic_vector(resize(unsigned(out_h), log2(N-1) + 1));
+        if(input_vector(i) = '0') then
+            output_vector <= std_logic_vector(i);
+            exit;
+        end if;
+    
+        end loop; 
+  
     end if;
+  
   end process;
 
 end Behavioral;

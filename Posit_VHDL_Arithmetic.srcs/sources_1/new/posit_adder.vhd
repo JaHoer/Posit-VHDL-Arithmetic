@@ -148,6 +148,13 @@ architecture Behavioral of posit_adder is
   signal tmp_o, tmp1_o : std_logic_vector(2*N-1 downto 0);
   signal tmp1_oN : std_logic_vector(2*N-1 downto 0);
 
+
+    alias DSR_right_in_up is DSR_right_in(N-1 downto es-1);
+    alias DSR_right_in_low is DSR_right_in(es -2 downto 0);
+    
+    alias add_m_in1_up is add_m_in1(N-1 downto es-1);
+    alias add_m_in1_low is add_m_in1(es -2 downto 0);
+
 begin
 
 -- ChatGPT
@@ -246,20 +253,28 @@ begin
     )
     port map (
       a => r_diff & le,
-      b => (Bs+1)'(others => '0') & se,
+      b => "0000",      --(Bs+1)'(others => '0') & se,
       c => diff                             -- <-- c statt result
     );
 
-  exp_diff <= exp_diff when diff(es+Bs) = '0' else Bs'("1") & diff(Bs-1 downto 0);
+  -- exp_diff <= Bs'("1") when diff(es+Bs) = '0' else diff(Bs-1 downto 0);
+  exp_diff <= std_logic_vector(1) when diff(es+Bs) = '0' else diff(Bs-1 downto 0);
 
   -- DSR Right Shifting of Small Mantissa
+  
+  
   gen_DSR_right_in: if es >= 2 generate
-    DSR_right_in <= sm & (es-1)'("0");
-  else
-    DSR_right_in <= sm;
+    
+    -- DSR_right_in <= sm & (es-1)'("0");
+    DSR_right_in_up <= sm;
+    DSR_right_in_low <= (others => '0');
+  --else
+    -- assign DSR_right_in = sm;   was unterschiedliche längen hat und somit eigentlich nicht gehen sollte
+    --DSR_right_in_up <= "0000";
+    --DSR_right_in_low <= (others => '1');
   end generate;
 
-  dsr1 : DSR_right_N_S
+  dsr1 : work.DSR_right_N_S
     generic map (
       N => N,
       S => Bs
@@ -272,29 +287,31 @@ begin
 
   -- Mantissa Addition
   gen_add_m_in1: if es >= 2 generate
-    add_m_in1 <= lm & (es-1)'("0");
-  else
-    add_m_in1 <= lm;
+    --add_m_in1 <= lm & (es-1)'("0");
+    add_m_in1_up <= lm;
+    add_m_in1_low <= (others => '0');
+  --else
+    --add_m_in1 <= lm;
   end generate;
 
-  uut_add_m1 : add_N
+  uut_add_m1 : work.add_N
     generic map (
       N => N
     )
     port map (
       a => add_m_in1,
       b => DSR_right_out,
-      result => add_m1
+      c => add_m1
     );
   
-  uut_sub_m2 : sub_N
+  uut_sub_m2 : work.sub_N
     generic map (
       N => N
     )
     port map (
       a => add_m_in1,
       b => DSR_right_out,
-      result => add_m2
+      c => add_m2
     );
     
   add_m <= add_m1 when op = '0' else add_m2;
@@ -303,17 +320,17 @@ begin
   -- LOD of mantissa addition result
   LOD_in <= ((add_m(N) or add_m(N-1)) & add_m(N-2 downto 0));
 
-  l2 : LOD_N
+  l2 : work.LOD_N
     generic map (
       N => N
     )
     port map (
-      in => LOD_in,
-      out => left_shift_val
+      input_vector => LOD_in,
+      output_vector => left_shift_val
     );
   
   -- DSR Left Shifting of mantissa result
-  dsl1 : DSR_left_N_S
+  dsl1 : work.DSR_left_N_S
     generic map (
       N => N,
       S => Bs
@@ -333,15 +350,15 @@ begin
   
   gen_le_o_tmp: if es >= 2 generate
     le_o_tmp <= exp_diff & DSR_e_diff & lr_N;
-  else
-    le_o_tmp <= exp_diff & lr_N;
+  --else
+  --  le_o_tmp <= exp_diff & lr_N;
   end generate;
 
   -- Shift le_o_tmp right to produce le_o
   gen_le_o: if es >= 2 generate
     le_o <= le_o_tmp(es+Bs downto 1);
-  else
-    le_o <= le_o_tmp(Bs downto 1);
+  --else
+  --  le_o <= le_o_tmp(Bs downto 1);
   end generate;
 
   -- Extract exponent bits
