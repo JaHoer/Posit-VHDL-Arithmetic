@@ -35,42 +35,51 @@ entity LZD_N is
 
 -- ChatGPT
   generic (
-    N : integer := 64
+    N : integer := 8
   );
   port (
+    clk : in std_logic;
     input_vector : in std_logic_vector(N-1 downto 0);
-    output_vector : out std_logic_vector(natural(log2(real(N)))-1 downto 0);
-    vld : out std_logic
+    output_vector : out std_logic_vector(3-1 downto 0)
   );
 
 end LZD_N;
 
 architecture Behavioral of LZD_N is
 
--- ChatGPT
-  function log2(value : integer) return integer is
-    variable temp : integer := value;
-    variable result : integer := 0;
-  begin
-    temp := temp - 1;
-    while temp > 0 loop
-      temp := temp / 2;
-      result := result + 1;
-    end loop;
-    return result;
-  end function log2;
-
 begin
+    process(input_vector)
 
--- ChatGPT
-  process(input_vector)
-    variable out_l : std_logic_vector(log2(N)-2 downto 0);
-    variable out_h : std_logic_vector(log2(N)-2 downto 0);
-    variable out_vl, out_vh : std_logic;
-    variable l : LZD_N;
-    variable h : LZD_N;
-  begin
+    variable z : integer := 7;
+    variable found : std_logic := '0';
+    variable out_var : std_logic_vector(3-1 downto 0);
     
+  begin
+        z := 7;
+        found := '0';
+    --if rising_edge(clk) then
+        -- itariere durch Vector und breche bei erster 1 ab
+        fl: for i in 8-1 downto 0 loop
+        
+        if(input_vector(i) = '1' and found = '0') then
+            out_var := std_logic_vector(to_unsigned(z,3));
+            found := '1';
+            
+        else
+            z := z - 1;
+        end if;
+    
+        end loop fl;
+        
+        
+        -- Falls keine Null gefunden wurde
+        if found = '0' then
+            out_var := "000";
+        end if;
+        
+        output_vector <= out_var; 
+   --end if;
+  
   end process;
 
 end Behavioral;

@@ -44,7 +44,7 @@ architecture Behavioral of tb_LOD_N is
 
     signal clk   : std_logic;
     signal in_v  : std_logic_vector(Nt-1 downto 0);
-    signal out_v : std_logic_vector(natural(log2(real(Nt)))-1 downto 0);
+    signal out_v : std_logic_vector(3-1 downto 0);
 
 
 begin
@@ -69,9 +69,21 @@ begin
 
     stimuli: process
     begin
-        wait for CLOCK_PERIOD*2;
-        in_v <= "00110101";
-        wait for CLOCK_PERIOD*2;
+    
+        wait for CLOCK_PERIOD;
+        in_v <= "11110111";
+        wait for CLOCK_PERIOD;
+        in_v <= "10111111";
+        wait for CLOCK_PERIOD;
+        in_v <= "11110000";
+        wait for CLOCK_PERIOD;
+        in_v <= "11100101";
+        wait for CLOCK_PERIOD;
+        in_v <= "11001000";
+        wait for CLOCK_PERIOD;
+        in_v <= "00000000";
+        wait for CLOCK_PERIOD;
+        in_v <= "11111111";
         
     end process;
         

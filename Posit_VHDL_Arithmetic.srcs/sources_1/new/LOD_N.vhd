@@ -37,12 +37,13 @@ entity LOD_N is
 
 
   generic (
-    N : integer := 64
+    N : integer := 8
   );
   port (
     clk : std_logic;
     input_vector : in std_logic_vector(N-1 downto 0);
-    output_vector : out std_logic_vector(natural(log2(real(N)))-1 downto 0)
+    --output_vector : out std_logic_vector(natural(log2(real(N)))-1 downto 0)
+    output_vector : out std_logic_vector(3-1 downto 0)
 
   );
 
@@ -59,22 +60,36 @@ architecture Behavioral of LOD_N is
 begin
 
   process(input_vector)
-
+  
+    variable z : integer := 7;
+    variable found : std_logic := '0';
+    variable out_var : std_logic_vector(3-1 downto 0);
+    
   begin
-  
-    if rising_edge(clk) then
-  
+        z := 7;
+        found := '0';
+    --if rising_edge(clk) then
         -- itariere durch Vector und breche bei erster 1 ab
-        for i in N-1 to 0 loop
-      
-        if(input_vector(i) = '0') then
-            output_vector <= std_logic_vector(i);
-            exit;
+        fl: for i in 8-1 downto 0 loop
+        
+        if(input_vector(i) = '0' and found = '0') then
+            out_var := std_logic_vector(to_unsigned(z,3));
+            found := '1';
+            
+        else
+            z := z - 1;
         end if;
     
-        end loop; 
-  
-    end if;
+        end loop fl;
+        
+        
+        -- Falls keine Null gefunden wurde
+        if found = '0' then
+            out_var := "000";
+        end if;
+        
+        output_vector <= out_var; 
+   --end if;
   
   end process;
 
