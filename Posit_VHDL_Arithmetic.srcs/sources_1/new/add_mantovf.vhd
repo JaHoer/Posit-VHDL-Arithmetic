@@ -46,10 +46,11 @@ entity add_mantovf is
 end add_mantovf;
 
 architecture Behavioral of add_mantovf is
+    signal mant : std_logic_vector(N downto 0);
 
 begin
+    mant <= (0 => mant_ovf, others => '0'); 
 
--- ChatGPT
-  c <= std_logic_vector(unsigned(a) + unsigned(mant_ovf & (N downto 1 => '0')));
+    c <= std_logic_vector(unsigned(a) + unsigned(mant));
 
 end Behavioral;

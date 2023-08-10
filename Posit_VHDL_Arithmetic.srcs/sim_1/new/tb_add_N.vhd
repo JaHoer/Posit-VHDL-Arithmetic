@@ -2,9 +2,9 @@
 -- Company: 
 -- Engineer: 
 -- 
--- Create Date: 10.08.2023 10:18:03
+-- Create Date: 10.08.2023 14:39:34
 -- Design Name: 
--- Module Name: tb_DSR_left_N_S - Behavioral
+-- Module Name: tb_add_N - Behavioral
 -- Project Name: 
 -- Target Devices: 
 -- Tool Versions: 
@@ -31,30 +31,27 @@ use IEEE.STD_LOGIC_1164.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity tb_DSR_left_N_S is
+entity tb_add_N is
     generic(
-        N_tb : integer := 8;
-        S_tb : integer := 3
+        N_tb : integer := 8
     );
 --  Port ( );
-end tb_DSR_left_N_S;
+end tb_add_N;
 
-architecture Behavioral of tb_DSR_left_N_S is
+architecture Behavioral of tb_add_N is
 
     constant CLOCK_PERIOD : time := 100 ns;
 
     signal clk  : std_logic;
     signal a_tb : std_logic_vector(N_tb-1 downto 0);
-    signal b_tb : std_logic_vector(S_tb-1 downto 0);
-    signal c_tb : std_logic_vector(N_tb-1 downto 0);
-
+    signal b_tb : std_logic_vector(N_tb-1 downto 0);
+    signal c_tb : std_logic_vector(N_tb downto 0);
 
 begin
 
-    UUT : entity work.DSR_left_N_S 
+    UUT : entity work.add_N 
     generic map(
-        N => N_tb,
-        S => S_tb
+        N => N_tb
     )
     port map (
         
@@ -67,24 +64,25 @@ begin
     stimuli: process
     begin
     
-        wait for CLOCK_PERIOD;
-        a_tb <= "11010111";
-        b_tb <= "000";
-        wait for CLOCK_PERIOD;
-        a_tb <= "11110111";
-        b_tb <= "101";
-        wait for CLOCK_PERIOD;
-        a_tb <= "11000111";
-        b_tb <= "111";
+        
         wait for CLOCK_PERIOD;
         a_tb <= "00000001";
-        b_tb <= "001";
+        b_tb <= "00000001";
         wait for CLOCK_PERIOD;
-        a_tb <= "00000001";
-        b_tb <= "010";
+        a_tb <= "00000011";
+        b_tb <= "00000001";
         wait for CLOCK_PERIOD;
-        a_tb <= "00000001";
-        b_tb <= "011";
+        a_tb <= "11111111";
+        b_tb <= "00000001";
+        wait for CLOCK_PERIOD;
+        a_tb <= "11111111";
+        b_tb <= "11111111";
+        wait for CLOCK_PERIOD;
+        a_tb <= "00000000";
+        b_tb <= "11111111";
+        wait for CLOCK_PERIOD;
+        a_tb <= "11001100";
+        b_tb <= "00110011";
         wait for CLOCK_PERIOD*3;
         
     end process;

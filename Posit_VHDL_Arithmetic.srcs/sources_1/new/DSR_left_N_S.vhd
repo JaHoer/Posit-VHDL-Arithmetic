@@ -37,6 +37,7 @@ entity DSR_left_N_S is
   generic (
     N : integer := 16;
     S : integer := 4
+    
   );
   port (
     a : in std_logic_vector(N-1 downto 0);
@@ -53,7 +54,7 @@ architecture Behavioral of DSR_left_N_S is
   --signal tmp : std_logic_vector(N-1 downto 0)(S-1 downto 0);
   
   signal tmp_m : tmp_matrix;
-  
+  constant SHIFT_2 : unsigned := to_unsigned(2, N);
 
 begin
 
@@ -65,8 +66,9 @@ begin
   loop_blk: for i in 1 to S-1 generate
    -- tmp(i) <= b(i) when b(i) = '1' else tmp(i-1)(0) & tmp(i-1)(N-2 downto 0);
     -- assign tmp[i] = b[i] ? tmp[i-1] << 2**i : tmp[i-1];
-    tmp_m(i) <= std_logic_vector(shift_left(unsigned(tmp_m(i-1)), to_integer(shift_left(unsigned(2), i)))) when b(i) = '1' else tmp_m(i-1);
-                                                                                           --    ^- need Size here
+    
+    tmp_m(i) <= std_logic_vector(shift_left(unsigned(tmp_m(i-1)), to_integer(shift_left(SHIFT_2, i)))) when b(i) = '1' else tmp_m(i-1);
+
   end generate loop_blk;
   
   c <= tmp_m(S-1);
