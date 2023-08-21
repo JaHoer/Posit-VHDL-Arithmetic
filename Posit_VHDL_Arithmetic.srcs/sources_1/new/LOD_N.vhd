@@ -56,7 +56,6 @@ end LOD_N;
 architecture Behavioral of LOD_N is
 
 
-
 begin
 
   process(input_vector)
