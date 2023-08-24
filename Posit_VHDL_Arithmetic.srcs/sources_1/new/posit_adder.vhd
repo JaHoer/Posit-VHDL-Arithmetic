@@ -71,7 +71,7 @@ architecture Behavioral of posit_adder is
     variable result : integer := 0;
   begin
     while tmp > 0 loop
-      tmp := to_integer(shift_right(unsigned(tmp), 1));
+      --tmp := to_integer(shift_right(unsigned(tmp), 1));
       result := result + 1;
     end loop;
     return result;
@@ -94,8 +94,13 @@ architecture Behavioral of posit_adder is
   signal regime1, regime2, Lshift1, Lshift2 : std_logic_vector(Bs-1 downto 0);
   signal e1, e2 : std_logic_vector(es-1 downto 0);
   signal mant1, mant2 : std_logic_vector(N-es-1 downto 0);
-  signal xin1 : std_logic_vector(N-1 downto 0) := s1 & in1(N-2 downto 0);
-  signal xin2 : std_logic_vector(N-1 downto 0) := s2 & in2(N-2 downto 0);
+--  wire [N-1:0] xin1 = s1 ? -in1 : in1;  
+--  signal xin1 : std_logic_vector(N-1 downto 0) := s1 & in1(N-2 downto 0);
+--  signal xin1 : std_logic_vector(N-1 downto 0) := in1 when s1 else (not in1);
+  signal xin1 : std_logic_vector(N-1 downto 0) := ((others => s1) and (not in1)) or ((others => (not s1)) and in1);
+--  wire [N-1:0] xin2 = s2 ? -in2 : in2;  
+--  signal xin2 : std_logic_vector(N-1 downto 0) := s2 & in2(N-2 downto 0);
+  signal xin2 : std_logic_vector(N-1 downto 0) := ((others => s2) and (not in2)) or ((others => (not s2)) and in2);
   
   component data_extract
     generic (
@@ -148,6 +153,8 @@ architecture Behavioral of posit_adder is
   signal tmp_o, tmp1_o : std_logic_vector(2*N-1 downto 0);
   signal tmp1_oN : std_logic_vector(2*N-1 downto 0);
 
+    signal r_diff_le : std_logic_vector(N-1 downto 0);
+    signal se_extended : std_logic_vector(N-1 downto 0);
 
     alias DSR_right_in_up is DSR_right_in(N-1 downto es-1);
     alias DSR_right_in_low is DSR_right_in(es -2 downto 0);
@@ -190,6 +197,10 @@ begin
       mant => mant2
     );
 
+
+    m1 <= zero_tmp1 & mant1;  -- <-- von ChatGPT vergessen
+    m2 <= zero_tmp2 & mant2;
+
   -- Large Checking and Assignment
   
   -- wire in1_gt_in2 = xin1[N-2:0] >= xin2[N-2:0] ? 1'b1 : 1'b0;
@@ -197,8 +208,9 @@ begin
   in1_gt_in2 <= '1' when xin1(N-2 downto 0) >= xin2(N-2 downto 0)
             else '0';
   
-  ls <= in1_gt_in2 when s1 = '1' else s2;
-  op <= s1 xor s2;
+  ls <= s1 when in1_gt_in2 = '1' else s2;
+  -- wire op = s1 ~^ s2;
+  op <= s1 xnor s2;
 
   lrc <= rc1 when in1_gt_in2 = '1' else rc2;
   src <= rc2 when in1_gt_in2 = '1' else rc1;
@@ -213,7 +225,7 @@ begin
   sm <= m2 when in1_gt_in2 = '1' else m1;
 
   -- Exponent Difference: Lower Mantissa Right Shift Amount
-  uut_sub1 : work.sub_N     --  <-- work. vergessen
+  uut_sub1 : entity work.sub_N     --  <-- work. vergessen
     generic map (
       N => Bs
     )
@@ -223,7 +235,7 @@ begin
       c => r_diff11         -- <-- c statt result
     );
     
-  uut_add1 : work.add_N     --  <-- work. vergessen
+  uut_add1 : entity work.add_N     --  <-- work. vergessen
     generic map (
       N => Bs
     )
@@ -233,7 +245,7 @@ begin
       c => r_diff12         -- <-- c statt result
     );
     
-  uut_sub2 : work.sub_N     --  <-- work. vergessen
+  uut_sub2 : entity work.sub_N     --  <-- work. vergessen
     generic map (
       N => Bs
     )
@@ -246,35 +258,43 @@ begin
   r_diff <= r_diff11 when lrc = '1' and src = '1' else
              r_diff12 when lrc = '1' and src = '0' else
              r_diff2;
+             
+    r_diff_le <= r_diff & le;
+    -- {{Bs+1{1'b0}},se}
+    -- se_extended <= (others => '0') & se;
+    se_extended <= std_logic_vector(resize(unsigned(se), N));
   
-  sub3 : work.sub_N     --  <-- work. vergessen
+  sub3 : entity work.sub_N     --  <-- work. vergessen
     generic map (
       N => es+Bs+1
     )
     port map (
-      a => r_diff & le,
-      b => "0000",      --(Bs+1)'(others => '0') & se,
+--      a => (r_diff & le),
+      a => r_diff_le,
+--      b => (Bs+1)'(others => '0') & se,
+      b => se_extended,
       c => diff                             -- <-- c statt result
     );
 
   -- exp_diff <= Bs'("1") when diff(es+Bs) = '0' else diff(Bs-1 downto 0);
-  exp_diff <= std_logic_vector(1) when diff(es+Bs) = '0' else diff(Bs-1 downto 0);
+  -- (|diff[es+Bs:Bs]) ? {Bs{1'b1}} : diff[Bs-1:0];
+  exp_diff <= (others => '1') when or_reduce(diff(es+Bs downto Bs)) = '0' else diff(Bs-1 downto 0);
 
   -- DSR Right Shifting of Small Mantissa
   
-  
+--TODO:
   gen_DSR_right_in: if es >= 2 generate
     
     -- DSR_right_in <= sm & (es-1)'("0");
     DSR_right_in_up <= sm;
     DSR_right_in_low <= (others => '0');
   --else
-    -- assign DSR_right_in = sm;   was unterschiedliche längen hat und somit eigentlich nicht gehen sollte
+    -- assign DSR_right_in = sm;   was unterschiedliche lï¿½ngen hat und somit eigentlich nicht gehen sollte
     --DSR_right_in_up <= "0000";
     --DSR_right_in_low <= (others => '1');
   end generate;
 
-  dsr1 : work.DSR_right_N_S
+  dsr1 : entity work.DSR_right_N_S
     generic map (
       N => N,
       S => Bs
@@ -285,6 +305,7 @@ begin
       c => DSR_right_out
     ); 
 
+-- TODO:
   -- Mantissa Addition
   gen_add_m_in1: if es >= 2 generate
     --add_m_in1 <= lm & (es-1)'("0");
@@ -294,7 +315,7 @@ begin
     --add_m_in1 <= lm;
   end generate;
 
-  uut_add_m1 : work.add_N
+  uut_add_m1 : entity work.add_N
     generic map (
       N => N
     )
@@ -304,7 +325,7 @@ begin
       c => add_m1
     );
   
-  uut_sub_m2 : work.sub_N
+  uut_sub_m2 : entity work.sub_N
     generic map (
       N => N
     )
@@ -314,13 +335,13 @@ begin
       c => add_m2
     );
     
-  add_m <= add_m1 when op = '0' else add_m2;
+  add_m <= add_m1 when op = '1' else add_m2;
   mant_ovf <= add_m(N) & add_m(N-1);
   
   -- LOD of mantissa addition result
   LOD_in <= ((add_m(N) or add_m(N-1)) & add_m(N-2 downto 0));
 
-  l2 : work.LOD_N
+  l2 : entity work.LOD_N
     generic map (
       N => N
     )
@@ -330,30 +351,36 @@ begin
     );
   
   -- DSR Left Shifting of mantissa result
-  dsl1 : work.DSR_left_N_S
+  dsl1 : entity work.DSR_left_N_S
     generic map (
       N => N,
       S => Bs
     )
     port map (
-      a => add_m(N-1 downto 1),
+      a => add_m(N downto 1),
       b => left_shift_val,
       c => DSR_left_out_t
     );
   
   -- Extra Left Shift
-  DSR_left_out <= DSR_left_out_t when mant_ovf = '0' else
-                  DSR_left_out_t(N-1) & DSR_left_out_t(N-1 downto 1);
+--  DSR_left_out <= DSR_left_out_t when mant_ovf = '0' else DSR_left_out_t(N-1) & DSR_left_out_t(N-1 downto 1);
+  DSR_left_out <= DSR_left_out_t(N-1 downto 0) when DSR_left_out_t(N-1) = '1' else DSR_left_out_t(N-2 downto 0) & '0';
+  
   
   -- Regime Alignment
-  lr_N <= DSR_left_out(N-1 downto N-Bs);
+  -- lr_N = lrc ? {1'b0,lr} : -{1'b0,lr}
+--  lr_N <= DSR_left_out(N-1 downto N-Bs);
+  lr_N <= '0' & lr when lrc = '1' else std_logic_vector( - signed('0' & lr));
   
+  
+-- TODO
   gen_le_o_tmp: if es >= 2 generate
     le_o_tmp <= exp_diff & DSR_e_diff & lr_N;
   --else
   --  le_o_tmp <= exp_diff & lr_N;
   end generate;
 
+-- TODO:
   -- Shift le_o_tmp right to produce le_o
   gen_le_o: if es >= 2 generate
     le_o <= le_o_tmp(es+Bs downto 1);
