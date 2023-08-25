@@ -148,6 +148,7 @@ architecture Behavioral of posit_adder is
   signal DSR_left_out : std_logic_vector(N-1 downto 0);
   signal lr_N : std_logic_vector(Bs downto 0);
   signal le_o_tmp, le_o : std_logic_vector(es+Bs+1 downto 0);
+  signal le_oN : std_logic_vector(es+Bs-1 downto 0);        -- <-- von ChatGPT vergessen
   signal e_o : std_logic_vector(es-1 downto 0);
   signal r_o : std_logic_vector(Bs-1 downto 0);
   signal tmp_o, tmp1_o : std_logic_vector(2*N-1 downto 0);
@@ -155,6 +156,10 @@ architecture Behavioral of posit_adder is
 
     signal r_diff_le : std_logic_vector(N-1 downto 0);
     signal se_extended : std_logic_vector(N-1 downto 0);
+    
+    
+    signal lr_N_le : std_logic_vector(N-1 downto 0);
+    signal left_shift_extended : std_logic_vector(es + Bs + 1 downto 0);
 
     alias DSR_right_in_up is DSR_right_in(N-1 downto es-1);
     alias DSR_right_in_low is DSR_right_in(es -2 downto 0);
@@ -264,7 +269,7 @@ begin
     -- se_extended <= (others => '0') & se;
     se_extended <= std_logic_vector(resize(unsigned(se), N));
   
-  sub3 : entity work.sub_N     --  <-- work. vergessen
+  sub_diff : entity work.sub_N     --  <-- work. vergessen
     generic map (
       N => es+Bs+1
     )
@@ -282,17 +287,22 @@ begin
 
   -- DSR Right Shifting of Small Mantissa
   
---TODO:
   gen_DSR_right_in: if es >= 2 generate
     
     -- DSR_right_in <= sm & (es-1)'("0");
     DSR_right_in_up <= sm;
     DSR_right_in_low <= (others => '0');
   --else
-    -- assign DSR_right_in = sm;   was unterschiedliche l�ngen hat und somit eigentlich nicht gehen sollte
-    --DSR_right_in_up <= "0000";
-    --DSR_right_in_low <= (others => '1');
+    -- assign DSR_right_in = sm;   
+    --DSR_right_in <= sm;
   end generate;
+  
+  gen_DSR_right_in_else: if es < 2 generate
+    -- else case
+    -- assign DSR_right_in = sm;   
+    DSR_right_in <= sm;
+  end generate;
+  
 
   dsr1 : entity work.DSR_right_N_S
     generic map (
@@ -305,7 +315,7 @@ begin
       c => DSR_right_out
     ); 
 
--- TODO:
+
   -- Mantissa Addition
   gen_add_m_in1: if es >= 2 generate
     --add_m_in1 <= lm & (es-1)'("0");
@@ -313,6 +323,11 @@ begin
     add_m_in1_low <= (others => '0');
   --else
     --add_m_in1 <= lm;
+  end generate;
+  
+  gen_add_m_in1_else: if es < 2 generate
+    -- else case
+    add_m_in1 <= lm;
   end generate;
 
   uut_add_m1 : entity work.add_N
@@ -373,27 +388,58 @@ begin
   lr_N <= '0' & lr when lrc = '1' else std_logic_vector( - signed('0' & lr));
   
   
--- TODO
-  gen_le_o_tmp: if es >= 2 generate
-    le_o_tmp <= exp_diff & DSR_e_diff & lr_N;
+--  gen_le_o_tmp: if es >= 2 generate
+--    le_o_tmp <= exp_diff & DSR_e_diff & lr_N;
   --else
   --  le_o_tmp <= exp_diff & lr_N;
-  end generate;
+--  end generate;
 
--- TODO:
   -- Shift le_o_tmp right to produce le_o
-  gen_le_o: if es >= 2 generate
-    le_o <= le_o_tmp(es+Bs downto 1);
+--  gen_le_o: if es >= 2 generate
+--    le_o <= le_o_tmp(es+Bs downto 1);
   --else
   --  le_o <= le_o_tmp(Bs downto 1);
-  end generate;
+--  end generate;
+
+    lr_N_le <= lr_n & le;
+    
+    -- {{es+1{1'b0}},left_shift}
+    left_shift_extended <= std_logic_vector(resize(unsigned(left_shift_val), es + Bs + 1));
+
+  
+  sub3 : entity work.sub_N     --  ganze entity vergessen
+    generic map (
+      N => (es + Bs + 1)
+    )
+    port map (
+      a => lr_N_le,
+      b => left_shift_extended,
+      c => le_o_tmp
+    );
+    
+    
+    uut_add_mantovf : entity work.add_mantovf     --  <-- work. vergessen
+    generic map (
+      N => (es + Bs + 1)
+    )
+    port map (
+      a => le_o_tmp,
+      mant_ovf => mant_ovf(0),
+      c => le_o         -- <-- c statt result
+    );
+    
+    
+    le_oN <= std_logic_vector(- signed(le_o)) when le_o(es+Bs) = '1' else le_o;
 
   -- Extract exponent bits
-  e_o <= le_o(es-1 downto 0);
+  e_o <= le_o(es-1 downto 0) when le_o(es+Bs) = '1' and or_reduce(le_oN(es-1 downto 0)) = '1' else le_oN(es-1 downto 0);
   
   -- Regime bits
-  r_o <= le_o(es+Bs-1 downto es);
+  r_o <= le_oN(es+Bs-1 downto es) & '1' when le_o(es+Bs) = '0' or (le_o(es+Bs) = '1' and or_reduce(le_oN(es-1 downto 0)) = '1') 
+                                        else le_o(es+Bs-1 downto es);
   
+  
+-- TODO:  
   -- Mantissa Bits
   tmp_o <= DSR_left_out;
   
