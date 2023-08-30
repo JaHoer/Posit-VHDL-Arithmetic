@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------------
 -- Company: 
--- Engineer: 
+-- Engineer: Jan Hörtig
 -- 
 -- Create Date: 28.06.2023 14:39:13
 -- Design Name: 
@@ -97,10 +97,14 @@ architecture Behavioral of posit_adder is
 --  wire [N-1:0] xin1 = s1 ? -in1 : in1;  
 --  signal xin1 : std_logic_vector(N-1 downto 0) := s1 & in1(N-2 downto 0);
 --  signal xin1 : std_logic_vector(N-1 downto 0) := in1 when s1 else (not in1);
+
+
+-- TODO illegal aggregate choice 'others' for an unconstrained target
   signal xin1 : std_logic_vector(N-1 downto 0) := ((others => s1) and (not in1)) or ((others => (not s1)) and in1);
 --  wire [N-1:0] xin2 = s2 ? -in2 : in2;  
 --  signal xin2 : std_logic_vector(N-1 downto 0) := s2 & in2(N-2 downto 0);
   signal xin2 : std_logic_vector(N-1 downto 0) := ((others => s2) and (not in2)) or ((others => (not s2)) and in2);
+  
   
   component data_extract
     generic (
@@ -444,7 +448,7 @@ begin
                                         else le_o(es+Bs-1 downto es);
   
   
--- TODO:  
+
   -- Mantissa Bits
   -- {N{~le_o[es+Bs]}}
   not_le_o <= (others => not le_o(es+Bs)); 

@@ -54,17 +54,17 @@ end data_extract;
 architecture Behavioral of data_extract is
 
 -- ChatGPT
-  function log2(value : integer) return integer is
-    variable tmp : integer := value - 1;
-    variable result : integer := 0;
-  begin
-    while tmp > 0 loop
-    -- srl nicht mehr vernünftig unterstützt
-      tmp := to_integer(shift_right(unsigned(tmp), 1));
-      result := result + 1;
-    end loop;
-    return result;
-  end function log2;
+--  function log2(value : integer) return integer is
+--    variable tmp : integer := value - 1;
+--    variable result : integer := 0;
+--  begin
+--    while tmp > 0 loop
+--    -- srl nicht mehr vernï¿½nftig unterstï¿½tzt
+--      tmp := to_integer(shift_right(unsigned(tmp), 1));
+--      result := result + 1;
+--    end loop;
+--    return result;
+--  end function log2;
 
   signal xin : std_logic_vector(N-1 downto 0);
   signal xin_tmp : std_logic_vector(N-1 downto 0);

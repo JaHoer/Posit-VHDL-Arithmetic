@@ -38,7 +38,7 @@ entity LZD_N is
     N : integer := 8
   );
   port (
-    clk : in std_logic;
+    --clk : in std_logic;
     input_vector : in std_logic_vector(N-1 downto 0);
     output_vector : out std_logic_vector(3-1 downto 0)
   );
