@@ -99,6 +99,7 @@ architecture Behavioral of posit_adder is
 --  signal xin1 : std_logic_vector(N-1 downto 0) := in1 when s1 else (not in1);
 
 
+
 -- TODO illegal aggregate choice 'others' for an unconstrained target
   signal xin1 : std_logic_vector(N-1 downto 0) := ((others => s1) and (not in1)) or ((others => (not s1)) and in1);
 --  wire [N-1:0] xin2 = s2 ? -in2 : in2;  
