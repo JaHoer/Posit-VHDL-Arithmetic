@@ -166,6 +166,11 @@ architecture Behavioral of posit_adder is
     
     alias add_m_in1_up is add_m_in1(N-1 downto es-1);
     alias add_m_in1_low is add_m_in1(es -2 downto 0);
+    
+    signal not_le_o : std_logic_vector(N-1 downto 0);
+    
+    signal out_zeros : std_logic_vector(N-2 downto 0);
+    
 
 begin
 
@@ -441,15 +446,38 @@ begin
   
 -- TODO:  
   -- Mantissa Bits
-  tmp_o <= DSR_left_out;
+  -- {N{~le_o[es+Bs]}}
+  not_le_o <= (others => not le_o(es+Bs)); 
+  tmp_o <= not_le_o & le_o(es + Bs) & e_o & DSR_left_out(N-2 downto es);
+  
+  
+  dsr2 : entity work.DSR_right_N_S
+  generic map (
+    N => 2*N,
+    S => Bs
+  )
+  port map (
+    a => tmp_o,
+    b => r_o,
+    c => tmp1_o
+  );
+  
   
   -- Extra Sign Bit
-  tmp1_oN <= tmp_o(N-1) & tmp_o(N-1 downto 0);
+  -- tmp1_oN = ls ? -tmp1_o : tmp1_o;
+  -- tmp1_oN <= tmp_o(N-1) & tmp_o(N-1 downto 0);
+  tmp1_oN <= std_logic_vector( - signed(tmp1_o)) when ls = '1' else tmp1_o;
   
   -- Output
-  out_val <= tmp1_oN(2*N-1 downto N);
-  inf <= '0';--(r_o(Bs-1) and (not r_o(Bs-2))) or (r_o(Bs-2) and (r_o(Bs-3 downto 0) = (Bs-3)'("0"))) or ((not r_o(Bs-1)) and (not r_o(Bs-2)) and (tmp1_oN(N-1 downto 0) = (N-1)'("0"))) or ((not r_o(Bs-1)) and (r_o(Bs-2)) and (tmp1_oN(N-1 downto 0) = (N-1)'("1")));
-  zero <= '1';--(r_o(Bs-1) and (not r_o(Bs-2)) and (tmp1_oN(N-1 downto 0) = (N-1)'("0"))) or ((not r_o(Bs-1)) and (not r_o(Bs-2)) and (tmp1_oN(N-1 downto 0) = (N-1)'("0")));
+  -- out = inf|zero|(~DSR_left_out[N-1]) ? {inf,{N-1{1'b0}}} : {ls, tmp1_oN[N-1:1]}
+  -- out_val <= tmp1_oN(2*N-1 downto N);
+  out_zeros <= (others => '0');
+  out_val <= inf_sig & out_zeros when (inf_sig = '1' or zero_sig = '1') or (DSR_left_out(N-1) = '0') else ls & tmp1_oN(N-1 downto 1);
+  
+  -- inf <= (r_o(Bs-1) and (not r_o(Bs-2))) or (r_o(Bs-2) and (r_o(Bs-3 downto 0) = (Bs-3)'("0"))) or ((not r_o(Bs-1)) and (not r_o(Bs-2)) and (tmp1_oN(N-1 downto 0) = (N-1)'("0"))) or ((not r_o(Bs-1)) and (r_o(Bs-2)) and (tmp1_oN(N-1 downto 0) = (N-1)'("1")));
+  inf <= inf_sig;
+  -- zero <= (r_o(Bs-1) and (not r_o(Bs-2)) and (tmp1_oN(N-1 downto 0) = (N-1)'("0"))) or ((not r_o(Bs-1)) and (not r_o(Bs-2)) and (tmp1_oN(N-1 downto 0) = (N-1)'("0")));
+  zero <= zero_sig;
   done <= start0;
 
 end Behavioral;
