@@ -89,8 +89,35 @@ begin
         start_tb <= '1';
         wait for CLOCK_PERIOD;
         assert done_tb = '1' report "Should be 1";
-        assert out_val_tb = x"00000100" report "Should be 00000100";
+        assert out_val_tb = "00000100" report "Should be 00000100";
         wait for CLOCK_PERIOD;
+        
+        start_tb <= '0';
+        wait for CLOCK_PERIOD;
+        
+        -- Zeile 265
+        in1_tb <= "00001000";
+        in2_tb <= "00000001";
+        start_tb <= '1';
+        wait for CLOCK_PERIOD;
+        assert done_tb = '1' report "Should be 1";
+        assert out_val_tb = "00001000" report "Should be 00001000";
+        wait for CLOCK_PERIOD;
+        
+        start_tb <= '0';
+        wait for CLOCK_PERIOD;
+        
+        -- Zeile 2520
+        in1_tb <= "11010111";
+        in2_tb <= "00001001";
+        start_tb <= '1';
+        wait for CLOCK_PERIOD;
+        assert done_tb = '1' report "Should be 1";
+        assert out_val_tb = "11010111" report "Should be 11010111";
+        wait for CLOCK_PERIOD;
+        
+        
+        
     
     end process;
 

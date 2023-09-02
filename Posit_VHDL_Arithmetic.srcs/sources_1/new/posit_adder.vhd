@@ -77,17 +77,30 @@ architecture Behavioral of posit_adder is
     return result;
   end function log2;
 
-  signal start0 : std_logic := start;
-  signal s1 : std_logic := in1(N-1);
-  signal s2 : std_logic := in2(N-1);
-  signal zero_tmp1 : std_logic := or_reduce(in1(N-2 downto 0));
-  signal zero_tmp2 : std_logic := or_reduce(in2(N-2 downto 0));
-  signal inf1 : std_logic := s1 and (not zero_tmp1);
-  signal inf2 : std_logic := s2 and (not zero_tmp2);
-  signal zero1 : std_logic := not (s1 or zero_tmp1);
-  signal zero2 : std_logic := not (s2 or zero_tmp2);
-  signal inf_sig : std_logic := inf1 or inf2;
-  signal zero_sig : std_logic := zero1 and zero2;
+-- von ChatGPT -> wirft Warnungen
+--  signal start0 : std_logic := start;
+--  signal s1 : std_logic := in1(N-1);
+--  signal s2 : std_logic := in2(N-1);
+--  signal zero_tmp1 : std_logic := or_reduce(in1(N-2 downto 0));
+--  signal zero_tmp2 : std_logic := or_reduce(in2(N-2 downto 0));
+--  signal inf1 : std_logic := s1 and (not zero_tmp1);
+--  signal inf2 : std_logic := s2 and (not zero_tmp2);
+--  signal zero1 : std_logic := not (s1 or zero_tmp1);
+--  signal zero2 : std_logic := not (s2 or zero_tmp2);
+--  signal inf_sig : std_logic := inf1 or inf2;
+--  signal zero_sig : std_logic := zero1 and zero2;
+  
+  signal start0 : std_logic;
+  signal s1 : std_logic;
+  signal s2 : std_logic;
+  signal zero_tmp1 : std_logic;
+  signal zero_tmp2 : std_logic;
+  signal inf1 : std_logic;
+  signal inf2 : std_logic;
+  signal zero1 : std_logic;
+  signal zero2 : std_logic;
+  signal inf_sig : std_logic;
+  signal zero_sig : std_logic;
 
   -- Data Extraction
   signal rc1, rc2 : std_logic;
@@ -100,11 +113,13 @@ architecture Behavioral of posit_adder is
 
 
 
--- TODO illegal aggregate choice 'others' for an unconstrained target
-  signal xin1 : std_logic_vector(N-1 downto 0) := ((others => s1) and (not in1)) or ((others => (not s1)) and in1);
+--  illegal aggregate choice 'others' for an unconstrained target
+--  signal xin1 : std_logic_vector(N-1 downto 0) := ((others => s1) and (not in1)) or ((others => (not s1)) and in1);
+  signal xin1 : std_logic_vector(N-1 downto 0);
 --  wire [N-1:0] xin2 = s2 ? -in2 : in2;  
 --  signal xin2 : std_logic_vector(N-1 downto 0) := s2 & in2(N-2 downto 0);
-  signal xin2 : std_logic_vector(N-1 downto 0) := ((others => s2) and (not in2)) or ((others => (not s2)) and in2);
+--  signal xin2 : std_logic_vector(N-1 downto 0) := ((others => s2) and (not in2)) or ((others => (not s2)) and in2);
+  signal xin2 : std_logic_vector(N-1 downto 0);
   
   
   component data_extract
@@ -153,7 +168,7 @@ architecture Behavioral of posit_adder is
   signal DSR_left_out : std_logic_vector(N-1 downto 0);
   signal lr_N : std_logic_vector(Bs downto 0);
   signal le_o_tmp, le_o : std_logic_vector(es+Bs+1 downto 0);
-  signal le_oN : std_logic_vector(es+Bs-1 downto 0);        -- <-- von ChatGPT vergessen
+  signal le_oN : std_logic_vector(es+Bs downto 0);        -- <-- von ChatGPT vergessen
   signal e_o : std_logic_vector(es-1 downto 0);
   signal r_o : std_logic_vector(Bs-1 downto 0);
   signal tmp_o, tmp1_o : std_logic_vector(2*N-1 downto 0);
@@ -164,7 +179,7 @@ architecture Behavioral of posit_adder is
     
     
     signal lr_N_le : std_logic_vector(N-1 downto 0);
-    signal left_shift_extended : std_logic_vector(es + Bs + 1 downto 0);
+    signal left_shift_extended : std_logic_vector(es + Bs downto 0);
 
     alias DSR_right_in_up is DSR_right_in(N-1 downto es-1);
     alias DSR_right_in_low is DSR_right_in(es -2 downto 0);
@@ -178,6 +193,27 @@ architecture Behavioral of posit_adder is
     
 
 begin
+
+
+
+    start0 <= start;
+    s1 <= in1(N-1);
+    s2 <= in2(N-1);
+    zero_tmp1 <= or_reduce(in1(N-2 downto 0));
+    zero_tmp2 <= or_reduce(in2(N-2 downto 0));
+    inf1 <= s1 and (not zero_tmp1);
+    inf2 <= s2 and (not zero_tmp2);
+    zero1 <= not (s1 or zero_tmp1);
+    zero2 <= not (s2 or zero_tmp2);
+    inf_sig <= inf1 or inf2;
+    zero_sig <= zero1 and zero2;
+
+    -- xin1 = s1 ? -in1 : in1;
+    -- xin1 <= ((others => s1) and (not in1)) or ((others => (not s1)) and in1);
+    xin1 <= std_logic_vector( - signed(in1)) when s1 = '1' else in1;
+    
+    -- xin2 <= ((others => s2) and (not in2)) or ((others => (not s2)) and in2);
+    xin2 <= std_logic_vector( - signed(in2)) when s2 = '1' else in2;
 
 -- ChatGPT
 
@@ -439,14 +475,16 @@ begin
     );
     
     
-    le_oN <= std_logic_vector(- signed(le_o)) when le_o(es+Bs) = '1' else le_o;
+    le_oN <= std_logic_vector(- signed(le_o(es+Bs downto 0))) when le_o(es+Bs) = '1' else le_o(es+Bs downto 0);
 
   -- Extract exponent bits
   e_o <= le_o(es-1 downto 0) when le_o(es+Bs) = '1' and or_reduce(le_oN(es-1 downto 0)) = '1' else le_oN(es-1 downto 0);
   
   -- Regime bits
-  r_o <= le_oN(es+Bs-1 downto es) & '1' when le_o(es+Bs) = '0' or (le_o(es+Bs) = '1' and or_reduce(le_oN(es-1 downto 0)) = '1') 
-                                        else le_o(es+Bs-1 downto es);
+  -- (~le_o[es+Bs] || (le_o[es+Bs] & |le_oN[es-1:0])) ? le_oN[es+Bs-1:es] + 1'b1 : le_oN[es+Bs-1:es];
+  r_o <= std_logic_vector(unsigned(le_oN(es+Bs-1 downto es)) + 1) 
+        when le_o(es+Bs) = '0' or (le_o(es+Bs) = '1' and or_reduce(le_oN(es-1 downto 0)) = '1') 
+        else le_o(es+Bs-1 downto es);
   
   
 

@@ -36,7 +36,7 @@ entity data_extract is
 -- ChatGPT
   generic (
     N : integer := 16;
-    Bs : integer := 4;
+    Bs : integer := 4;      -- log2(N)
     es : integer := 2
   );
   port (
