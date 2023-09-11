@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------------
 -- Company: 
--- Engineer: Jan Hörtig
+-- Engineer: Jan Hoertig
 -- 
 -- Create Date: 28.06.2023 14:39:13
 -- Design Name: 
@@ -56,7 +56,25 @@ entity posit_adder is
     out_val : out std_logic_vector(N-1 downto 0);
     inf : out std_logic;
     zero : out std_logic;
-    done : out std_logic
+    done : out std_logic;
+    
+    -- Debug Outputs
+
+    inf1_o : out std_logic;
+    inf2_o : out std_logic;
+    zero1_o : out std_logic;
+    zero2_o : out std_logic;
+    
+    rc1_o : out std_logic;
+    rc2_o : out std_logic;
+    regime1_o : out std_logic_vector(Bs-1 downto 0); 
+    regime2_o : out std_logic_vector(Bs-1 downto 0); 
+    Lshift1_o : out std_logic_vector(Bs-1 downto 0); 
+    Lshift2_o : out std_logic_vector(Bs-1 downto 0);
+    e1_o : out std_logic_vector(es-1 downto 0);
+    e2_o : out std_logic_vector(es-1 downto 0);
+    mant1_o : out std_logic_vector(N-es-1 downto 0); 
+    mant2_o : out std_logic_vector(N-es-1 downto 0)
   );
 
 
@@ -208,12 +226,13 @@ begin
     inf_sig <= inf1 or inf2;
     zero_sig <= zero1 and zero2;
 
-    -- xin1 = s1 ? -in1 : in1;
-    -- xin1 <= ((others => s1) and (not in1)) or ((others => (not s1)) and in1);
-    xin1 <= std_logic_vector( - signed(in1)) when s1 = '1' else in1;
+    -- For true sign bit, operands undergo 2's complement conversion which produces XIN1 and XIN2, each of N-1 bits (except the respective sign bit)
+    -- XIN1 ? S1 ? -IN1[N -2 : 0] : IN1[N -2 : 0]
+
+    -- xin1 = s1 ? -in1 : in1;      -- ???
+    xin1 <= std_logic_vector( - signed(in1(N-2 downto 0))) when s1 = '1' else in1(N-2 downto 0);
     
-    -- xin2 <= ((others => s2) and (not in2)) or ((others => (not s2)) and in2);
-    xin2 <= std_logic_vector( - signed(in2)) when s2 = '1' else in2;
+    xin2 <= std_logic_vector( - signed(in2(N-2 downto 0))) when s2 = '1' else in2(N-2 downto 0);
 
 -- ChatGPT
 
@@ -522,5 +541,28 @@ begin
   -- zero <= (r_o(Bs-1) and (not r_o(Bs-2)) and (tmp1_oN(N-1 downto 0) = (N-1)'("0"))) or ((not r_o(Bs-1)) and (not r_o(Bs-2)) and (tmp1_oN(N-1 downto 0) = (N-1)'("0")));
   zero <= zero_sig;
   done <= start0;
-
+  
+  
+  
+    -- Debug Outputs
+    
+    inf1_o <= inf1;
+    inf2_o <= inf2;
+    zero1_o <= zero1;
+    zero2_o <= zero2;
+    
+    rc1_o <= rc1;
+    rc2_o <= rc2;
+    regime1_o <= regime1;
+    regime2_o <= regime2;
+    Lshift1_o <= Lshift1;
+    Lshift2_o <= Lshift2;
+    e1_o <= e1;
+    e2_o <= e2;
+    mant1_o <= mant1;
+    mant2_o <= mant2;
+  
+  
+  
+  
 end Behavioral;

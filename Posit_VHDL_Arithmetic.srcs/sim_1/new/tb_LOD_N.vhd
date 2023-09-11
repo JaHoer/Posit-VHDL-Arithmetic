@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------------
 -- Company: 
--- Engineer: 
+-- Engineer: Jan Hoertig
 -- 
 -- Create Date: 09.08.2023 09:55:22
 -- Design Name: 
@@ -34,7 +34,8 @@ use ieee.math_real.all;
 
 entity tb_LOD_N is
   generic(
-    Nt : integer := 8
+    Nt : integer := 8;
+    log2N_tb : integer := 3
   );
 --  Port ( );
 end tb_LOD_N;
@@ -51,10 +52,11 @@ begin
 
     UUT : entity work.LOD_N 
     generic map(
-        N => Nt
+        N => Nt,
+        log2N => log2N_tb
     )
     port map (
-        clk => clk,
+        -- clk => clk,
         input_vector => in_v,
         output_vector => out_v
     );
@@ -69,7 +71,15 @@ begin
 
     stimuli: process
     begin
-    
+        
+        wait for CLOCK_PERIOD;
+        in_v <= "00000001";
+        wait for CLOCK_PERIOD;
+        in_v <= "00000011";
+        wait for CLOCK_PERIOD;
+        in_v <= "00000111";
+        wait for CLOCK_PERIOD;
+        in_v <= "11110111";
         wait for CLOCK_PERIOD;
         in_v <= "11110111";
         wait for CLOCK_PERIOD;

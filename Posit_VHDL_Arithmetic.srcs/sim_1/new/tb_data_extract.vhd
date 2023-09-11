@@ -79,6 +79,13 @@ begin
     begin
    
         wait for CLOCK_PERIOD;
+        
+        in_val_tb <= "00000000"; -- 0
+        wait for CLOCK_PERIOD;
+        
+        in_val_tb <= "10000000"; -- infinity
+        wait for CLOCK_PERIOD;
+        
         in_val_tb <= "01000000"; -- +1
         wait for CLOCK_PERIOD;
         --assert rc_tb = '1' report "Should be 1";
@@ -87,11 +94,8 @@ begin
         --assert exp_tb = "0000" report "Should be 0000";
         --assert mant_tb = "0" report "Should be 0";
         
-        in_val_tb <= "11000000"; -- -1
-        wait for CLOCK_PERIOD;
-        
-        in_val_tb <= "00000000"; -- 0
-        wait for CLOCK_PERIOD;
+        -- in_val_tb <= "11000000"; -- -1
+        -- wait for CLOCK_PERIOD;
         
         in_val_tb <= "01100100"; -- +6
         wait for CLOCK_PERIOD;

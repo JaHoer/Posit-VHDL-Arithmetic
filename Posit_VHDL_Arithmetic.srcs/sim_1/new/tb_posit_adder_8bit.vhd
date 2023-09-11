@@ -57,6 +57,22 @@ architecture Behavioral of tb_posit_adder_8bit is
     signal inf_tb : std_logic;
     signal zero_tb : std_logic;
     signal done_tb : std_logic;
+    
+    signal inf1_tb :  std_logic;
+    signal inf2_tb :  std_logic;
+    signal zero1_tb :  std_logic;
+    signal zero2_tb :  std_logic;
+    
+    signal rc1_tb : std_logic;
+    signal rc2_tb : std_logic;
+    signal regime1_tb : std_logic_vector(Bs_tb-1 downto 0); 
+    signal regime2_tb : std_logic_vector(Bs_tb-1 downto 0); 
+    signal Lshift1_tb : std_logic_vector(Bs_tb-1 downto 0); 
+    signal Lshift2_tb : std_logic_vector(Bs_tb-1 downto 0);
+    signal e1_tb : std_logic_vector(es_tb-1 downto 0);
+    signal e2_tb : std_logic_vector(es_tb-1 downto 0);
+    signal mant1_tb : std_logic_vector(N_tb-es_tb-1 downto 0); 
+    signal mant2_tb : std_logic_vector(N_tb-es_tb-1 downto 0);
 
 begin
 
@@ -73,7 +89,23 @@ begin
         out_val => out_val_tb,
         inf => inf_tb,
         zero => zero_tb,
-        done => done_tb
+        done => done_tb,
+        
+        inf1_o => inf1_tb,
+        inf2_o => inf2_tb,
+        zero1_o => zero1_tb,
+        zero2_o => zero2_tb,
+    
+        rc1_o => rc1_tb,
+        rc2_o => rc2_tb,
+        regime1_o => regime1_tb,
+        regime2_o => regime2_tb,
+        Lshift1_o => Lshift1_tb,
+        Lshift2_o => Lshift2_tb,
+        e1_o => e1_tb,
+        e2_o => e2_tb,
+        mant1_o => mant1_tb,
+        mant2_o => mant2_tb
        
     );
     
