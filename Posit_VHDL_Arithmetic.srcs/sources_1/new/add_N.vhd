@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
+-- Company: FAU
+-- Engineer: Jan Hoertig
 -- 
 -- Create Date: 28.06.2023 14:39:13
 -- Design Name: 

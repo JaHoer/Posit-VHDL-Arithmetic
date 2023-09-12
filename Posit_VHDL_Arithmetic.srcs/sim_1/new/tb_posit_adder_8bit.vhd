@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------------
--- Company: 
--- Engineer: Jan Hörig
+-- Company: FAU
+-- Engineer: Jan Hoerig
 -- 
 -- Create Date: 08/30/2023 12:33:32 PM
 -- Design Name: 

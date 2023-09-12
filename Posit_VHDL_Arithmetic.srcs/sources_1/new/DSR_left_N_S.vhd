@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
+-- Company: FAU
+-- Engineer: Jan Hoertig
 -- 
 -- Create Date: 28.06.2023 14:39:13
 -- Design Name: 
@@ -36,7 +36,7 @@ entity DSR_left_N_S is
 -- ChatGPT
   generic (
     N : integer := 16;
-    S : integer := 4
+    S : integer := 4        -- log2N
     
   );
   port (
@@ -67,7 +67,7 @@ begin
    -- tmp(i) <= b(i) when b(i) = '1' else tmp(i-1)(0) & tmp(i-1)(N-2 downto 0);
     -- assign tmp[i] = b[i] ? tmp[i-1] << 2**i : tmp[i-1];
     
-    tmp_m(i) <= std_logic_vector(shift_left(unsigned(tmp_m(i-1)), to_integer(shift_left(SHIFT_2, i)))) when b(i) = '1' else tmp_m(i-1);
+    tmp_m(i) <= std_logic_vector(shift_left(unsigned(tmp_m(i-1)), to_integer(shift_left(SHIFT_2, i-1)))) when b(i) = '1' else tmp_m(i-1);
 
   end generate loop_blk;
   

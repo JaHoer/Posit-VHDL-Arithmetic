@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------------
--- Company: 
+-- Company: FAU
 -- Engineer: Jan Hoertig
 -- 
 -- Create Date: 28.06.2023 14:39:13
@@ -171,8 +171,10 @@ architecture Behavioral of posit_adder is
   signal in1_gt_in2 : std_logic;
   signal r_diff11, r_diff12, r_diff2 : std_logic_vector(Bs downto 0);
   signal r_diff : std_logic_vector(Bs downto 0);
+  signal r_diff_shift : std_logic_vector(Bs downto 0);
   signal diff : std_logic_vector(es+Bs+1 downto 0);
-  signal exp_diff : std_logic_vector(Bs-1 downto 0);
+  signal diff_eig : std_logic_vector(es downto 0);
+  signal exp_diff : std_logic_vector(Bs+1 downto 0);    -- should be Bs-1 not +1
   signal DSR_right_in : std_logic_vector(N-1 downto 0);
   signal DSR_right_out : std_logic_vector(N-1 downto 0);
   signal DSR_e_diff : std_logic_vector(Bs-1 downto 0);
@@ -230,9 +232,9 @@ begin
     -- XIN1 ? S1 ? -IN1[N -2 : 0] : IN1[N -2 : 0]
 
     -- xin1 = s1 ? -in1 : in1;      -- ???
-    xin1 <= std_logic_vector( - signed(in1(N-2 downto 0))) when s1 = '1' else in1(N-2 downto 0);
+    xin1 <= std_logic_vector( - signed(in1(N-1 downto 0))) when s1 = '1' else in1(N-1 downto 0);
     
-    xin2 <= std_logic_vector( - signed(in2(N-2 downto 0))) when s2 = '1' else in2(N-2 downto 0);
+    xin2 <= std_logic_vector( - signed(in2(N-1 downto 0))) when s2 = '1' else in2(N-1 downto 0);
 
 -- ChatGPT
 
@@ -294,7 +296,14 @@ begin
   lm <= m1 when in1_gt_in2 = '1' else m2;
   sm <= m2 when in1_gt_in2 = '1' else m1;
 
+
+
+
   -- Exponent Difference: Lower Mantissa Right Shift Amount
+  -- Ediff ? ((LRC ? LR-(SRC ? SR : -SR) : SR-LR) « ES) +LE-SE
+  
+  
+  --an effective regime value difference (by taking their signs into account) is performed
   uut_sub1 : entity work.sub_N     --  <-- work. vergessen
     generic map (
       N => Bs
@@ -325,30 +334,81 @@ begin
       c => r_diff2         -- <-- c statt result
     );
     
-  r_diff <= r_diff11 when lrc = '1' and src = '1' else
-             r_diff12 when lrc = '1' and src = '0' else
-             r_diff2;
+    
+    -- (LRC ? LR-(SRC ? SR : -SR) : SR-LR)
+    
+    --          LR - SR     when lrc = '1' and src = '1' else
+    --          LR - (-SR)  when lrc = '1' and src = '0' else
+    --          SR - LR;
+    
+    r_diff <= r_diff11 when lrc = '1' and src = '1' else
+              r_diff12 when lrc = '1' and src = '0' else
+              r_diff2;
              
-    r_diff_le <= r_diff & le;
-    -- {{Bs+1{1'b0}},se}
-    -- se_extended <= (others => '0') & se;
-    se_extended <= std_logic_vector(resize(unsigned(se), N));
+    
+
+    
+    
+    -- exponent difference
+    -- LE-SE
+    
+--    r_diff_le <= r_diff & le;
+--    se_extended <= std_logic_vector(resize(unsigned(se), N));
   
-  sub_diff : entity work.sub_N     --  <-- work. vergessen
+--  sub_diff : entity work.sub_N     --  <-- work. vergessen
+--    generic map (
+--      N => es+Bs+1
+--    )
+--    port map (
+--      a => r_diff_le,
+--      b => se_extended,
+--      c => diff                             -- <-- c statt result
+--    );
+
+  -- -- exp_diff <= Bs'("1") when diff(es+Bs) = '0' else diff(Bs-1 downto 0);       -- <-- alt
+  -- -- (|diff[es+Bs:Bs]) ? {Bs{1'b1}} : diff[Bs-1:0];
+--  exp_diff <= (others => '1') when or_reduce(diff(es+Bs downto Bs)) = '0' else diff(Bs-1 downto 0);
+
+
+
+    -- Abweichung von Verilog Vorlage !!!
+    
+    sub_exp : entity work.sub_N
     generic map (
-      N => es+Bs+1
+      N => es
     )
     port map (
---      a => (r_diff & le),
-      a => r_diff_le,
---      b => (Bs+1)'(others => '0') & se,
-      b => se_extended,
-      c => diff                             -- <-- c statt result
+      a => le,
+      b => se,
+      c => diff_eig
     );
-
-  -- exp_diff <= Bs'("1") when diff(es+Bs) = '0' else diff(Bs-1 downto 0);
-  -- (|diff[es+Bs:Bs]) ? {Bs{1'b1}} : diff[Bs-1:0];
-  exp_diff <= (others => '1') when or_reduce(diff(es+Bs downto Bs)) = '0' else diff(Bs-1 downto 0);
+  
+  
+    -- Regime Diff shift left by ES bits
+    
+    dsr_reg_sl : entity work.DSR_left_N_S
+    generic map (
+      N => Bs+1,
+      S => Bs
+    )
+    port map (
+      a => r_diff,
+      b => std_logic_vector(to_unsigned(es, Bs)),
+      c => r_diff_shift
+    ); 
+    
+  
+    
+    add_exp_diff : entity work.add_N
+    generic map (
+      N => Bs+1
+    )
+    port map (
+      a => r_diff_shift,
+      b => std_logic_vector(resize(unsigned(diff_eig), Bs+1)),
+      c => exp_diff
+    );
+  
 
   -- DSR Right Shifting of Small Mantissa
   
@@ -368,6 +428,8 @@ begin
     DSR_right_in <= sm;
   end generate;
   
+  -- DOTO: shortening only temporary solution   !!!
+  DSR_e_diff <= exp_diff(Bs-1 downto 0);
 
   dsr1 : entity work.DSR_right_N_S
     generic map (
@@ -415,7 +477,10 @@ begin
       c => add_m2
     );
     
+    -- Select if Add or Sub
   add_m <= add_m1 when op = '1' else add_m2;
+  
+  -- check for Overflow of Mant
   mant_ovf <= add_m(N) & add_m(N-1);
   
   -- LOD of mantissa addition result

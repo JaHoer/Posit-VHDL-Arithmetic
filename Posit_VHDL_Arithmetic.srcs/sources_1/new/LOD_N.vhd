@@ -80,9 +80,9 @@ begin
         end loop fl;
         
         
-        -- Falls keine Null gefunden wurde
+        -- Falls keine Null gefunden wurde -> laenge des Regimes = ganze Laenge
         if found = '0' then
-            out_var := "000";
+            out_var := std_logic_vector(to_unsigned(N-1,log2N));
         end if;
         
         output_vector <= out_var; 

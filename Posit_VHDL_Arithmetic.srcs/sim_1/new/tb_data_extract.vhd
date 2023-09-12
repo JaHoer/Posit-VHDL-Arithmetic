@@ -35,7 +35,7 @@ entity tb_data_extract is
     generic (
         N_tb : integer := 8;
         Bs_tb : integer := 3; -- log2(N)
-        es_tb : integer := 4
+        es_tb : integer := 1
         
     );
 
@@ -56,6 +56,10 @@ architecture Behavioral of tb_data_extract is
     signal Lshift_tb : std_logic_vector(Bs_tb-1 downto 0);
     signal exp_tb : std_logic_vector(es_tb-1 downto 0);
     signal mant_tb : std_logic_vector(N_tb-es_tb-1 downto 0);
+    
+    signal xin_r_tb : std_logic_vector(N_tb-1 downto 0);
+    signal k_tb : std_logic_vector(Bs_tb-1 downto 0);
+    signal xin_tmp_tb : std_logic_vector(N_tb-1 downto 0);
 
 begin
 
@@ -72,6 +76,10 @@ begin
         Lshift => Lshift_tb,
         exp => exp_tb,
         mant => mant_tb
+        
+        --xin_r_o => xin_r_tb,
+        --k_o => k_tb,
+        --xin_tmp_o => xin_tmp_tb
     );
     
     

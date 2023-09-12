@@ -73,15 +73,17 @@ begin
     begin
         
         wait for CLOCK_PERIOD;
+        in_v <= "00000000";
+        wait for CLOCK_PERIOD;
         in_v <= "00000001";
         wait for CLOCK_PERIOD;
         in_v <= "00000011";
         wait for CLOCK_PERIOD;
         in_v <= "00000111";
         wait for CLOCK_PERIOD;
-        in_v <= "11110111";
+        in_v <= "00110111";
         wait for CLOCK_PERIOD;
-        in_v <= "11110111";
+        in_v <= "01110111";
         wait for CLOCK_PERIOD;
         in_v <= "10111111";
         wait for CLOCK_PERIOD;

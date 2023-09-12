@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------------
 -- Company: 
--- Engineer: 
+-- Engineer: Jan Hoertig
 -- 
 -- Create Date: 10.08.2023 10:18:03
 -- Design Name: 
@@ -67,6 +67,9 @@ begin
     stimuli: process
     begin
     
+        wait for CLOCK_PERIOD;
+        a_tb <= "10010000";
+        b_tb <= "010";
         wait for CLOCK_PERIOD;
         a_tb <= "11010111";
         b_tb <= "000";
