@@ -219,8 +219,14 @@ begin
     
     mult_eN <= std_logic_vector(- signed(mult_e(es+Bs downto 0))) when mult_e(es+Bs+1) = '1' else mult_e(es+Bs downto 0);
     
+    -- IF (Exp[E]&(|ExpN[ES-1:0]))
+  
+    --      EO[ES-1:0] ? 2's complement of ExpN[ES-1:0]     else EO[ES-1:0] ? ExpN[ES-1:0]
     e_o <= mult_e(es-1 downto 0) when mult_e(es+Bs+1) = '1' and OR_REDUCE(mult_eN(es-1 downto 0)) = '1' else mult_eN(es-1 downto 0);
     
+    
+    -- IF (!Exp[E]||(Exp[E]&(|ExpN[ES-1:0])))
+    --      RO[E -ES-1:0] ? ExpN[E -1 : ES] +1      else RO[E -ES-1:0] ? ExpN[E -1 : ES]
     r_o <= std_logic_vector(unsigned(mult_eN(es+Bs downto es)) + 1) when mult_e(es+Bs+1) = '0' or (mult_e(es+Bs+1)= '1' and OR_REDUCE(mult_eN(es-1 downto 0)) = '1') else mult_eN(es+Bs downto es); 
     
     
@@ -229,6 +235,8 @@ begin
     
     not_mult_e <= (others => not mult_e(es+Bs+1));
     
+    
+    -- REM[2 ?N -1:0] ? {N{!Exp[E]},Exp[E],EO,MFP[N -2 : ES]}
     tmp_o <= not_mult_e & mult_e(es+Bs+1) & e_o & mult_mN(2*(N-es) downto N-es+2);
     
     
@@ -251,9 +259,11 @@ begin
     
     
     -- Final Output
+    -- If (SFP == 1): REM ? (2's complement of REM)
     tmp1_oN <= std_logic_vector(- signed(tmp1_o)) when mult_s = '1' else tmp1_o;
     
     out_zeros <= (others => '0');
+    -- Combine SFP with LSB (N-1) bit of REM
     out_val <= inf_sig & out_zeros when (inf_sig = '1' or zero_sig = '1') or mult_mN(2*(N-es)+1) = '0' else mult_s & tmp1_oN(N-1 downto 1);
     
     inf <= inf_sig;
