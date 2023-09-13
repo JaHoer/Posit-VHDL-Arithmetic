@@ -59,18 +59,7 @@ end data_extract;
 
 architecture Behavioral of data_extract is
 
--- ChatGPT
---  function log2(value : integer) return integer is
---    variable tmp : integer := value - 1;
---    variable result : integer := 0;
---  begin
---    while tmp > 0 loop
---    -- srl nicht mehr vern�nftig unterst�tzt
---      tmp := to_integer(shift_right(unsigned(tmp), 1));
---      result := result + 1;
---    end loop;
---    return result;
---  end function log2;
+
   signal rc_tmp : std_logic;
   signal xin : std_logic_vector(N-1 downto 0);
   
@@ -104,20 +93,16 @@ begin
     -- used to count the sequence of 0 with terminating 1 (one less than the actual count of 1). RC determines either of K0 or
     -- K1 as R[RS-1:0] (absolute regime value) and regime left shift amount (Lshift) of respective operands.
     
-    -- Leading One Detection (LOD) of XIN1[N-2:0] (? K0)
-    --LOD_N_inst_2 : entity work.LOD_N
-    --    generic map (N => N, log2N => Bs)
-    --    port map (input_vector => xin(N-2 downto 0) & '0', output_vector => k0);
-    
-    --Leading Zero Detection (LZD) of XIN1[N-3:0] (? K1)
-    --LZD_N_inst_3 : entity work.LZD_N
-    --    generic map (N => N, log2N => Bs)
-    --    port map (input_vector => xin(N-3 downto 0) & "00", output_vector => k1);
         
     -- from PACoGen    
     xinst_k : entity work.LOD_N
-        generic map (N => N, log2N => Bs)
-        port map (input_vector => xin_r(N-2 downto 0) & (rc_tmp xor '0') , output_vector => k);
+        generic map (
+            N => N,
+            log2N => Bs)
+        port map (
+            input_vector => xin_r(N-2 downto 0) & (rc_tmp xor '0') , 
+            output_vector => k
+        );
 
     --k_o <= k;
     
@@ -133,9 +118,6 @@ begin
 
     -- To extract the exponent and mantissa, the respective XIN is dynamically left shifted by Lshift to push-out the entire regime
     -- bits and align exponent and mantissa at MSB. Now the MSB ES bit will act as the exponent and remaining bit would be mantissa bits
-    --DSR_left_N_S_inst : entity work.DSR_left_N_S
-    --    generic map (N => N, S => Bs)
-    --    port map (a => xin(N-3 downto 0) & "00", b => Lshift, c => xin_tmp);
         
     -- from PACoGen
     ls : entity work.DSR_left_N_S
