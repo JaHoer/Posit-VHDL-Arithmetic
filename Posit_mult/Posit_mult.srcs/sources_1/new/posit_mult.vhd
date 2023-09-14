@@ -64,7 +64,26 @@ entity posit_mult is
         e1_o : out std_logic_vector(es-1 downto 0);
         e2_o : out std_logic_vector(es-1 downto 0);
         mant1_o : out std_logic_vector(N-es-1 downto 0); 
-        mant2_o : out std_logic_vector(N-es-1 downto 0)
+        mant2_o : out std_logic_vector(N-es-1 downto 0);
+        
+        m1_o : out std_logic_vector(N-es downto 0);
+        m2_o : out std_logic_vector(N-es downto 0);
+        r1_o : out std_logic_vector(Bs+1 downto 0);
+        r2_o : out std_logic_vector(Bs+1 downto 0);
+        
+        r1e1_o : out std_logic_vector(Bs+es+1 downto 0);
+        r2e2_o : out std_logic_vector(Bs+es+1 downto 0);
+        
+        mult_m_o : out std_logic_vector(2*(N-es)+1 downto 0);
+        mult_e_o : out std_logic_vector(Bs+es+1 downto 0);
+        
+        e_o_o : out std_logic_vector(es-1 downto 0);
+        r_o_o : out std_logic_vector(Bs downto 0);
+        tmp_o_o : out std_logic_vector(2*N-1 downto 0);
+        tmp1_o_o : out std_logic_vector(2*N-1 downto 0);
+        r_o_dsr_o : out std_logic_vector(Bs downto 0);
+        tmp1_oN_o : out std_logic_vector(2*N-1 downto 0)
+
     );
 end posit_mult;
 
@@ -120,6 +139,10 @@ architecture Behavioral of posit_mult is
     
     signal r1 : std_logic_vector(Bs+1 downto 0);
     signal r2 : std_logic_vector(Bs+1 downto 0);
+    
+    signal r1e1 : std_logic_vector(Bs+es+1 downto 0);
+    signal r2e2 : std_logic_vector(Bs+es+1 downto 0);
+    
     signal mult_e : std_logic_vector(Bs+es+1 downto 0);
     
     signal mult_eN : std_logic_vector(es+Bs downto 0);
@@ -195,8 +218,8 @@ begin
         
     -- Sign, Exponent and Mantissa Computation
     
-    m1 <= zero_tmp1 & mant1;
-    m2 <= zero_tmp2 & mant2;
+    m1 <= zero1 & mant1;
+    m2 <= zero2 & mant2;
     
     mult_s <= s1 xnor s2;
     
@@ -208,11 +231,17 @@ begin
     mult_mN <= std_logic_vector(shift_left(unsigned(mult_m), 1)) when mult_m_ovf = '0' else mult_m;
     
     
+    -- TODO probably wrong r1 and r2 values
     r1 <= ("00" & regime1) when rc1 = '1' else std_logic_vector(- signed(regime1));
-    r1 <= ("00" & regime2) when rc2 = '1' else std_logic_vector(- signed(regime2));
+    r2 <= ("00" & regime2) when rc2 = '1' else std_logic_vector(- signed(regime2));
     
     mult_m_ovf_v(0) <= mult_m_ovf;
-    mult_e <= std_logic_vector(unsigned(r1 & e1) + unsigned(r2 & e2) + unsigned( mult_m_ovf_v));
+    
+    r1e1 <= r1 & e1;
+    r2e2 <= r2 & e2;
+    
+    -- rechnet falsch
+    mult_e <= std_logic_vector(unsigned(r1e1) + unsigned(r2e2) + unsigned( mult_m_ovf_v));
     
     
     -- Exponent and Regime Computation
@@ -264,7 +293,8 @@ begin
     
     out_zeros <= (others => '0');
     -- Combine SFP with LSB (N-1) bit of REM
-    out_val <= inf_sig & out_zeros when (inf_sig = '1' or zero_sig = '1') or mult_mN(2*(N-es)+1) = '0' else mult_s & tmp1_oN(N-1 downto 1);
+    -- out_val <= inf_sig & out_zeros when (inf_sig = '1' or zero_sig = '1') or mult_mN(2*(N-es)+1) = '0' else mult_s & tmp1_oN(N-1 downto 1);
+    out_val <= inf_sig & out_zeros when (inf_sig = '1' or zero_sig = '1') else mult_s & tmp1_oN(N-1 downto 1);
     
     inf <= inf_sig;
     zero <= zero_sig;
@@ -284,6 +314,23 @@ begin
     e2_o <= e2;
     mant1_o <= mant1;
     mant2_o <= mant2;
+    
+    m1_o <= m1;
+    m2_o <= m2;
+    r1_o <= r1;
+    r2_o <= r2;
+    
+    r1e1_o <= r1e1;
+    r2e2_o <= r2e2;
+    
+    mult_m_o <= mult_m;
+    mult_e_o <= mult_e;
+    e_o_o <= e_o;
+    r_o_o <= r_o;
+    tmp_o_o <= tmp_o;
+    tmp1_o_o <= tmp1_o;
+    r_o_dsr_o <= r_o_dsr;
+    tmp1_oN_o <= tmp1_oN;
     
     
     

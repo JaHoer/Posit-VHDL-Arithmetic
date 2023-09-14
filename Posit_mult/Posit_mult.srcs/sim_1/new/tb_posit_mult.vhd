@@ -69,6 +69,24 @@ architecture Behavioral of tb_posit_mult is
     signal e2_tb : std_logic_vector(es_tb-1 downto 0);
     signal mant1_tb : std_logic_vector(N_tb-es_tb-1 downto 0); 
     signal mant2_tb : std_logic_vector(N_tb-es_tb-1 downto 0);
+    
+    signal m1_tb : std_logic_vector(N_tb-es_tb downto 0);
+    signal m2_tb : std_logic_vector(N_tb-es_tb downto 0);
+    signal r1_tb : std_logic_vector(Bs_tb+1 downto 0);
+    signal r2_tb : std_logic_vector(Bs_tb+1 downto 0);
+    
+    signal r1e1_tb : std_logic_vector(Bs_tb+es_tb+1 downto 0);
+    signal r2e2_tb : std_logic_vector(Bs_tb+es_tb+1 downto 0);
+    
+    signal mult_m_tb : std_logic_vector(2*(N_tb-es_tb)+1 downto 0);
+    signal mult_e_tb : std_logic_vector(Bs_tb+es_tb+1 downto 0);
+    
+    signal e_o_tb : std_logic_vector(es_tb-1 downto 0);
+    signal r_o_tb : std_logic_vector(Bs_tb downto 0);
+    signal tmp_o_tb : std_logic_vector(2*N_tb-1 downto 0);
+    signal tmp1_o_tb : std_logic_vector(2*N_tb-1 downto 0);
+    signal r_o_dsr_tb : std_logic_vector(Bs_tb downto 0);
+    signal tmp1_oN_tb : std_logic_vector(2*N_tb-1 downto 0);
 
 begin
 
@@ -99,7 +117,27 @@ begin
         e1_o => e1_tb,
         e2_o => e2_tb,
         mant1_o => mant1_tb,
-        mant2_o => mant2_tb
+        mant2_o => mant2_tb,
+        
+        m1_o => m1_tb,
+        m2_o => m2_tb,
+        r1_o => r1_tb,
+        r2_o => r2_tb,
+        
+        r1e1_o => r1e1_tb,
+        r2e2_o => r2e2_tb,
+        
+        mult_m_o => mult_m_tb,
+        mult_e_o => mult_e_tb,
+        
+        e_o_o => e_o_tb,
+        r_o_o => r_o_tb,
+        tmp_o_o => tmp_o_tb,
+        tmp1_o_o => tmp1_o_tb,
+        r_o_dsr_o => r_o_dsr_tb,
+        tmp1_oN_o => tmp1_oN_tb
+        
+        
        
     );
     
@@ -116,10 +154,9 @@ begin
         wait for CLOCK_PERIOD;
         assert done_tb = '1' report "Should be 1";
         assert out_val_tb = "00000000" report "Should be 00000000";
-        wait for CLOCK_PERIOD;
-        
         start_tb <= '0';
         wait for CLOCK_PERIOD;
+       
         
         -- Zeile 265
         in1_tb <= "00001000";
@@ -128,10 +165,9 @@ begin
         wait for CLOCK_PERIOD;
         assert done_tb = '1' report "Should be 1";
         assert out_val_tb = "00000001" report "Should be 00000001";
-        wait for CLOCK_PERIOD;
-        
         start_tb <= '0';
         wait for CLOCK_PERIOD;
+        
         
         -- Zeile 2520
         in1_tb <= "11011110";
@@ -140,6 +176,17 @@ begin
         wait for CLOCK_PERIOD;
         assert done_tb = '1' report "Should be 1";
         assert out_val_tb = "11111011" report "Should be 11111011";
+        start_tb <= '0';
+        wait for CLOCK_PERIOD;
+        
+        -- Zeile 12801
+        in1_tb <= "00100110";
+        in2_tb <= "00110010";
+        start_tb <= '1';
+        wait for CLOCK_PERIOD;
+        assert done_tb = '1' report "Should be 1";
+        assert out_val_tb = "00011100" report "Should be 00011100";
+        start_tb <= '0';
         wait for CLOCK_PERIOD;
         
         
