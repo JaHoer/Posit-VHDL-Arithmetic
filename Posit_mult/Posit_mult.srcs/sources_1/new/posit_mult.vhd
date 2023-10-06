@@ -56,6 +56,8 @@ entity posit_mult is
         inf2_o : out std_logic;
         zero1_o : out std_logic;
         zero2_o : out std_logic;
+        
+        mult_s_o : out std_logic;
     
         rc1_o : out std_logic;
         rc2_o : out std_logic;
@@ -136,6 +138,9 @@ architecture Behavioral of posit_mult is
     signal mult_m_ovf : std_logic;
     signal mult_m_ovf_v : std_logic_vector(0 downto 0);
     signal mult_mN : std_logic_vector(2*(N-es)+1 downto 0);
+    
+    signal regime1_long_inv : std_logic_vector(Bs+1 downto 0);
+    signal regime2_long_inv : std_logic_vector(Bs+1 downto 0);
     
     signal r1 : std_logic_vector(Bs+1 downto 0);
     signal r2 : std_logic_vector(Bs+1 downto 0);
@@ -218,10 +223,10 @@ begin
         
     -- Sign, Exponent and Mantissa Computation
     
-    m1 <= zero1 & mant1;
-    m2 <= zero2 & mant2;
+    m1 <= zero_tmp1 & mant1;
+    m2 <= zero_tmp2 & mant2;
     
-    mult_s <= s1 xnor s2;
+    mult_s <= s1 xor s2;
     
     mult_m <= std_logic_vector(unsigned(m1) * unsigned(m2));
     
@@ -230,17 +235,19 @@ begin
     
     mult_mN <= std_logic_vector(shift_left(unsigned(mult_m), 1)) when mult_m_ovf = '0' else mult_m;
     
+    regime1_long_inv <= std_logic_vector(resize(signed(regime1), Bs + 2));  -- r1'length
+    regime2_long_inv <= std_logic_vector(resize(signed(regime2), Bs + 2));  -- r2'length
     
-    -- TODO probably wrong r1 and r2 values
-    r1 <= ("00" & regime1) when rc1 = '1' else std_logic_vector(- signed(regime1));
-    r2 <= ("00" & regime2) when rc2 = '1' else std_logic_vector(- signed(regime2));
+
+    r1 <= ("00" & regime1) when rc1 = '1' else std_logic_vector(- signed(regime1_long_inv));
+    r2 <= ("00" & regime2) when rc2 = '1' else std_logic_vector(- signed(regime2_long_inv));
     
     mult_m_ovf_v(0) <= mult_m_ovf;
     
     r1e1 <= r1 & e1;
     r2e2 <= r2 & e2;
     
-    -- rechnet falsch
+ 
     mult_e <= std_logic_vector(unsigned(r1e1) + unsigned(r2e2) + unsigned( mult_m_ovf_v));
     
     
@@ -305,6 +312,8 @@ begin
     inf2_o <= inf2;
     zero1_o <= zero1;
     zero2_o <= zero2;
+    
+    mult_s_o <= mult_s;
     
     rc1_o <= rc1;
     rc2_o <= rc2;

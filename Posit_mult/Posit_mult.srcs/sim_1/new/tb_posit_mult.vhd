@@ -61,6 +61,8 @@ architecture Behavioral of tb_posit_mult is
     signal zero1_tb :  std_logic;
     signal zero2_tb :  std_logic;
     
+    signal mult_s_tb : std_logic;
+    
     signal rc1_tb : std_logic;
     signal rc2_tb : std_logic;
     signal regime1_tb : std_logic_vector(Bs_tb-1 downto 0); 
@@ -109,6 +111,8 @@ begin
         inf2_o => inf2_tb,
         zero1_o => zero1_tb,
         zero2_o => zero2_tb,
+        
+        mult_s_o => mult_s_tb,
     
         rc1_o => rc1_tb,
         rc2_o => rc2_tb,

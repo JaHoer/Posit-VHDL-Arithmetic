@@ -60,13 +60,13 @@ begin
 -- ChatGPT
 --  tmp(0) <= b(0) when b(0) = '1' else a(0) & a(N-2 downto 0);
 --  tmp(0) <= b(0) when b(0) = '1' else a(0);
-  tmp_m(0) <= std_logic_vector(shift_left(unsigned(a), 1)) when b(0) = '1' else a;
+  tmp_m(0) <= std_logic_vector(shift_right(unsigned(a), 1)) when b(0) = '1' else a;
   
   loop_blk: for i in 1 to S-1 generate
    -- tmp(i) <= b(i) when b(i) = '1' else tmp(i-1)(0) & tmp(i-1)(N-2 downto 0);
     -- assign tmp[i] = b[i] ? tmp[i-1] << 2**i : tmp[i-1];
     
-    tmp_m(i) <= std_logic_vector(shift_left(unsigned(tmp_m(i-1)), to_integer(shift_left(SHIFT_2, i-1)))) when b(i) = '1' else tmp_m(i-1);
+    tmp_m(i) <= std_logic_vector(shift_right(unsigned(tmp_m(i-1)), to_integer(shift_right(SHIFT_2, i-1)))) when b(i) = '1' else tmp_m(i-1);
 
   end generate loop_blk;
   
