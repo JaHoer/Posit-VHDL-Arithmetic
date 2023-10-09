@@ -49,11 +49,9 @@ end DSR_right_N_S;
 architecture Behavioral of DSR_right_N_S is
 
     type tmp_matrix is array (S-1 downto 0) of std_logic_vector(N-1 downto 0);
--- ChatGPT
-  --signal tmp : std_logic_vector(N-1 downto 0)(S-1 downto 0);
   
-  signal tmp_m : tmp_matrix;
-  constant SHIFT_2 : unsigned := to_unsigned(2, N);
+    signal tmp_m : tmp_matrix;
+    constant SHIFT_2 : unsigned := to_unsigned(2, N);
 
 begin
 
@@ -66,7 +64,7 @@ begin
    -- tmp(i) <= b(i) when b(i) = '1' else tmp(i-1)(0) & tmp(i-1)(N-2 downto 0);
     -- assign tmp[i] = b[i] ? tmp[i-1] << 2**i : tmp[i-1];
     
-    tmp_m(i) <= std_logic_vector(shift_right(unsigned(tmp_m(i-1)), to_integer(shift_right(SHIFT_2, i-1)))) when b(i) = '1' else tmp_m(i-1);
+    tmp_m(i) <= std_logic_vector(shift_right(unsigned(tmp_m(i-1)), to_integer(shift_left(SHIFT_2, i-1)))) when b(i) = '1' else tmp_m(i-1);
 
   end generate loop_blk;
   

@@ -44,7 +44,7 @@ end tb_posit_mult;
 
 architecture Behavioral of tb_posit_mult is
 
-    constant CLOCK_PERIOD : time := 100 ns;
+    constant CLOCK_PERIOD : time := 150 ns;
 
     signal clk  : std_logic;
 

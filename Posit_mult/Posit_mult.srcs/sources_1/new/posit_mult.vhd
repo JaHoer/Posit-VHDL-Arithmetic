@@ -158,6 +158,7 @@ architecture Behavioral of posit_mult is
     signal tmp_o : std_logic_vector(2*N-1 downto 0);
     
     signal tmp1_o : std_logic_vector(2*N-1 downto 0);
+    signal r_o_dsr_tmp : std_logic_vector(Bs downto 0);
     signal r_o_dsr : std_logic_vector(Bs downto 0);
     
     signal tmp1_oN : std_logic_vector(2*N-1 downto 0);
@@ -235,8 +236,8 @@ begin
     
     mult_mN <= std_logic_vector(shift_left(unsigned(mult_m), 1)) when mult_m_ovf = '0' else mult_m;
     
-    regime1_long_inv <= std_logic_vector(resize(signed(regime1), Bs + 2));  -- r1'length
-    regime2_long_inv <= std_logic_vector(resize(signed(regime2), Bs + 2));  -- r2'length
+    regime1_long_inv <= std_logic_vector(resize(unsigned(regime1), Bs + 2));  -- r1'length
+    regime2_long_inv <= std_logic_vector(resize(unsigned(regime2), Bs + 2));  -- r2'length
     
 
     r1 <= ("00" & regime1) when rc1 = '1' else std_logic_vector(- signed(regime1_long_inv));
@@ -279,19 +280,22 @@ begin
     
     -- Including Regime bits in Exponent-Mantissa Packing
     
-    r_o_dsr <= (others => '0') when r_o(Bs) = '1' else r_o;
+    r_o_dsr_tmp <= (others => '1') when r_o(Bs) = '1' else r_o;
+    r_o_dsr <= '0' & r_o_dsr_tmp(Bs-1 downto 0);
     
-    dsr2 : entity work.DSR_right_N_S
-        generic map (
-            N => 2*N,
-            S => Bs+1
-        )
-        port map (
-            a => tmp_o,
-            b => r_o_dsr,
-            c => tmp1_o
-        );
+--    dsr2 : entity work.DSR_right_N_S
+--        generic map (
+--            N => 2*N,
+--            S => Bs+1
+--        )
+--        port map (
+--            a => tmp_o,
+--            b => r_o_dsr,
+--            c => tmp1_o
+--        );
         
+    
+    tmp1_o <= std_logic_vector(shift_right(unsigned(tmp_o), to_integer(unsigned(r_o_dsr))));  
     
     
     -- Final Output
@@ -301,7 +305,7 @@ begin
     out_zeros <= (others => '0');
     -- Combine SFP with LSB (N-1) bit of REM
     -- out_val <= inf_sig & out_zeros when (inf_sig = '1' or zero_sig = '1') or mult_mN(2*(N-es)+1) = '0' else mult_s & tmp1_oN(N-1 downto 1);
-    out_val <= inf_sig & out_zeros when (inf_sig = '1' or zero_sig = '1') else mult_s & tmp1_oN(N-1 downto 1);
+    out_val <= inf_sig & out_zeros when (inf_sig = '1' or zero_sig = '1') or mult_mN(2*(N-es)+1) = '0' else mult_s & tmp1_oN(N-1 downto 1);
     
     inf <= inf_sig;
     zero <= zero_sig;
