@@ -169,6 +169,8 @@ architecture Behavioral of posit_mult is
 
 begin
     
+    
+    
     start0 <= start;
     s1 <= in1(N-1);
     s2 <= in2(N-1);
@@ -309,6 +311,8 @@ begin
     
     inf <= inf_sig;
     zero <= zero_sig;
+    
+    done <= '1';
     
     -- Debug Outputs
     
