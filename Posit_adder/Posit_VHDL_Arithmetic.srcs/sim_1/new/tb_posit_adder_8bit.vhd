@@ -54,6 +54,7 @@ architecture Behavioral of tb_posit_adder_8bit is
     signal in2_tb : std_logic_vector(N_tb-1 downto 0);
     signal start_tb : std_logic;
     signal out_val_tb : std_logic_vector(N_tb-1 downto 0);
+    signal out_val_ref_tb : std_logic_vector(N_tb-1 downto 0);
     signal inf_tb : std_logic;
     signal zero_tb : std_logic;
     signal done_tb : std_logic;
@@ -115,10 +116,24 @@ begin
     begin
     
         wait for CLOCK_PERIOD;
+        
+        
+        -- Zeile 9325
+        in1_tb <= "01101100";
+        in2_tb <= "00100100";
+        start_tb <= '1';
+        out_val_ref_tb <= "01101100";
+        wait for CLOCK_PERIOD;
+        assert done_tb = '1' report "Should be 1";
+        assert out_val_tb = "01101100" report "Should be 01101100";
+        wait for CLOCK_PERIOD;
+        
+        
         -- Zeile 5
         in1_tb <= "00000100";
         in2_tb <= "00000000";
         start_tb <= '1';
+        out_val_ref_tb <= "00000100";
         wait for CLOCK_PERIOD;
         assert done_tb = '1' report "Should be 1";
         assert out_val_tb = "00000100" report "Should be 00000100";
@@ -131,6 +146,7 @@ begin
         in1_tb <= "00001000";
         in2_tb <= "00000001";
         start_tb <= '1';
+        out_val_ref_tb <= "00001000";
         wait for CLOCK_PERIOD;
         assert done_tb = '1' report "Should be 1";
         assert out_val_tb = "00001000" report "Should be 00001000";
@@ -143,9 +159,18 @@ begin
         in1_tb <= "11010111";
         in2_tb <= "00001001";
         start_tb <= '1';
+        out_val_ref_tb <= "11010111";
         wait for CLOCK_PERIOD;
         assert done_tb = '1' report "Should be 1";
         assert out_val_tb = "11010111" report "Should be 11010111";
+        wait for CLOCK_PERIOD;
+        
+        
+        -- End Marker
+        in1_tb <= "XXXXXXXX";
+        in2_tb <= "XXXXXXXX";
+        start_tb <= '1';
+        out_val_ref_tb <= "XXXXXXXX";
         wait for CLOCK_PERIOD;
         
         
