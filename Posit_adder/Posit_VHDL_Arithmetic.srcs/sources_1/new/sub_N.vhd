@@ -33,7 +33,6 @@ use IEEE.NUMERIC_STD.ALL;
 
 entity sub_N is
 
--- ChatGPT
   generic (
     N : integer := 10
   );
@@ -43,14 +42,12 @@ entity sub_N is
     c : out std_logic_vector(N downto 0)
   );
 
-
 end sub_N;
 
 architecture Behavioral of sub_N is
 
 begin
 
--- Chat GPT
   c <= std_logic_vector(unsigned('0' & a) - unsigned('0' & b));
 
 end Behavioral;

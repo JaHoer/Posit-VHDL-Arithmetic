@@ -33,7 +33,6 @@ use IEEE.NUMERIC_STD.ALL;
 
 entity add_N is
 
--- ChatGPT
   generic (
     N : integer := 10
   );
@@ -49,7 +48,6 @@ architecture Behavioral of add_N is
 
 begin
 
--- ChatGPT
   c <= std_logic_vector(unsigned('0' & a) + unsigned('0' & b));
 
 end Behavioral;

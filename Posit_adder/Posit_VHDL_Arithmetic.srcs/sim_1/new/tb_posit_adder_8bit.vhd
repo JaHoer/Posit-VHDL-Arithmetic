@@ -46,7 +46,7 @@ end tb_posit_adder_8bit;
 
 architecture Behavioral of tb_posit_adder_8bit is
 
-    constant CLOCK_PERIOD : time := 100 ns;
+    constant CLOCK_PERIOD : time := 500 ns;
 
     signal clk  : std_logic;
 
@@ -74,6 +74,41 @@ architecture Behavioral of tb_posit_adder_8bit is
     signal e2_tb : std_logic_vector(es_tb-1 downto 0);
     signal mant1_tb : std_logic_vector(N_tb-es_tb-1 downto 0); 
     signal mant2_tb : std_logic_vector(N_tb-es_tb-1 downto 0);
+    
+    signal in1_gt_in2_tb :  std_logic;
+    signal r_diff11_tb : std_logic_vector(Bs_tb downto 0); 
+    signal r_diff12_tb : std_logic_vector(Bs_tb downto 0); 
+    signal r_diff2_tb : std_logic_vector(Bs_tb downto 0);
+    signal r_diff_tb : std_logic_vector(Bs_tb downto 0);
+    signal r_diff_shift_tb : std_logic_vector(Bs_tb downto 0);
+    signal diff_tb : std_logic_vector(es_tb+Bs_tb+1 downto 0);
+    signal diff_eig_tb : std_logic_vector(es_tb downto 0);
+    signal exp_diff_tb : std_logic_vector(Bs_tb-1 downto 0); 
+    
+    signal DSR_right_in_tb : std_logic_vector(N_tb-1 downto 0);
+    signal DSR_right_out_tb : std_logic_vector(N_tb-1 downto 0);
+    
+    signal add_m_in1_tb : std_logic_vector(N_tb-1 downto 0);
+    signal add_m1_tb : std_logic_vector(N_tb downto 0);
+    signal add_m2_tb : std_logic_vector(N_tb downto 0);
+    signal add_m_tb : std_logic_vector(N_tb downto 0);
+    signal mant_ovf_tb : std_logic_vector(1 downto 0);
+    
+    signal left_shift_val_tb : std_logic_vector(Bs_tb-1 downto 0);
+    signal left_shift_extended_tb : std_logic_vector(es_tb + Bs_tb downto 0);
+    signal DSR_left_out_t_tb : std_logic_vector(N_tb-1 downto 0);
+    signal DSR_left_out_tb : std_logic_vector(N_tb-1 downto 0);
+    
+    signal lr_N_tb : std_logic_vector(Bs_tb downto 0);
+    signal le_o_tmp_tb : std_logic_vector(es_tb+Bs_tb+1 downto 0);
+    signal le_o_tb : std_logic_vector(es_tb+Bs_tb+1 downto 0);
+    signal le_oN_tb : std_logic_vector(es_tb+Bs_tb downto 0); 
+    
+    
+    signal e_o_tb : std_logic_vector(es_tb-1 downto 0);
+    signal r_o_tb : std_logic_vector(Bs_tb-1 downto 0);
+    signal tmp_o_tb : std_logic_vector(2*N_tb-1 downto 0);
+    signal tmp1_oN_tb : std_logic_vector(2*N_tb-1 downto 0);
 
 begin
 
@@ -106,7 +141,42 @@ begin
         e1_o => e1_tb,
         e2_o => e2_tb,
         mant1_o => mant1_tb,
-        mant2_o => mant2_tb
+        mant2_o => mant2_tb,
+        
+        in1_gt_in2_o => in1_gt_in2_tb,
+        r_diff11_o => r_diff11_tb,
+        r_diff12_o => r_diff12_tb,
+        r_diff2_o => r_diff2_tb,
+        r_diff_o => r_diff_tb,
+        r_diff_shift_o => r_diff_shift_tb,
+        diff_o => diff_tb,
+        diff_eig_o => diff_eig_tb,
+        exp_diff_o => exp_diff_tb,
+        
+        DSR_right_in_o => DSR_right_in_tb,
+        DSR_right_out_o => DSR_right_out_tb,
+        
+        add_m_in1_o => add_m_in1_tb,
+        add_m1_o => add_m1_tb,
+        add_m2_o => add_m2_tb,
+        add_m_o => add_m_tb,
+        mant_ovf_o => mant_ovf_tb,
+        
+        left_shift_val_o => left_shift_val_tb,
+        left_shift_extended_o => left_shift_extended_tb,
+        
+        DSR_left_out_t_o => DSR_left_out_t_tb,
+        DSR_left_out_o => DSR_left_out_tb,
+        lr_N_o => lr_N_tb,
+        le_o_tmp_o => le_o_tmp_tb,
+        le_o_o => le_o_tb,
+        le_oN_o => le_oN_tb,
+        
+        
+        e_o_o => e_o_tb,
+        r_o_o => r_o_tb,
+        tmp_o_o => tmp_o_tb,
+        tmp1_oN_o => tmp1_oN_tb
        
     );
     
@@ -117,6 +187,18 @@ begin
     
         wait for CLOCK_PERIOD;
         
+        -- Zeile 9325
+        in1_tb <= "11101001";
+        in2_tb <= "00011000";
+        start_tb <= '1';
+        out_val_ref_tb <= "00010111";
+        wait for CLOCK_PERIOD;
+        assert done_tb = '1' report "Should be 1";
+        assert out_val_tb = "00010111" report "Should be 00010111";
+        wait for CLOCK_PERIOD;
+        
+        start_tb <= '0';
+        wait for CLOCK_PERIOD;
         
         -- Zeile 9325
         in1_tb <= "01101100";
@@ -128,6 +210,8 @@ begin
         assert out_val_tb = "01101100" report "Should be 01101100";
         wait for CLOCK_PERIOD;
         
+        start_tb <= '0';
+        wait for CLOCK_PERIOD;
         
         -- Zeile 5
         in1_tb <= "00000100";

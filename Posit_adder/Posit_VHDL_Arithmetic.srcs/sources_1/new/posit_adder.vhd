@@ -74,7 +74,43 @@ entity posit_adder is
     e1_o : out std_logic_vector(es-1 downto 0);
     e2_o : out std_logic_vector(es-1 downto 0);
     mant1_o : out std_logic_vector(N-es-1 downto 0); 
-    mant2_o : out std_logic_vector(N-es-1 downto 0)
+    mant2_o : out std_logic_vector(N-es-1 downto 0);
+    
+    in1_gt_in2_o : out std_logic;
+    r_diff11_o : out std_logic_vector(Bs downto 0); 
+    r_diff12_o : out std_logic_vector(Bs downto 0); 
+    r_diff2_o : out std_logic_vector(Bs downto 0);
+    r_diff_o : out std_logic_vector(Bs downto 0);
+    r_diff_shift_o : out std_logic_vector(Bs downto 0);
+    diff_o : out std_logic_vector(es+Bs+1 downto 0);
+    diff_eig_o : out std_logic_vector(es downto 0);
+    exp_diff_o : out std_logic_vector(Bs-1 downto 0); 
+    
+    DSR_right_in_o : out std_logic_vector(N-1 downto 0);
+    DSR_right_out_o : out std_logic_vector(N-1 downto 0);
+    
+    add_m_in1_o : out std_logic_vector(N-1 downto 0);
+    add_m1_o : out std_logic_vector(N downto 0);
+    add_m2_o : out std_logic_vector(N downto 0);
+    
+    add_m_o : out std_logic_vector(N downto 0);
+    mant_ovf_o : out std_logic_vector(1 downto 0);
+    
+    left_shift_val_o : out std_logic_vector(Bs-1 downto 0);
+    left_shift_extended_o : out std_logic_vector(es + Bs downto 0);
+    
+    DSR_left_out_t_o : out std_logic_vector(N-1 downto 0);
+    DSR_left_out_o : out std_logic_vector(N-1 downto 0);
+    
+    lr_N_o : out std_logic_vector(Bs downto 0);
+    le_o_tmp_o : out std_logic_vector(es+Bs+1 downto 0);
+    le_o_o : out std_logic_vector(es+Bs+1 downto 0);
+    le_oN_o : out std_logic_vector(es+Bs downto 0); 
+    
+    e_o_o : out std_logic_vector(es-1 downto 0);
+    r_o_o : out std_logic_vector(Bs-1 downto 0);
+    tmp_o_o : out std_logic_vector(2*N-1 downto 0);
+    tmp1_oN_o : out std_logic_vector(2*N-1 downto 0)
   );
 
 
@@ -174,7 +210,7 @@ architecture Behavioral of posit_adder is
   signal r_diff_shift : std_logic_vector(Bs downto 0);
   signal diff : std_logic_vector(es+Bs+1 downto 0);
   signal diff_eig : std_logic_vector(es downto 0);
-  signal exp_diff : std_logic_vector(Bs+1 downto 0);    -- should be Bs-1 not +1
+  signal exp_diff : std_logic_vector(Bs-1 downto 0);    -- should be Bs-1 not +1
   signal DSR_right_in : std_logic_vector(N-1 downto 0);
   signal DSR_right_out : std_logic_vector(N-1 downto 0);
   signal DSR_e_diff : std_logic_vector(Bs-1 downto 0);
@@ -352,62 +388,65 @@ begin
     -- exponent difference
     -- LE-SE
     
---    r_diff_le <= r_diff & le;
---    se_extended <= std_logic_vector(resize(unsigned(se), N));
+    r_diff_le <= r_diff & le;
+    se_extended <= std_logic_vector(resize(unsigned(se), N));
   
---  sub_diff : entity work.sub_N     --  <-- work. vergessen
---    generic map (
---      N => es+Bs+1
---    )
---    port map (
---      a => r_diff_le,
---      b => se_extended,
---      c => diff                             -- <-- c statt result
---    );
+  sub_diff : entity work.sub_N     --  <-- work. vergessen
+    generic map (
+      N => es+Bs+1
+    )
+    port map (
+      a => r_diff_le,
+      b => se_extended,
+      c => diff                             -- <-- c statt result
+    );
 
   -- -- exp_diff <= Bs'("1") when diff(es+Bs) = '0' else diff(Bs-1 downto 0);       -- <-- alt
   -- -- (|diff[es+Bs:Bs]) ? {Bs{1'b1}} : diff[Bs-1:0];
---  exp_diff <= (others => '1') when or_reduce(diff(es+Bs downto Bs)) = '0' else diff(Bs-1 downto 0);
+  exp_diff <= (others => '1') when or_reduce(diff(es+Bs downto Bs)) = '1' else diff(Bs-1 downto 0);
 
 
 
     -- Abweichung von Verilog Vorlage !!!
     
-    sub_exp : entity work.sub_N
-    generic map (
-      N => es
-    )
-    port map (
-      a => le,
-      b => se,
-      c => diff_eig
-    );
+--    sub_exp : entity work.sub_N
+--    generic map (
+--      N => es
+--    )
+--    port map (
+--      a => le,
+--      b => se,
+--      c => diff_eig
+--    );
   
   
     -- Regime Diff shift left by ES bits
     
-    dsr_reg_sl : entity work.DSR_left_N_S
-    generic map (
-      N => Bs+1,
-      S => Bs
-    )
-    port map (
-      a => r_diff,
-      b => std_logic_vector(to_unsigned(es, Bs)),
-      c => r_diff_shift
-    ); 
+--    dsr_reg_sl : entity work.DSR_left_N_S
+--    generic map (
+--      N => Bs+1,
+--      S => Bs
+--    )
+--    port map (
+--      a => r_diff,
+--      b => std_logic_vector(to_unsigned(es, Bs)),
+--      c => r_diff_shift
+--    ); 
     
   
     
-    add_exp_diff : entity work.add_N
-    generic map (
-      N => Bs+1
-    )
-    port map (
-      a => r_diff_shift,
-      b => std_logic_vector(resize(unsigned(diff_eig), Bs+1)),
-      c => exp_diff
-    );
+--    add_exp_diff : entity work.add_N
+--    generic map (
+--      N => Bs+1
+--    )
+--    port map (
+--      a => r_diff_shift,
+--      b => std_logic_vector(resize(unsigned(diff_eig), Bs+1)),
+--      c => exp_diff
+--    );
+  
+  
+  -- ende abweichung
   
 
   -- DSR Right Shifting of Small Mantissa
@@ -642,7 +681,41 @@ begin
     e2_o <= e2;
     mant1_o <= mant1;
     mant2_o <= mant2;
-  
+    
+    in1_gt_in2_o <= in1_gt_in2;
+    r_diff11_o <= r_diff11;
+    r_diff12_o <= r_diff12;
+    r_diff2_o <= r_diff2;
+    r_diff_o <= r_diff;
+    r_diff_shift_o <= r_diff_shift;
+    diff_o <= diff;
+    diff_eig_o <= diff_eig;
+    exp_diff_o <= exp_diff;
+    
+    DSR_right_in_o <= DSR_right_in;
+    DSR_right_out_o <= DSR_right_out;
+    
+    add_m_in1_o <= add_m_in1;
+    add_m1_o <= add_m1;
+    add_m2_o <= add_m2;
+    add_m_o <= add_m;
+    mant_ovf_o <= mant_ovf;
+    
+    left_shift_val_o <= left_shift_val;
+    left_shift_extended_o <= left_shift_extended;
+    
+    DSR_left_out_t_o <= DSR_left_out_t;
+    DSR_left_out_o <= DSR_left_out;
+    lr_N_o <= lr_N;
+    le_o_tmp_o <= le_o_tmp;
+    le_o_o <= le_o;
+    le_oN_o <= le_oN;
+    
+    e_o_o <= e_o;
+    r_o_o <= r_o;
+    
+    tmp_o_o <= tmp_o;
+    tmp1_oN_o <= tmp1_oN;
   
   
   
