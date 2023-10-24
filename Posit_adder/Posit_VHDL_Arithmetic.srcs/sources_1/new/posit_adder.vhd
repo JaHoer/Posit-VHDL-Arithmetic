@@ -587,7 +587,7 @@ begin
     left_shift_extended <= std_logic_vector(resize(unsigned(left_shift_val), es + Bs + 1));
 
     -- {(LRC ? LR : -LR),LE} - Nshift
-  sub3 : entity work.sub_N     --  ganze entity vergessen
+  sub3 : entity work.sub_N
     generic map (
       N => (es + Bs + 1)
     )
@@ -598,14 +598,14 @@ begin
     );
     
     -- LE_O = {(LRC ? LR : -LR),LE} - Nshift + Movf
-    uut_add_mantovf : entity work.add_mantovf     --  <-- work. vergessen
+    uut_add_mantovf : entity work.add_mantovf
     generic map (
       N => (es + Bs + 1)
     )
     port map (
       a => le_o_tmp,
-      mant_ovf => mant_ovf(0),
-      c => le_o         -- <-- c statt result
+      mant_ovf => mant_ovf(1),
+      c => le_o
     );
     
     -- LE_ON = LE_O[ES+RS] ? -LE_O : LE_O
