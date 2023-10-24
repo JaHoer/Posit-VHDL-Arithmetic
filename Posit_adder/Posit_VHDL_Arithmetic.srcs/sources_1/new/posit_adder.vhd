@@ -336,7 +336,7 @@ begin
 
 
   -- Exponent Difference: Lower Mantissa Right Shift Amount
-  -- Ediff ? ((LRC ? LR-(SRC ? SR : -SR) : SR-LR) « ES) +LE-SE
+  -- Ediff ? ((LRC ? LR-(SRC ? SR : -SR) : SR-LR) ï¿½ ES) +LE-SE
   
   
   --an effective regime value difference (by taking their signs into account) is performed
@@ -525,7 +525,7 @@ begin
   -- Add_M is checked for mantissa overflow (Movf) by checking its MSB and shifted 1-bit to left
   -- accordingly if found false, which requires an N-1 bit 2:1 MUX (Line 32-33)
   
-  -- Add_M ? Movf ? Add_M : Add_M « 1
+  -- Add_M ? Movf ? Add_M : Add_M ï¿½ 1
   
   
   -- LOD of mantissa addition result
@@ -622,7 +622,7 @@ begin
   -- (~le_o[es+Bs] || (le_o[es+Bs] & |le_oN[es-1:0])) ? le_oN[es+Bs-1:es] + 1'b1 : le_oN[es+Bs-1:es];
   r_o <= std_logic_vector(unsigned(le_oN(es+Bs-1 downto es)) + 1) 
         when le_o(es+Bs) = '0' or (le_o(es+Bs) = '1' and or_reduce(le_oN(es-1 downto 0)) = '1') 
-        else le_o(es+Bs-1 downto es);
+        else le_oN(es+Bs-1 downto es);
   
   
 
