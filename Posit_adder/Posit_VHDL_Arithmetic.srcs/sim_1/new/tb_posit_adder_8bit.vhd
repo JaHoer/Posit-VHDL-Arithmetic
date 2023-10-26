@@ -183,11 +183,197 @@ begin
     
     stimuli: process
     
-    begin
-    
+    begin     
+        
+        
+        wait for CLOCK_PERIOD;
+        -- Null * Null
+        in1_tb <= "00000000";
+        in2_tb <= "00000000";
+        out_val_ref_tb <= "00000000";
+        start_tb <= '1';
+        wait for CLOCK_PERIOD;
+        assert done_tb = '1' report "Done Should be 1";
+        assert out_val_tb = "00000000" report "Should be 00000000";
+        start_tb <= '0';
         wait for CLOCK_PERIOD;
         
-        -- Zeile 9325
+        -- Zeile 129
+        -- Inf * Null
+        in1_tb <= "10000000";
+        in2_tb <= "00000000";
+        out_val_ref_tb <= "10000000";
+        start_tb <= '1';
+        wait for CLOCK_PERIOD;
+        assert done_tb = '1' report "Done Should be 1";
+        assert out_val_tb = "10000000" report "Should be 10000000";
+        start_tb <= '0';
+        wait for CLOCK_PERIOD;
+        
+        
+        -- Inf * Inf
+        in1_tb <= "10000000";
+        in2_tb <= "10000000";
+        out_val_ref_tb <= "10000000";
+        start_tb <= '1';
+        wait for CLOCK_PERIOD;
+        assert done_tb = '1' report "Done Should be 1";
+        assert out_val_tb = "10000000" report "Should be 10000000";
+        start_tb <= '0';
+        wait for CLOCK_PERIOD;
+        
+        
+        -- Zeile 5
+        -- +small * Null
+        in1_tb <= "00000100";
+        in2_tb <= "00000000";
+        out_val_ref_tb <= "00000100";
+        start_tb <= '1';
+        wait for CLOCK_PERIOD;
+        assert done_tb = '1' report "Done Should be 1";
+        assert out_val_tb = "00000100" report "Should be 00000100";
+        start_tb <= '0';
+        wait for CLOCK_PERIOD;
+        
+        
+        -- Zeile 32773
+        -- +small * Inf
+        in1_tb <= "00000100";
+        in2_tb <= "10000000";
+        out_val_ref_tb <= "10000000";
+        start_tb <= '1';
+        wait for CLOCK_PERIOD;
+        assert done_tb = '1' report "Done Should be 1";
+        assert out_val_tb = "10000000" report "Should be 10000000";
+        start_tb <= '0';
+        wait for CLOCK_PERIOD;
+       
+        
+        -- Zeile 265
+        -- +small * +very small
+        in1_tb <= "00001000";
+        in2_tb <= "00000001";
+        out_val_ref_tb <= "00001000";
+        start_tb <= '1';
+        wait for CLOCK_PERIOD;
+        assert done_tb = '1' report "Done Should be 1";
+        assert out_val_tb = "00001000" report "Should be 00001000";
+        start_tb <= '0';
+        wait for CLOCK_PERIOD;
+        
+        
+        -- Zeile 360
+        -- +big * +very small
+        in1_tb <= "01100111";
+        in2_tb <= "00000001";
+        out_val_ref_tb <= "01100111";
+        start_tb <= '1';
+        wait for CLOCK_PERIOD;
+        assert done_tb = '1' report "Done Should be 1";
+        assert out_val_tb = "01100111" report "Should be 01100111";
+        start_tb <= '0';
+        wait for CLOCK_PERIOD;
+        
+        
+        -- Zeile 65110
+        -- +big * -very small
+        in1_tb <= "01010101";
+        in2_tb <= "11111110";
+        out_val_ref_tb <= "01010101";
+        start_tb <= '1';
+        wait for CLOCK_PERIOD;
+        assert done_tb = '1' report "Done Should be 1";
+        assert out_val_tb = "01010101" report "Should be 01010101";
+        start_tb <= '0';
+        wait for CLOCK_PERIOD;
+        
+        -- Zeile 2520
+        -- -small * +small
+        in1_tb <= "11010111";
+        in2_tb <= "00001001";
+        out_val_ref_tb <= "11010111";
+        start_tb <= '1';
+        wait for CLOCK_PERIOD;
+        assert done_tb = '1' report "Done Should be 1";
+        assert out_val_tb = "11010111" report "Should be 11010111";
+        start_tb <= '0';
+        wait for CLOCK_PERIOD;
+        
+        -- Zeile 12839
+        -- +small * +small
+        in1_tb <= "00100110";
+        in2_tb <= "00110010";
+        out_val_ref_tb <= "00110010";
+        start_tb <= '1';
+        wait for CLOCK_PERIOD;
+        assert done_tb = '1' report "Done Should be 1";
+        assert out_val_tb = "00110010" report "Should be 00110010";
+        start_tb <= '0';
+        wait for CLOCK_PERIOD;
+        
+        -- Zeile 27502
+        -- +big * +big
+        in1_tb <= "01101101";
+        in2_tb <= "01101011";
+        out_val_ref_tb <= "01101101";
+        start_tb <= '1';
+        wait for CLOCK_PERIOD;
+        assert done_tb = '1' report "Done Should be 1";
+        assert out_val_tb = "01101101" report "Should be 01101101";
+        start_tb <= '0';
+        wait for CLOCK_PERIOD;
+        
+        -- Zeile 35804
+        -- -small * -big
+        in1_tb <= "11011011";
+        in2_tb <= "10001011";
+        out_val_ref_tb <= "10001011";
+        start_tb <= '1';
+        wait for CLOCK_PERIOD;
+        assert done_tb = '1' report "Done Should be 1";
+        assert out_val_tb = "10001011" report "Should be 10001011";
+        start_tb <= '0';
+        wait for CLOCK_PERIOD;
+        
+        -- Zeile 35748
+        -- -big * -big
+        in1_tb <= "10100011";
+        in2_tb <= "10001011";
+        out_val_ref_tb <= "10001011";
+        start_tb <= '1';
+        wait for CLOCK_PERIOD;
+        assert done_tb = '1' report "Done Should be 1";
+        assert out_val_tb = "10001011" report "Should be 10001011";
+        start_tb <= '0';
+        wait for CLOCK_PERIOD;
+        
+        
+        -- Zeile 38786
+        -- - very big * -big
+        in1_tb <= "10000001";
+        in2_tb <= "10010111";
+        out_val_ref_tb <= "10000001";
+        start_tb <= '1';
+        wait for CLOCK_PERIOD;
+        assert done_tb = '1' report "Done Should be 1";
+        assert out_val_tb = "10000001" report "Should be 10000001";
+        start_tb <= '0';
+        wait for CLOCK_PERIOD;
+        
+        
+        
+        -- End Marker
+        in1_tb <= "XXXXXXXX";
+        in2_tb <= "XXXXXXXX";
+        start_tb <= '1';
+        out_val_ref_tb <= "XXXXXXXX";
+        wait for CLOCK_PERIOD;
+        
+        
+        -----------------------------------
+        
+        
+        -- Zeile 6378
         in1_tb <= "11101001";
         in2_tb <= "00011000";
         start_tb <= '1';
