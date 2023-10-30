@@ -1,10 +1,10 @@
 ----------------------------------------------------------------------------------
--- Company: FAU
--- Engineer: Jan Hoertig
+-- Company: 
+-- Engineer: 
 -- 
--- Create Date: 13.09.2023 13:55:48
+-- Create Date: 30.10.2023 10:33:51
 -- Design Name: 
--- Module Name: tb_posit_mult - Behavioral
+-- Module Name: tb_posit_mult_pipeline - Behavioral
 -- Project Name: 
 -- Target Devices: 
 -- Tool Versions: 
@@ -31,7 +31,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity tb_posit_mult is
+entity tb_posit_mult_pipeline is
     generic (
         N_tb : integer := 8;
         Bs_tb : integer := 3;   -- log2(N)
@@ -40,11 +40,11 @@ entity tb_posit_mult is
     );
 
 --  Port ( );
-end tb_posit_mult;
+end tb_posit_mult_pipeline;
 
-architecture Behavioral of tb_posit_mult is
+architecture Behavioral of tb_posit_mult_pipeline is
 
-    constant CLOCK_PERIOD : time := 150 ns;
+    constant CLOCK_PERIOD : time := 2000 ns;
 
     signal clk_tb  : std_logic;
 
@@ -93,7 +93,7 @@ architecture Behavioral of tb_posit_mult is
 
 begin
 
-    UUT : entity work.posit_mult
+    UUT : entity work.posit_mult_pipeline
     generic map (
         N => N_tb,
         Bs => Bs_tb,

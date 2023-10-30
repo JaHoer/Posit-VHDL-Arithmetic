@@ -2,9 +2,9 @@
 -- Company: FAU
 -- Engineer: Jan Hoertig
 -- 
--- Create Date: 13.09.2023 13:11:18
+-- Create Date: 30.10.2023 10:08:10
 -- Design Name: 
--- Module Name: posit_mult - Behavioral
+-- Module Name: posit_mult_pipeline - Behavioral
 -- Project Name: 
 -- Target Devices: 
 -- Tool Versions: 
@@ -35,7 +35,7 @@ use ieee.std_logic_misc.all;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity posit_mult is
+entity posit_mult_pipeline is
     generic (
         N : integer := 16;
         Bs : integer := 4;  -- log2(N)
@@ -89,9 +89,9 @@ entity posit_mult is
         tmp1_oN_o : out std_logic_vector(2*N-1 downto 0)
 
     );
-end posit_mult;
+end posit_mult_pipeline;
 
-architecture Behavioral of posit_mult is
+architecture Behavioral of posit_mult_pipeline is
 
     signal start0 : std_logic;
     signal s1 : std_logic;
@@ -171,30 +171,6 @@ architecture Behavioral of posit_mult is
 
 begin
     
-    
-    
-    start0 <= start;
-    s1 <= in1(N-1);
-    s2 <= in2(N-1);
-    zero_tmp1 <= or_reduce(in1(N-2 downto 0));
-    zero_tmp2 <= or_reduce(in2(N-2 downto 0));
-    inf1 <= s1 and (not zero_tmp1);
-    inf2 <= s2 and (not zero_tmp2);
-    zero1 <= not (s1 or zero_tmp1);
-    zero2 <= not (s2 or zero_tmp2);
-    inf_sig <= inf1 or inf2;
-    zero_sig <= zero1 and zero2;
-
-    -- For true sign bit, operands undergo 2's complement conversion which produces XIN1 and XIN2, each of N-1 bits (except the respective sign bit)
-    -- XIN1 ? S1 ? -IN1[N -2 : 0] : IN1[N -2 : 0]
-
-    -- xin1 = s1 ? -in1 : in1;      -- ???
-    xin1 <= std_logic_vector( - signed(in1(N-1 downto 0))) when s1 = '1' else in1(N-1 downto 0);
-    
-    xin2 <= std_logic_vector( - signed(in2(N-1 downto 0))) when s2 = '1' else in2(N-1 downto 0);
-    
-    
-    
     -- Data Extraction
     uut_de1 : data_extract
         generic map (
@@ -226,6 +202,58 @@ begin
             mant => mant2
         );
         
+        
+--    dsr2 : entity work.DSR_right_N_S
+--        generic map (
+--            N => 2*N,
+--            S => Bs+1
+--        )
+--        port map (
+--            a => tmp_o,
+--            b => r_o_dsr,
+--            c => tmp1_o
+--        );
+    
+    
+    
+    
+    data_extract_p : process (clk)
+    begin
+    
+    if rising_edge(clk) then
+    
+    start0 <= start;
+    s1 <= in1(N-1);
+    s2 <= in2(N-1);
+    zero_tmp1 <= or_reduce(in1(N-2 downto 0));
+    zero_tmp2 <= or_reduce(in2(N-2 downto 0));
+    inf1 <= s1 and (not zero_tmp1);
+    inf2 <= s2 and (not zero_tmp2);
+    zero1 <= not (s1 or zero_tmp1);
+    zero2 <= not (s2 or zero_tmp2);
+    inf_sig <= inf1 or inf2;
+    zero_sig <= zero1 and zero2;
+
+    -- For true sign bit, operands undergo 2's complement conversion which produces XIN1 and XIN2, each of N-1 bits (except the respective sign bit)
+    -- xin1 <= std_logic_vector( - signed(in1(N-1 downto 0))) when s1 = '1' else in1(N-1 downto 0);
+    if s1 = '1' then
+        xin1 <= std_logic_vector( - signed(in1(N-1 downto 0)));
+    else
+        xin1 <= in1(N-1 downto 0);
+    end if;
+    
+    
+    -- xin2 <= std_logic_vector( - signed(in2(N-1 downto 0))) when s2 = '1' else in2(N-1 downto 0);
+    if s2 = '1' then
+        xin2 <= std_logic_vector( - signed(in2(N-1 downto 0)));
+    else
+        xin2 <= in2(N-1 downto 0);
+    end if;
+    
+    
+    
+    
+        
     -- Sign, Exponent and Mantissa Computation
     
     m1 <= zero_tmp1 & mant1;
@@ -238,14 +266,31 @@ begin
     -- check for overflow
     mult_m_ovf <= mult_m(2*(N-es)+1);
     
-    mult_mN <= std_logic_vector(shift_left(unsigned(mult_m), 1)) when mult_m_ovf = '0' else mult_m;
+    --mult_mN <= std_logic_vector(shift_left(unsigned(mult_m), 1)) when mult_m_ovf = '0' else mult_m;
+    if mult_m_ovf = '0' then
+        mult_mN <= std_logic_vector(shift_left(unsigned(mult_m), 1));
+    else
+        mult_mN <= mult_m;
+    end if;
     
     regime1_long_inv <= std_logic_vector(resize(unsigned(regime1), Bs + 2));  -- r1'length
     regime2_long_inv <= std_logic_vector(resize(unsigned(regime2), Bs + 2));  -- r2'length
     
 
-    r1 <= ("00" & regime1) when rc1 = '1' else std_logic_vector(- signed(regime1_long_inv));
-    r2 <= ("00" & regime2) when rc2 = '1' else std_logic_vector(- signed(regime2_long_inv));
+    -- r1 <= ("00" & regime1) when rc1 = '1' else std_logic_vector(- signed(regime1_long_inv));
+    if rc1 = '1' then
+        r1 <= ("00" & regime1);
+    else
+        r1 <= std_logic_vector(- signed(regime1_long_inv));
+    end if;
+    
+    -- r2 <= ("00" & regime2) when rc2 = '1' else std_logic_vector(- signed(regime2_long_inv));
+    if rc2 = '1' then
+        r2 <= ("00" & regime2);
+    else
+        r2 <= std_logic_vector(- signed(regime2_long_inv));
+    end if;
+    
     
     mult_m_ovf_v(0) <= mult_m_ovf;
     
@@ -258,58 +303,75 @@ begin
     
     -- Exponent and Regime Computation
     
-    mult_eN <= std_logic_vector(- signed(mult_e(es+Bs downto 0))) when mult_e(es+Bs+1) = '1' else mult_e(es+Bs downto 0);
+    -- mult_eN <= std_logic_vector(- signed(mult_e(es+Bs downto 0))) when mult_e(es+Bs+1) = '1' else mult_e(es+Bs downto 0);
+    if mult_e(es+Bs+1) = '1' then
+        mult_eN <= std_logic_vector(- signed(mult_e(es+Bs downto 0)));
+    else
+        mult_eN <= mult_e(es+Bs downto 0);
+    end if;
     
-    -- IF (Exp[E]&(|ExpN[ES-1:0]))
-  
-    --      EO[ES-1:0] ? 2's complement of ExpN[ES-1:0]     else EO[ES-1:0] ? ExpN[ES-1:0]
-    e_o <= mult_e(es-1 downto 0) when mult_e(es+Bs+1) = '1' and OR_REDUCE(mult_eN(es-1 downto 0)) = '1' else mult_eN(es-1 downto 0);
+    
+    -- e_o <= mult_e(es-1 downto 0) when mult_e(es+Bs+1) = '1' and OR_REDUCE(mult_eN(es-1 downto 0)) = '1' else mult_eN(es-1 downto 0);
+    if mult_e(es+Bs+1) = '1' and OR_REDUCE(mult_eN(es-1 downto 0)) = '1' then
+        e_o <= mult_e(es-1 downto 0);
+    else
+        e_o <= mult_eN(es-1 downto 0);
+    end if;
     
     
-    -- IF (!Exp[E]||(Exp[E]&(|ExpN[ES-1:0])))
-    --      RO[E -ES-1:0] ? ExpN[E -1 : ES] +1      else RO[E -ES-1:0] ? ExpN[E -1 : ES]
-    r_o <= std_logic_vector(unsigned(mult_eN(es+Bs downto es)) + 1) when mult_e(es+Bs+1) = '0' or (mult_e(es+Bs+1)= '1' and OR_REDUCE(mult_eN(es-1 downto 0)) = '1') else mult_eN(es+Bs downto es); 
-    
+    -- r_o <= std_logic_vector(unsigned(mult_eN(es+Bs downto es)) + 1) when mult_e(es+Bs+1) = '0' or (mult_e(es+Bs+1)= '1' and OR_REDUCE(mult_eN(es-1 downto 0)) = '1') else mult_eN(es+Bs downto es); 
+    if mult_e(es+Bs+1) = '0' or (mult_e(es+Bs+1)= '1' and OR_REDUCE(mult_eN(es-1 downto 0)) = '1') then
+        r_o <= std_logic_vector(unsigned(mult_eN(es+Bs downto es)) + 1);
+    else
+        r_o <= mult_eN(es+Bs downto es); 
+    end if;
     
     
     -- Exponent and Mantissa Packing
     
     not_mult_e <= (others => not mult_e(es+Bs+1));
     
-    
-    -- REM[2 ?N -1:0] ? {N{!Exp[E]},Exp[E],EO,MFP[N -2 : ES]}
     tmp_o <= not_mult_e & mult_e(es+Bs+1) & e_o & mult_mN(2*(N-es) downto N-es+2);
     
     
     
     -- Including Regime bits in Exponent-Mantissa Packing
     
-    r_o_dsr_tmp <= (others => '1') when r_o(Bs) = '1' else r_o;
+    -- r_o_dsr_tmp <= (others => '1') when r_o(Bs) = '1' else r_o;
+    if r_o(Bs) = '1' then
+        r_o_dsr_tmp <= (others => '1');
+    else
+        r_o_dsr_tmp <= r_o;
+    end if;
+    
     r_o_dsr <= '0' & r_o_dsr_tmp(Bs-1 downto 0);
     
---    dsr2 : entity work.DSR_right_N_S
---        generic map (
---            N => 2*N,
---            S => Bs+1
---        )
---        port map (
---            a => tmp_o,
---            b => r_o_dsr,
---            c => tmp1_o
---        );
+
         
     
     tmp1_o <= std_logic_vector(shift_right(unsigned(tmp_o), to_integer(unsigned(r_o_dsr))));  
     
     
     -- Final Output
-    -- If (SFP == 1): REM ? (2's complement of REM)
-    tmp1_oN <= std_logic_vector(- signed(tmp1_o)) when mult_s = '1' else tmp1_o;
+    
+    --tmp1_oN <= std_logic_vector(- signed(tmp1_o)) when mult_s = '1' else tmp1_o;
+    if mult_s = '1' then
+        tmp1_oN <= std_logic_vector(- signed(tmp1_o));
+    else
+        tmp1_oN <= tmp1_o;
+    end if;
     
     out_zeros <= (others => '0');
+    
+    
     -- Combine SFP with LSB (N-1) bit of REM
-    -- out_val <= inf_sig & out_zeros when (inf_sig = '1' or zero_sig = '1') or mult_mN(2*(N-es)+1) = '0' else mult_s & tmp1_oN(N-1 downto 1);
-    out_val <= inf_sig & out_zeros when (inf_sig = '1' or zero_sig = '1') or mult_mN(2*(N-es)+1) = '0' else mult_s & tmp1_oN(N-1 downto 1);
+
+    --out_val <= inf_sig & out_zeros when (inf_sig = '1' or zero_sig = '1') or mult_mN(2*(N-es)+1) = '0' else mult_s & tmp1_oN(N-1 downto 1);
+    if (inf_sig = '1' or zero_sig = '1') or mult_mN(2*(N-es)+1) = '0' then
+        out_val <= inf_sig & out_zeros;
+    else
+        out_val <= mult_s & tmp1_oN(N-1 downto 1);
+    end if;
     
     inf <= inf_sig;
     zero <= zero_sig;
@@ -353,7 +415,7 @@ begin
     
     
     
-    
-    
+    end if;
+    end process;
 
 end Behavioral;
