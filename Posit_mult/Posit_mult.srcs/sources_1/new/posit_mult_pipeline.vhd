@@ -218,6 +218,64 @@ begin
     
     
     data_extract_p : process (clk)
+    
+        variable v_start0 : std_logic;
+        variable v_s1 : std_logic;
+        variable v_s2 : std_logic;
+        variable v_zero_tmp1 : std_logic;
+        variable v_zero_tmp2 : std_logic;
+        variable v_inf1 : std_logic;
+        variable v_inf2 : std_logic;
+        variable v_zero1 : std_logic;
+        variable v_zero2 : std_logic;
+        variable v_inf_sig : std_logic;
+        variable v_zero_sig : std_logic;
+    
+        -- Data Extraction
+        variable v_rc1, v_rc2 : std_logic;
+        variable v_regime1, v_regime2, v_Lshift1, v_Lshift2 : std_logic_vector(Bs-1 downto 0);
+        variable v_e1, v_e2 : std_logic_vector(es-1 downto 0);
+        variable v_mant1, v_mant2 : std_logic_vector(N-es-1 downto 0);
+    
+    
+        variable v_xin1 : std_logic_vector(N-1 downto 0);
+        variable v_xin2 : std_logic_vector(N-1 downto 0);
+        
+        variable v_m1, v_m2 : std_logic_vector(N-es downto 0);
+        variable v_mult_s : std_logic;
+    
+        variable v_mult_m : std_logic_vector(2*(N-es)+1 downto 0);
+        variable v_mult_m_ovf : std_logic;
+        variable v_mult_m_ovf_v : std_logic_vector(0 downto 0);
+        variable v_mult_mN : std_logic_vector(2*(N-es)+1 downto 0);
+    
+        variable v_regime1_long_inv : std_logic_vector(Bs+1 downto 0);
+        variable v_regime2_long_inv : std_logic_vector(Bs+1 downto 0);
+    
+        variable v_r1 : std_logic_vector(Bs+1 downto 0);
+        variable v_r2 : std_logic_vector(Bs+1 downto 0);
+    
+        variable v_r1e1 : std_logic_vector(Bs+es+1 downto 0);
+        variable v_r2e2 : std_logic_vector(Bs+es+1 downto 0);
+    
+        variable v_mult_e : std_logic_vector(Bs+es+1 downto 0);
+    
+        variable v_mult_eN : std_logic_vector(es+Bs downto 0);
+        variable v_e_o : std_logic_vector(es-1 downto 0);
+        variable v_r_o : std_logic_vector(Bs downto 0);
+    
+        variable v_not_mult_e : std_logic_vector(N-1 downto 0);
+        variable v_tmp_o : std_logic_vector(2*N-1 downto 0);
+    
+        variable v_tmp1_o : std_logic_vector(2*N-1 downto 0);
+        variable v_r_o_dsr_tmp : std_logic_vector(Bs downto 0);
+        variable v_r_o_dsr : std_logic_vector(Bs downto 0);
+    
+        variable v_tmp1_oN : std_logic_vector(2*N-1 downto 0);
+    
+        variable v_out_zeros : std_logic_vector(N-2 downto 0);
+    
+    
     begin
     
     if rising_edge(clk) then
@@ -250,11 +308,17 @@ begin
         xin2 <= in2(N-1 downto 0);
     end if;
     
-    
-    
+    end if;
+    end process;
     
         
     -- Sign, Exponent and Mantissa Computation
+    
+    mant_p : process (clk)
+    begin
+    
+    if rising_edge(clk) then
+    
     
     m1 <= zero_tmp1 & mant1;
     m2 <= zero_tmp2 & mant2;
@@ -272,6 +336,19 @@ begin
     else
         mult_mN <= mult_m;
     end if;
+    
+--    end if;
+--    end process;
+    
+    
+    
+    
+--    regime_exp : process (clk)
+--    begin
+    
+--    if rising_edge (clk) then
+    
+    
     
     regime1_long_inv <= std_logic_vector(resize(unsigned(regime1), Bs + 2));  -- r1'length
     regime2_long_inv <= std_logic_vector(resize(unsigned(regime2), Bs + 2));  -- r2'length
@@ -304,7 +381,7 @@ begin
     -- Exponent and Regime Computation
     
     -- mult_eN <= std_logic_vector(- signed(mult_e(es+Bs downto 0))) when mult_e(es+Bs+1) = '1' else mult_e(es+Bs downto 0);
-    if mult_e(es+Bs+1) = '1' then
+    if mult_e(es +Bs+1) = '1' then
         mult_eN <= std_logic_vector(- signed(mult_e(es+Bs downto 0)));
     else
         mult_eN <= mult_e(es+Bs downto 0);
@@ -378,6 +455,10 @@ begin
     
     done <= '1';
     
+    end if;
+    end process;
+    
+    
     -- Debug Outputs
     
     inf1_o <= inf1;
@@ -415,7 +496,6 @@ begin
     
     
     
-    end if;
-    end process;
+    
 
 end Behavioral;
