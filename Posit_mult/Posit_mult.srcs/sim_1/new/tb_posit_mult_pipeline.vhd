@@ -36,8 +36,7 @@ entity tb_posit_mult_pipeline is
         N_tb : integer := 8;
         Bs_tb : integer := 3;   -- log2(N)
         es_tb : integer := 4;    -- fuer Wertetabelle = 4
-        Pipe_2_3 : integer := 1;
-        Pipe_3_4 : integer := 1
+        Pipe_stages_tb : integer := 3      -- between 1 and 3 possible
         
     );
 
@@ -48,6 +47,7 @@ architecture Behavioral of tb_posit_mult_pipeline is
 
     constant CLOCK_PERIOD : time := 200 ns;
 
+    signal rst_tb : std_logic;
     signal clk_tb  : std_logic;
 
     signal in1_tb : std_logic_vector(N_tb-1 downto 0);
@@ -99,9 +99,11 @@ begin
     generic map (
         N => N_tb,
         Bs => Bs_tb,
-        es => es_tb
+        es => es_tb,
+        Pipe_stages => Pipe_stages_tb
     )
     port map (
+        rst => rst_tb,
         clk => clk_tb,
     
         in1 => in1_tb,
@@ -164,7 +166,9 @@ begin
     
     begin
     
-        
+        rst_tb <= '1';
+        wait for CLOCK_PERIOD;
+        rst_tb <= '0';
         
         wait for CLOCK_PERIOD;
         -- Null * Null
@@ -341,6 +345,7 @@ begin
         
         
         -- End
+        rst_tb <= '1';
         in1_tb <= "XXXXXXXX";
         in2_tb <= "XXXXXXXX";
         out_referenz <= "XXXXXXXX";
