@@ -35,7 +35,9 @@ entity tb_posit_mult_pipeline is
     generic (
         N_tb : integer := 8;
         Bs_tb : integer := 3;   -- log2(N)
-        es_tb : integer := 4    -- fuer Wertetabelle = 4
+        es_tb : integer := 4;    -- fuer Wertetabelle = 4
+        Pipe_2_3 : integer := 1;
+        Pipe_3_4 : integer := 1
         
     );
 
