@@ -218,26 +218,7 @@ architecture Behavioral of posit_adder_pipeline is
 begin
 
 
-
-    start0 <= start;
-    s1 <= in1(N-1);
-    s2 <= in2(N-1);
-    zero_tmp1 <= or_reduce(in1(N-2 downto 0));
-    zero_tmp2 <= or_reduce(in2(N-2 downto 0));
-    inf1 <= s1 and (not zero_tmp1);
-    inf2 <= s2 and (not zero_tmp2);
-    zero1 <= not (s1 or zero_tmp1);
-    zero2 <= not (s2 or zero_tmp2);
-    inf_sig <= inf1 or inf2;
-    zero_sig <= zero1 and zero2;
-
-
-    xin1 <= std_logic_vector( - signed(in1(N-1 downto 0))) when s1 = '1' else in1(N-1 downto 0);
-    
-    xin2 <= std_logic_vector( - signed(in2(N-1 downto 0))) when s2 = '1' else in2(N-1 downto 0);
-
-
-  -- Data Extraction
+      -- Data Extraction
   uut_de1 : data_extract
     generic map (
       N => N,
@@ -269,30 +250,124 @@ begin
     );
 
 
+
+addition : process
+
+
+begin
+
+
+    start0 <= start;
+    s1 <= in1(N-1);
+    s2 <= in2(N-1);
+    zero_tmp1 <= or_reduce(in1(N-2 downto 0));
+    zero_tmp2 <= or_reduce(in2(N-2 downto 0));
+    inf1 <= s1 and (not zero_tmp1);
+    inf2 <= s2 and (not zero_tmp2);
+    zero1 <= not (s1 or zero_tmp1);
+    zero2 <= not (s2 or zero_tmp2);
+    inf_sig <= inf1 or inf2;
+    zero_sig <= zero1 and zero2;
+
+    
+    
+--    xin1 <= std_logic_vector( - signed(in1(N-1 downto 0))) when s1 = '1' else in1(N-1 downto 0);
+    if s1 = '1' then
+        xin1 <= std_logic_vector( - signed(in1(N-1 downto 0)));
+    else
+        xin1 <= in1(N-1 downto 0);
+    end if;
+    
+--    xin2 <= std_logic_vector( - signed(in2(N-1 downto 0))) when s2 = '1' else in2(N-1 downto 0);
+    if s2 = '1' then
+        xin2 <= std_logic_vector( - signed(in2(N-1 downto 0)));
+    else 
+        xin2 <= in2(N-1 downto 0);
+    end if;
+
+
+
+
+
     m1 <= zero_tmp1 & mant1;
     m2 <= zero_tmp2 & mant2;
 
   -- Large Checking and Assignment
   
-  in1_gt_in2 <= '1' when xin1(N-2 downto 0) >= xin2(N-2 downto 0)
-            else '0';
+--  in1_gt_in2 <= '1' when xin1(N-2 downto 0) >= xin2(N-2 downto 0) else '0';
+    if xin1(N-2 downto 0) >= xin2(N-2 downto 0) then
+        in1_gt_in2 <= '1';
+    else
+        in1_gt_in2 <= '0';
+    end if;
+
   
-  ls <= s1 when in1_gt_in2 = '1' else s2;
-  -- wire op = s1 ~^ s2;
-  op <= s1 xnor s2;
+--  ls <= s1 when in1_gt_in2 = '1' else s2;
+    if in1_gt_in2 = '1' then
+        ls <= s1;
+    else 
+        ls <= s2;
+    end if;
 
-  lrc <= rc1 when in1_gt_in2 = '1' else rc2;
-  src <= rc2 when in1_gt_in2 = '1' else rc1;
 
-  lr <= regime1 when in1_gt_in2 = '1' else regime2;
-  sr <= regime2 when in1_gt_in2 = '1' else regime1;
+    -- wire op = s1 ~^ s2;
+    op <= s1 xnor s2;
 
-  le <= e1 when in1_gt_in2 = '1' else e2;
-  se <= e2 when in1_gt_in2 = '1' else e1;
+--  lrc <= rc1 when in1_gt_in2 = '1' else rc2;
+    if in1_gt_in2 = '1' then
+        lrc <= rc1;
+    else 
+        lrc <= rc2;
+    end if;
+  
+--  src <= rc2 when in1_gt_in2 = '1' else rc1;
+    if in1_gt_in2 = '1' then
+        src <= rc2;
+    else 
+        src <= rc1;
+    end if;
 
-  lm <= m1 when in1_gt_in2 = '1' else m2;
-  sm <= m2 when in1_gt_in2 = '1' else m1;
+--    lr <= regime1 when in1_gt_in2 = '1' else regime2;
+    if in1_gt_in2 = '1' then
+        lr <= regime1;
+    else 
+        lr <= regime2;
+    end if;
+    
+--    sr <= regime2 when in1_gt_in2 = '1' else regime1;
+    if in1_gt_in2 = '1' then
+        sr <= regime2;
+    else 
+        sr <= regime1;
+    end if;
 
+--  le <= e1 when in1_gt_in2 = '1' else e2;
+    if in1_gt_in2 = '1' then
+        le <= e1;
+    else 
+        le <= e2;
+    end if;
+    
+--  se <= e2 when in1_gt_in2 = '1' else e1;
+    if in1_gt_in2 = '1' then
+        se <= e2;
+    else 
+        se <= e1;
+    end if;
+
+--  lm <= m1 when in1_gt_in2 = '1' else m2;
+    if in1_gt_in2 = '1' then
+        lm <= m1;
+    else 
+        lm <= m2;
+    end if;
+    
+--  sm <= m2 when in1_gt_in2 = '1' else m1;
+    if in1_gt_in2 = '1' then
+        sm <= m2;
+    else 
+        sm <= m1;
+    end if;
 
 
 
@@ -300,41 +375,58 @@ begin
   
   
   --an effective regime value difference (by taking their signs into account) is performed
-  uut_sub1 : entity work.sub_N
-    generic map (
-      N => Bs
-    )
-    port map (
-      a => lr,
-      b => sr,
-      c => r_diff11
-    );
+--  uut_sub1 : entity work.sub_N
+--    generic map (
+--      N => Bs
+--    )
+--    port map (
+--      a => lr,
+--      b => sr,
+--      c => r_diff11
+--    );
+    r_diff11 <= std_logic_vector(unsigned('0' & lr) - unsigned('0' & sr));
+
     
-  uut_add1 : entity work.add_N
-    generic map (
-      N => Bs
-    )
-    port map (
-      a => lr,
-      b => sr,
-      c => r_diff12
-    );
+--  uut_add1 : entity work.add_N
+--    generic map (
+--      N => Bs
+--    )
+--    port map (
+--      a => lr,
+--      b => sr,
+--      c => r_diff12
+--    );
+    r_diff12 <= std_logic_vector(unsigned('0' & lr) + unsigned('0' & sr));
+
+
     
-  uut_sub2 : entity work.sub_N
-    generic map (
-      N => Bs
-    )
-    port map (
-      a => sr,
-      b => lr,
-      c => r_diff2
-    );
+--  uut_sub2 : entity work.sub_N
+--    generic map (
+--      N => Bs
+--    )
+--    port map (
+--      a => sr,
+--      b => lr,
+--      c => r_diff2
+--    );
+    r_diff2 <= std_logic_vector(unsigned('0' & sr) - unsigned('0' & lr));
+    
+    
+--    r_diff <= r_diff11 when lrc = '1' and src = '1' else
+--              r_diff12 when lrc = '1' and src = '0' else
+--              r_diff2;
+    
+    if lrc = '1' and src = '1' then
+        r_diff <= r_diff11;
+    elsif lrc = '1' and src = '0' then
+        r_diff <= r_diff12;
+    else
+        r_diff <= r_diff2;
+    end if;
     
     
     
-    r_diff <= r_diff11 when lrc = '1' and src = '1' else
-              r_diff12 when lrc = '1' and src = '0' else
-              r_diff2;
+
              
     
 
@@ -346,18 +438,24 @@ begin
     r_diff_le <= r_diff & le;
     se_extended <= std_logic_vector(resize(unsigned(se), N));
   
-  sub_diff : entity work.sub_N
-    generic map (
-      N => es+Bs+1
-    )
-    port map (
-      a => r_diff_le,
-      b => se_extended,
-      c => diff
-    );
+--  sub_diff : entity work.sub_N
+--    generic map (
+--      N => es+Bs+1
+--    )
+--    port map (
+--      a => r_diff_le,
+--      b => se_extended,
+--      c => diff
+--    );
+    diff <= std_logic_vector(unsigned('0' & r_diff_le) - unsigned('0' & se_extended));
 
-  exp_diff <= (others => '1') when or_reduce(diff(es+Bs downto Bs)) = '1' else diff(Bs-1 downto 0);
 
+--  exp_diff <= (others => '1') when or_reduce(diff(es+Bs downto Bs)) = '1' else diff(Bs-1 downto 0);
+    if or_reduce(diff(es+Bs downto Bs)) = '1' then
+        exp_diff <= (others => '1');
+    else
+        exp_diff <= diff(Bs-1 downto 0);
+    end if;
 
   
 
@@ -408,28 +506,37 @@ begin
     add_m_in1 <= lm;
   end generate;
 
-  uut_add_m1 : entity work.add_N
-    generic map (
-      N => N
-    )
-    port map (
-      a => add_m_in1,
-      b => DSR_right_out,
-      c => add_m1
-    );
+--  uut_add_m1 : entity work.add_N
+--    generic map (
+--      N => N
+--    )
+--    port map (
+--      a => add_m_in1,
+--      b => DSR_right_out,
+--      c => add_m1
+--    );
+    add_m1 <= std_logic_vector(unsigned('0' & add_m_in1) + unsigned('0' & DSR_right_out));
   
-  uut_sub_m2 : entity work.sub_N
-    generic map (
-      N => N
-    )
-    port map (
-      a => add_m_in1,
-      b => DSR_right_out,
-      c => add_m2
-    );
+--  uut_sub_m2 : entity work.sub_N
+--    generic map (
+--      N => N
+--    )
+--    port map (
+--      a => add_m_in1,
+--      b => DSR_right_out,
+--      c => add_m2
+--    );
+    add_m2 <= std_logic_vector(unsigned('0' & add_m_in1) - unsigned('0' & DSR_right_out));
+
     
     -- Select if Add or Sub
-  add_m <= add_m1 when op = '1' else add_m2;
+--  add_m <= add_m1 when op = '1' else add_m2;
+    if op = '1' then
+        add_m <= add_m1;
+    else
+        add_m <= add_m2;
+    end if;
+
   
   -- check for Overflow of Mant
   mant_ovf <= add_m(N) & add_m(N-1);
@@ -452,40 +559,35 @@ begin
     );
   
   -- DSR Left Shifting of mantissa result
-  dsl1 : entity work.DSR_left_N_S
-    generic map (
-      N => N,
-      S => Bs
-    )
-    port map (
-      a => add_m(N downto 1),
-      b => left_shift_val,
-      c => DSR_left_out_t
-    );
+--  dsl1 : entity work.DSR_left_N_S
+--    generic map (
+--      N => N,
+--      S => Bs
+--    )
+--    port map (
+--      a => add_m(N downto 1),
+--      b => left_shift_val,
+--      c => DSR_left_out_t
+--    );
+    DSR_left_out_t <= std_logic_vector(left_shift(unsigned(add_m(N downto 1)), to_integer(unsigned(left_shift_val))));    
+    
   
   -- Extra Left Shift
 --  DSR_left_out <= DSR_left_out_t when mant_ovf = '0' else DSR_left_out_t(N-1) & DSR_left_out_t(N-1 downto 1);
-  DSR_left_out <= DSR_left_out_t(N-1 downto 0) when DSR_left_out_t(N-1) = '1' else DSR_left_out_t(N-2 downto 0) & '0';
+    DSR_left_out <= DSR_left_out_t(N-1 downto 0) when DSR_left_out_t(N-1) = '1' else DSR_left_out_t(N-2 downto 0) & '0';
   
   
   -- Regime Alignment
   
 
-    lr_N <= '0' & lr when lrc = '1' else std_logic_vector( - signed('0' & lr));
+--    lr_N <= '0' & lr when lrc = '1' else std_logic_vector( - signed('0' & lr));
+    if lrc = '1' then
+        lr_N <= '0' & lr;
+    else
+        lr_N <= std_logic_vector( - signed('0' & lr));
+    end if;  
   
-  
---  gen_le_o_tmp: if es >= 2 generate
---    le_o_tmp <= exp_diff & DSR_e_diff & lr_N;
-  --else
-  --  le_o_tmp <= exp_diff & lr_N;
---  end generate;
 
-  -- Shift le_o_tmp right to produce le_o
---  gen_le_o: if es >= 2 generate
---    le_o <= le_o_tmp(es+Bs downto 1);
-  --else
-  --  le_o <= le_o_tmp(Bs downto 1);
---  end generate;
 
     -- {(LRC ? LR : -LR),LE}
     lr_N_le <= lr_n & le;
@@ -494,43 +596,61 @@ begin
     left_shift_extended <= std_logic_vector(resize(unsigned(left_shift_val), es + Bs + 1));
 
     -- {(LRC ? LR : -LR),LE} - Nshift
-  sub3 : entity work.sub_N
-    generic map (
-      N => (es + Bs + 1)
-    )
-    port map (
-      a => lr_N_le,
-      b => left_shift_extended,
-      c => le_o_tmp
-    );
+--  sub3 : entity work.sub_N
+--    generic map (
+--      N => (es + Bs + 1)
+--    )
+--    port map (
+--      a => lr_N_le,
+--      b => left_shift_extended,
+--      c => le_o_tmp
+--    );
+    le_o_tmp <= std_logic_vector(unsigned('0' & lr_N_le) - unsigned('0' & left_shift_extended));
+    
     
     -- LE_O = {(LRC ? LR : -LR),LE} - Nshift + Movf
-    uut_add_mantovf : entity work.add_mantovf
-    generic map (
-      N => (es + Bs + 1)
-    )
-    port map (
-      a => le_o_tmp,
-      mant_ovf => mant_ovf(1),
-      c => le_o
-    );
+--    uut_add_mantovf : entity work.add_mantovf
+--    generic map (
+--      N => (es + Bs + 1)
+--    )
+--    port map (
+--      a => le_o_tmp,
+--      mant_ovf => mant_ovf(1),
+--      c => le_o
+--    );
+    le_o <= std_logic_vector(unsigned(le_o_tmp) + unsigned(mant_ovf(1)));
+
     
     -- LE_ON = LE_O[ES+RS] ? -LE_O : LE_O
-    le_oN <= std_logic_vector(- signed(le_o(es+Bs downto 0))) when le_o(es+Bs) = '1' else le_o(es+Bs downto 0);
+--    le_oN <= std_logic_vector(- signed(le_o(es+Bs downto 0))) when le_o(es+Bs) = '1' else le_o(es+Bs downto 0);
+    if le_o(es+Bs) = '1' then
+        le_oN <= std_logic_vector(- signed(le_o(es+Bs downto 0)));
+    else
+        le_oN <= le_o(es+Bs downto 0);
+    end if;
 
   -- Extract exponent bits
     -- If LE_O is negative and LSB ES bits of LE_ON is non zero, then, E_O is computed as 2's complement of LSB ES bits
     -- of LE_ON, which is compensated by an increase in R_O, else LSB ES bits of LE_ON would become E_O
   
-  e_o <= le_o(es-1 downto 0) when le_o(es+Bs) = '1' and or_reduce(le_oN(es-1 downto 0)) = '1' else le_oN(es-1 downto 0);
-        -- ^-- 2's complement missing TODO vermutlich If und Else vertauscht
+--    e_o <= le_o(es-1 downto 0) when le_o(es+Bs) = '1' and or_reduce(le_oN(es-1 downto 0)) = '1' else le_oN(es-1 downto 0);
+    if le_o(es+Bs) = '1' and or_reduce(le_oN(es-1 downto 0)) = '1' then
+        e_o <= le_o(es-1 downto 0);
+    else
+        e_o <= le_oN(es-1 downto 0);
+    end if;  
+  
   
   -- Regime bits
   -- (~le_o[es+Bs] || (le_o[es+Bs] & |le_oN[es-1:0])) ? le_oN[es+Bs-1:es] + 1'b1 : le_oN[es+Bs-1:es];
-  r_o <= std_logic_vector(unsigned(le_oN(es+Bs-1 downto es)) + 1) 
-        when le_o(es+Bs) = '0' or (le_o(es+Bs) = '1' and or_reduce(le_oN(es-1 downto 0)) = '1') 
-        else le_oN(es+Bs-1 downto es);
-  
+--  r_o <= std_logic_vector(unsigned(le_oN(es+Bs-1 downto es)) + 1) 
+--        when le_o(es+Bs) = '0' or (le_o(es+Bs) = '1' and or_reduce(le_oN(es-1 downto 0)) = '1') 
+--        else le_oN(es+Bs-1 downto es);
+    if le_o(es+Bs) = '0' or (le_o(es+Bs) = '1' and or_reduce(le_oN(es-1 downto 0)) = '1') then
+        r_o <= std_logic_vector(unsigned(le_oN(es+Bs-1 downto es)) + 1);
+    else
+        r_o <= le_oN(es+Bs-1 downto es);
+    end if;  
   
 
   -- Mantissa Bits
@@ -539,25 +659,39 @@ begin
   tmp_o <= not_le_o & le_o(es + Bs) & e_o & DSR_left_out(N-2 downto es);
   
   
-  dsr2 : entity work.DSR_right_N_S
-  generic map (
-    N => 2*N,
-    S => Bs
-  )
-  port map (
-    a => tmp_o,
-    b => r_o,
-    c => tmp1_o
-  );
+--  dsr2 : entity work.DSR_right_N_S
+--  generic map (
+--    N => 2*N,
+--    S => Bs
+--  )
+--  port map (
+--    a => tmp_o,
+--    b => r_o,
+--    c => tmp1_o
+--  );
+  tmp1_o <= std_logic_vector(left_shift(unsigned(tmp_o), to_integer(unsigned(ro))));  
+  
   
   
   -- Extra Sign Bit
   -- If large sign (LS) is true, shifted TMP requires being negated (Line 46), as per the requirement of -ve posit.
-  tmp1_oN <= std_logic_vector( - signed(tmp1_o)) when ls = '1' else tmp1_o;
+--  tmp1_oN <= std_logic_vector( - signed(tmp1_o)) when ls = '1' else tmp1_o;
+  if ls = '1' then 
+    tmp1_oN <= std_logic_vector( - signed(tmp1_o));
+  else
+    tmp1_oN <= tmp1_o;
+  end if;
+  
   
   -- Output
   out_zeros <= (others => '0');
-  out_val <= inf_sig & out_zeros when (inf_sig = '1' or zero_sig = '1') or (DSR_left_out(N-1) = '0') else ls & tmp1_oN(N-1 downto 1);
+--  out_val <= inf_sig & out_zeros when (inf_sig = '1' or zero_sig = '1') or (DSR_left_out(N-1) = '0') else ls & tmp1_oN(N-1 downto 1);
+    if (inf_sig = '1' or zero_sig = '1') or (DSR_left_out(N-1) = '0') then
+        out_val <= inf_sig & out_zeros;
+    else
+        out_val <= ls & tmp1_oN(N-1 downto 1);
+    end if;
+  
   
   -- inf <= (r_o(Bs-1) and (not r_o(Bs-2))) or (r_o(Bs-2) and (r_o(Bs-3 downto 0) = (Bs-3)'("0"))) or ((not r_o(Bs-1)) and (not r_o(Bs-2)) and (tmp1_oN(N-1 downto 0) = (N-1)'("0"))) or ((not r_o(Bs-1)) and (r_o(Bs-2)) and (tmp1_oN(N-1 downto 0) = (N-1)'("1")));
   inf <= inf_sig;
@@ -621,5 +755,6 @@ begin
     tmp1_oN_o <= tmp1_oN;
   
   
+end process;  
   
 end Behavioral;
