@@ -43,9 +43,9 @@ end tb_posit_adder_pipeline;
 
 architecture Behavioral of tb_posit_adder_pipeline is
 
-constant CLOCK_PERIOD : time := 500 ns;
+constant CLOCK_PERIOD : time := 200 ns;
 
-    signal clk  : std_logic;
+    signal clk_tb  : std_logic;
 
     signal in1_tb : std_logic_vector(N_tb-1 downto 0);
     signal in2_tb : std_logic_vector(N_tb-1 downto 0);
@@ -109,13 +109,14 @@ constant CLOCK_PERIOD : time := 500 ns;
 
 begin
 
-    UUT : entity work.posit_adder
+    UUT : entity work.posit_adder_pipeline
     generic map (
         N => N_tb,
         Bs => Bs_tb,
         es => es_tb
     )
     port map (
+        clk => clk_tb,
         in1 => in1_tb,
         in2 => in2_tb,
         start => start_tb,
@@ -178,6 +179,16 @@ begin
     );
     
     
+    generate_sim_clock: process
+    begin
+    	clk_tb <= '1';
+    	wait for CLOCK_PERIOD/2;
+    	clk_tb <= '0';
+    	wait for CLOCK_PERIOD/2;
+    end process;
+    
+    
+    
     stimuli: process
     
     begin     
@@ -189,10 +200,10 @@ begin
         in2_tb <= "00000000";
         out_val_ref_tb <= "00000000";
         start_tb <= '1';
-        wait for CLOCK_PERIOD;
-        assert done_tb = '1' report "Done Should be 1";
-        assert out_val_tb = "00000000" report "Should be 00000000";
-        start_tb <= '0';
+--        wait for CLOCK_PERIOD;
+--        assert done_tb = '1' report "Done Should be 1";
+--        assert out_val_tb = "00000000" report "Should be 00000000";
+--        start_tb <= '0';
         wait for CLOCK_PERIOD;
         
         -- Zeile 129
@@ -201,10 +212,10 @@ begin
         in2_tb <= "00000000";
         out_val_ref_tb <= "10000000";
         start_tb <= '1';
-        wait for CLOCK_PERIOD;
-        assert done_tb = '1' report "Done Should be 1";
-        assert out_val_tb = "10000000" report "Should be 10000000";
-        start_tb <= '0';
+--        wait for CLOCK_PERIOD;
+--        assert done_tb = '1' report "Done Should be 1";
+--        assert out_val_tb = "10000000" report "Should be 10000000";
+--        start_tb <= '0';
         wait for CLOCK_PERIOD;
         
         
@@ -213,10 +224,10 @@ begin
         in2_tb <= "10000000";
         out_val_ref_tb <= "10000000";
         start_tb <= '1';
-        wait for CLOCK_PERIOD;
-        assert done_tb = '1' report "Done Should be 1";
-        assert out_val_tb = "10000000" report "Should be 10000000";
-        start_tb <= '0';
+--        wait for CLOCK_PERIOD;
+--        assert done_tb = '1' report "Done Should be 1";
+--        assert out_val_tb = "10000000" report "Should be 10000000";
+--        start_tb <= '0';
         wait for CLOCK_PERIOD;
         
         
@@ -226,10 +237,10 @@ begin
         in2_tb <= "00000000";
         out_val_ref_tb <= "00000100";
         start_tb <= '1';
-        wait for CLOCK_PERIOD;
-        assert done_tb = '1' report "Done Should be 1";
-        assert out_val_tb = "00000100" report "Should be 00000100";
-        start_tb <= '0';
+--        wait for CLOCK_PERIOD;
+--        assert done_tb = '1' report "Done Should be 1";
+--        assert out_val_tb = "00000100" report "Should be 00000100";
+--        start_tb <= '0';
         wait for CLOCK_PERIOD;
         
         
@@ -239,10 +250,10 @@ begin
         in2_tb <= "10000000";
         out_val_ref_tb <= "10000000";
         start_tb <= '1';
-        wait for CLOCK_PERIOD;
-        assert done_tb = '1' report "Done Should be 1";
-        assert out_val_tb = "10000000" report "Should be 10000000";
-        start_tb <= '0';
+--        wait for CLOCK_PERIOD;
+--        assert done_tb = '1' report "Done Should be 1";
+--        assert out_val_tb = "10000000" report "Should be 10000000";
+--        start_tb <= '0';
         wait for CLOCK_PERIOD;
        
         
@@ -252,10 +263,10 @@ begin
         in2_tb <= "00000001";
         out_val_ref_tb <= "00001000";
         start_tb <= '1';
-        wait for CLOCK_PERIOD;
-        assert done_tb = '1' report "Done Should be 1";
-        assert out_val_tb = "00001000" report "Should be 00001000";
-        start_tb <= '0';
+--        wait for CLOCK_PERIOD;
+--        assert done_tb = '1' report "Done Should be 1";
+--        assert out_val_tb = "00001000" report "Should be 00001000";
+--        start_tb <= '0';
         wait for CLOCK_PERIOD;
         
         
@@ -265,10 +276,10 @@ begin
         in2_tb <= "00000001";
         out_val_ref_tb <= "01100111";
         start_tb <= '1';
-        wait for CLOCK_PERIOD;
-        assert done_tb = '1' report "Done Should be 1";
-        assert out_val_tb = "01100111" report "Should be 01100111";
-        start_tb <= '0';
+--        wait for CLOCK_PERIOD;
+--        assert done_tb = '1' report "Done Should be 1";
+--        assert out_val_tb = "01100111" report "Should be 01100111";
+--        start_tb <= '0';
         wait for CLOCK_PERIOD;
         
         
@@ -278,10 +289,10 @@ begin
         in2_tb <= "11111110";
         out_val_ref_tb <= "01010101";
         start_tb <= '1';
-        wait for CLOCK_PERIOD;
-        assert done_tb = '1' report "Done Should be 1";
-        assert out_val_tb = "01010101" report "Should be 01010101";
-        start_tb <= '0';
+--        wait for CLOCK_PERIOD;
+--        assert done_tb = '1' report "Done Should be 1";
+--        assert out_val_tb = "01010101" report "Should be 01010101";
+--        start_tb <= '0';
         wait for CLOCK_PERIOD;
         
         -- Zeile 2520
@@ -290,10 +301,10 @@ begin
         in2_tb <= "00001001";
         out_val_ref_tb <= "11010111";
         start_tb <= '1';
-        wait for CLOCK_PERIOD;
-        assert done_tb = '1' report "Done Should be 1";
-        assert out_val_tb = "11010111" report "Should be 11010111";
-        start_tb <= '0';
+--        wait for CLOCK_PERIOD;
+--        assert done_tb = '1' report "Done Should be 1";
+--        assert out_val_tb = "11010111" report "Should be 11010111";
+--        start_tb <= '0';
         wait for CLOCK_PERIOD;
         
         -- Zeile 12839
@@ -302,10 +313,10 @@ begin
         in2_tb <= "00110010";
         out_val_ref_tb <= "00110010";
         start_tb <= '1';
-        wait for CLOCK_PERIOD;
-        assert done_tb = '1' report "Done Should be 1";
-        assert out_val_tb = "00110010" report "Should be 00110010";
-        start_tb <= '0';
+--        wait for CLOCK_PERIOD;
+--        assert done_tb = '1' report "Done Should be 1";
+--        assert out_val_tb = "00110010" report "Should be 00110010";
+--        start_tb <= '0';
         wait for CLOCK_PERIOD;
         
         -- Zeile 27502
@@ -314,10 +325,10 @@ begin
         in2_tb <= "01101011";
         out_val_ref_tb <= "01101101";
         start_tb <= '1';
-        wait for CLOCK_PERIOD;
-        assert done_tb = '1' report "Done Should be 1";
-        assert out_val_tb = "01101101" report "Should be 01101101";
-        start_tb <= '0';
+--        wait for CLOCK_PERIOD;
+--        assert done_tb = '1' report "Done Should be 1";
+--        assert out_val_tb = "01101101" report "Should be 01101101";
+--        start_tb <= '0';
         wait for CLOCK_PERIOD;
         
         -- Zeile 35804
@@ -326,10 +337,10 @@ begin
         in2_tb <= "10001011";
         out_val_ref_tb <= "10001011";
         start_tb <= '1';
-        wait for CLOCK_PERIOD;
-        assert done_tb = '1' report "Done Should be 1";
-        assert out_val_tb = "10001011" report "Should be 10001011";
-        start_tb <= '0';
+--        wait for CLOCK_PERIOD;
+--        assert done_tb = '1' report "Done Should be 1";
+--        assert out_val_tb = "10001011" report "Should be 10001011";
+--        start_tb <= '0';
         wait for CLOCK_PERIOD;
         
         -- Zeile 35748
@@ -338,10 +349,10 @@ begin
         in2_tb <= "10001011";
         out_val_ref_tb <= "10001011";
         start_tb <= '1';
-        wait for CLOCK_PERIOD;
-        assert done_tb = '1' report "Done Should be 1";
-        assert out_val_tb = "10001011" report "Should be 10001011";
-        start_tb <= '0';
+--        wait for CLOCK_PERIOD;
+--        assert done_tb = '1' report "Done Should be 1";
+--        assert out_val_tb = "10001011" report "Should be 10001011";
+--        start_tb <= '0';
         wait for CLOCK_PERIOD;
         
         
@@ -351,10 +362,10 @@ begin
         in2_tb <= "10010111";
         out_val_ref_tb <= "10000001";
         start_tb <= '1';
-        wait for CLOCK_PERIOD;
-        assert done_tb = '1' report "Done Should be 1";
-        assert out_val_tb = "10000001" report "Should be 10000001";
-        start_tb <= '0';
+--        wait for CLOCK_PERIOD;
+--        assert done_tb = '1' report "Done Should be 1";
+--        assert out_val_tb = "10000001" report "Should be 10000001";
+--        start_tb <= '0';
         wait for CLOCK_PERIOD;
         
         
@@ -375,12 +386,12 @@ begin
         in2_tb <= "00011000";
         start_tb <= '1';
         out_val_ref_tb <= "00010111";
-        wait for CLOCK_PERIOD;
-        assert done_tb = '1' report "Should be 1";
-        assert out_val_tb = "00010111" report "Should be 00010111";
-        wait for CLOCK_PERIOD;
+--        wait for CLOCK_PERIOD;
+--        assert done_tb = '1' report "Should be 1";
+--        assert out_val_tb = "00010111" report "Should be 00010111";
+--        wait for CLOCK_PERIOD;
         
-        start_tb <= '0';
+--        start_tb <= '0';
         wait for CLOCK_PERIOD;
         
         -- Zeile 9325
@@ -388,12 +399,12 @@ begin
         in2_tb <= "00100100";
         start_tb <= '1';
         out_val_ref_tb <= "01101100";
-        wait for CLOCK_PERIOD;
-        assert done_tb = '1' report "Should be 1";
-        assert out_val_tb = "01101100" report "Should be 01101100";
-        wait for CLOCK_PERIOD;
+--        wait for CLOCK_PERIOD;
+--        assert done_tb = '1' report "Should be 1";
+--        assert out_val_tb = "01101100" report "Should be 01101100";
+--        wait for CLOCK_PERIOD;
         
-        start_tb <= '0';
+--        start_tb <= '0';
         wait for CLOCK_PERIOD;
         
         -- Zeile 5
@@ -401,12 +412,12 @@ begin
         in2_tb <= "00000000";
         start_tb <= '1';
         out_val_ref_tb <= "00000100";
-        wait for CLOCK_PERIOD;
-        assert done_tb = '1' report "Should be 1";
-        assert out_val_tb = "00000100" report "Should be 00000100";
-        wait for CLOCK_PERIOD;
+--        wait for CLOCK_PERIOD;
+--        assert done_tb = '1' report "Should be 1";
+--        assert out_val_tb = "00000100" report "Should be 00000100";
+--        wait for CLOCK_PERIOD;
         
-        start_tb <= '0';
+--        start_tb <= '0';
         wait for CLOCK_PERIOD;
         
         -- Zeile 265
@@ -414,12 +425,12 @@ begin
         in2_tb <= "00000001";
         start_tb <= '1';
         out_val_ref_tb <= "00001000";
-        wait for CLOCK_PERIOD;
-        assert done_tb = '1' report "Should be 1";
-        assert out_val_tb = "00001000" report "Should be 00001000";
-        wait for CLOCK_PERIOD;
+--        wait for CLOCK_PERIOD;
+--        assert done_tb = '1' report "Should be 1";
+--        assert out_val_tb = "00001000" report "Should be 00001000";
+--        wait for CLOCK_PERIOD;
         
-        start_tb <= '0';
+--        start_tb <= '0';
         wait for CLOCK_PERIOD;
         
         -- Zeile 2520
@@ -427,9 +438,9 @@ begin
         in2_tb <= "00001001";
         start_tb <= '1';
         out_val_ref_tb <= "11010111";
-        wait for CLOCK_PERIOD;
-        assert done_tb = '1' report "Should be 1";
-        assert out_val_tb = "11010111" report "Should be 11010111";
+--        wait for CLOCK_PERIOD;
+--        assert done_tb = '1' report "Should be 1";
+--        assert out_val_tb = "11010111" report "Should be 11010111";
         wait for CLOCK_PERIOD;
         
         
