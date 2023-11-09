@@ -219,7 +219,7 @@ begin
 
 
       -- Data Extraction
-  uut_de1 : data_extract
+    uut_de1 : data_extract
     generic map (
       N => N,
       Bs => Bs,
@@ -234,7 +234,7 @@ begin
       mant => mant1
     );
 
-  uut_de2 : data_extract
+    uut_de2 : data_extract
     generic map (
       N => N,
       Bs => Bs,
@@ -248,125 +248,221 @@ begin
       exp => e2,
       mant => mant2
     );
+    
+    
+    
+    l2 : entity work.LOD_N
+    generic map (
+      N => N
+    )
+    port map (
+      input_vector => LOD_in,
+      output_vector => left_shift_val   -- Nshift
+    );
+    
 
 
 
 addition : process
+    
+    variable v_start0 : std_logic;
+    variable v_s1 : std_logic;
+    variable v_s2 : std_logic;
+    variable v_zero_tmp1 : std_logic;
+    variable v_zero_tmp2 : std_logic;
+    variable v_inf1 : std_logic;
+    variable v_inf2 : std_logic;
+    variable v_zero1 : std_logic;
+    variable v_zero2 : std_logic;
+    variable v_inf_sig : std_logic;
+    variable v_zero_sig : std_logic;
+
+    -- Data Extraction
+    variable v_rc1 : std_logic; 
+    variable v_rc2 : std_logic;
+    variable v_regime1 : std_logic_vector(Bs-1 downto 0);
+    variable v_regime2: std_logic_vector(Bs-1 downto 0);
+    variable v_e1 : std_logic_vector(es-1 downto 0);
+    variable v_e2 : std_logic_vector(es-1 downto 0);
+    variable v_mant1 : std_logic_vector(N-es-1 downto 0);
+    variable v_mant2 : std_logic_vector(N-es-1 downto 0);
+
+    variable v_xin1 : std_logic_vector(N-1 downto 0);
+    variable v_xin2 : std_logic_vector(N-1 downto 0);
+    variable v_m1 : std_logic_vector(N-es downto 0);
+    variable v_m2 : std_logic_vector(N-es downto 0);
+    variable v_ls : std_logic;
+    variable v_op : std_logic;
+    variable v_lrc : std_logic;
+    variable v_src : std_logic;
+    variable v_lr : std_logic_vector(Bs-1 downto 0);
+    variable v_sr : std_logic_vector(Bs-1 downto 0);
+    variable v_le : std_logic_vector(es-1 downto 0);
+    variable v_se : std_logic_vector(es-1 downto 0);
+    variable v_lm : std_logic_vector(N-es downto 0);
+    variable v_sm : std_logic_vector(N-es downto 0);
+    variable v_in1_gt_in2 : std_logic;
+    variable v_r_diff11 : std_logic_vector(Bs downto 0);
+    variable v_r_diff12 : std_logic_vector(Bs downto 0);
+    variable v_r_diff2 : std_logic_vector(Bs downto 0);
+    variable v_r_diff : std_logic_vector(Bs downto 0);
+    variable v_r_diff_shift : std_logic_vector(Bs downto 0);
+    variable v_diff : std_logic_vector(es+Bs+1 downto 0);
+    variable v_diff_eig : std_logic_vector(es downto 0);
+    variable v_exp_diff : std_logic_vector(Bs-1 downto 0);
+    variable v_DSR_right_in : std_logic_vector(N-1 downto 0);
+    variable v_DSR_right_out : std_logic_vector(N-1 downto 0);
+    variable v_DSR_e_diff : std_logic_vector(Bs-1 downto 0);
+    variable v_add_m_in1 : std_logic_vector(N-1 downto 0);
+    variable v_add_m1 : std_logic_vector(N downto 0);
+    variable v_add_m2 : std_logic_vector(N downto 0);
+    variable v_add_m : std_logic_vector(N downto 0);
+    variable v_mant_ovf : std_logic_vector(1 downto 0);
+    variable v_LOD_in : std_logic_vector(N-1 downto 0);
+    variable v_left_shift_val : std_logic_vector(Bs-1 downto 0);
+    variable v_DSR_left_out_t : std_logic_vector(N-1 downto 0);
+    variable v_DSR_left_out : std_logic_vector(N-1 downto 0);
+    variable v_lr_N : std_logic_vector(Bs downto 0);
+    variable v_le_o_tmp : std_logic_vector(es+Bs+1 downto 0);
+    variable v_le_o : std_logic_vector(es+Bs+1 downto 0);
+    variable v_le_oN : std_logic_vector(es+Bs downto 0);
+    variable v_e_o : std_logic_vector(es-1 downto 0);
+    variable v_r_o : std_logic_vector(Bs-1 downto 0);
+    variable v_tmp_o : std_logic_vector(2*N-1 downto 0);
+    variable v_tmp1_o : std_logic_vector(2*N-1 downto 0);
+    variable v_tmp1_oN : std_logic_vector(2*N-1 downto 0);
+
+    variable v_r_diff_le : std_logic_vector(N-1 downto 0);
+    variable v_se_extended : std_logic_vector(N-1 downto 0);
+    
+    
+    variable v_lr_N_le : std_logic_vector(N-1 downto 0);
+    variable v_left_shift_extended : std_logic_vector(es + Bs downto 0);
+
+    alias v_DSR_right_in_up is v_DSR_right_in(N-1 downto es-1);
+    alias v_DSR_right_in_low is v_DSR_right_in(es -2 downto 0);
+    
+    alias v_add_m_in1_up is v_add_m_in1(N-1 downto es-1);
+    alias v_add_m_in1_low is v_add_m_in1(es -2 downto 0);
+    
+    variable v_not_le_o : std_logic_vector(N-1 downto 0);
+    
+    variable v_out_zeros : std_logic_vector(N-2 downto 0);
 
 
 begin
 
 
-    start0 <= start;
-    s1 <= in1(N-1);
-    s2 <= in2(N-1);
-    zero_tmp1 <= or_reduce(in1(N-2 downto 0));
-    zero_tmp2 <= or_reduce(in2(N-2 downto 0));
-    inf1 <= s1 and (not zero_tmp1);
-    inf2 <= s2 and (not zero_tmp2);
-    zero1 <= not (s1 or zero_tmp1);
-    zero2 <= not (s2 or zero_tmp2);
-    inf_sig <= inf1 or inf2;
-    zero_sig <= zero1 and zero2;
+    v_start0 := start;
+    v_s1 := in1(N-1);
+    v_s2 := in2(N-1);
+    v_zero_tmp1 := or_reduce(in1(N-2 downto 0));
+    v_zero_tmp2 := or_reduce(in2(N-2 downto 0));
+    v_inf1 := s1 and (not zero_tmp1);
+    v_inf2 := s2 and (not zero_tmp2);
+    v_zero1 := not (s1 or zero_tmp1);
+    v_zero2 := not (s2 or zero_tmp2);
+    v_inf_sig := inf1 or inf2;
+    v_zero_sig := zero1 and zero2;
 
     
     
 --    xin1 <= std_logic_vector( - signed(in1(N-1 downto 0))) when s1 = '1' else in1(N-1 downto 0);
-    if s1 = '1' then
-        xin1 <= std_logic_vector( - signed(in1(N-1 downto 0)));
+    if v_s1 = '1' then
+        v_xin1 := std_logic_vector( - signed(in1(N-1 downto 0)));
     else
-        xin1 <= in1(N-1 downto 0);
+        v_xin1 := in1(N-1 downto 0);
     end if;
     
 --    xin2 <= std_logic_vector( - signed(in2(N-1 downto 0))) when s2 = '1' else in2(N-1 downto 0);
-    if s2 = '1' then
-        xin2 <= std_logic_vector( - signed(in2(N-1 downto 0)));
+    if v_s2 = '1' then
+        v_xin2 := std_logic_vector( - signed(in2(N-1 downto 0)));
     else 
-        xin2 <= in2(N-1 downto 0);
+        v_xin2 := in2(N-1 downto 0);
     end if;
 
 
 
 
 
-    m1 <= zero_tmp1 & mant1;
-    m2 <= zero_tmp2 & mant2;
+    v_m1 := v_zero_tmp1 & v_mant1;
+    v_m2 := v_zero_tmp2 & v_mant2;
 
   -- Large Checking and Assignment
   
 --  in1_gt_in2 <= '1' when xin1(N-2 downto 0) >= xin2(N-2 downto 0) else '0';
-    if xin1(N-2 downto 0) >= xin2(N-2 downto 0) then
-        in1_gt_in2 <= '1';
+    if v_xin1(N-2 downto 0) >= v_xin2(N-2 downto 0) then
+        v_in1_gt_in2 := '1';
     else
-        in1_gt_in2 <= '0';
+        v_in1_gt_in2 := '0';
     end if;
 
   
 --  ls <= s1 when in1_gt_in2 = '1' else s2;
-    if in1_gt_in2 = '1' then
-        ls <= s1;
+    if v_in1_gt_in2 = '1' then
+        v_ls := v_s1;
     else 
-        ls <= s2;
+        v_ls := v_s2;
     end if;
 
 
     -- wire op = s1 ~^ s2;
-    op <= s1 xnor s2;
+    v_op := v_s1 xnor v_s2;
 
 --  lrc <= rc1 when in1_gt_in2 = '1' else rc2;
-    if in1_gt_in2 = '1' then
-        lrc <= rc1;
+    if v_in1_gt_in2 = '1' then
+        v_lrc := v_rc1;
     else 
-        lrc <= rc2;
+        v_lrc := v_rc2;
     end if;
   
 --  src <= rc2 when in1_gt_in2 = '1' else rc1;
-    if in1_gt_in2 = '1' then
-        src <= rc2;
+    if v_in1_gt_in2 = '1' then
+        v_src := v_rc2;
     else 
-        src <= rc1;
+        v_src := v_rc1;
     end if;
 
 --    lr <= regime1 when in1_gt_in2 = '1' else regime2;
-    if in1_gt_in2 = '1' then
-        lr <= regime1;
+    if v_in1_gt_in2 = '1' then
+        v_lr := v_regime1;
     else 
-        lr <= regime2;
+        v_lr := v_regime2;
     end if;
     
 --    sr <= regime2 when in1_gt_in2 = '1' else regime1;
-    if in1_gt_in2 = '1' then
-        sr <= regime2;
+    if v_in1_gt_in2 = '1' then
+        v_sr := v_regime2;
     else 
-        sr <= regime1;
+        v_sr := v_regime1;
     end if;
 
 --  le <= e1 when in1_gt_in2 = '1' else e2;
-    if in1_gt_in2 = '1' then
-        le <= e1;
+    if v_in1_gt_in2 = '1' then
+        v_le := v_e1;
     else 
-        le <= e2;
+        v_le := v_e2;
     end if;
     
 --  se <= e2 when in1_gt_in2 = '1' else e1;
-    if in1_gt_in2 = '1' then
-        se <= e2;
+    if v_in1_gt_in2 = '1' then
+        v_se := v_e2;
     else 
-        se <= e1;
+        v_se := v_e1;
     end if;
 
 --  lm <= m1 when in1_gt_in2 = '1' else m2;
-    if in1_gt_in2 = '1' then
-        lm <= m1;
+    if v_in1_gt_in2 = '1' then
+        v_lm := v_m1;
     else 
-        lm <= m2;
+        v_lm := v_m2;
     end if;
     
 --  sm <= m2 when in1_gt_in2 = '1' else m1;
-    if in1_gt_in2 = '1' then
-        sm <= m2;
+    if v_in1_gt_in2 = '1' then
+        v_sm := v_m2;
     else 
-        sm <= m1;
+        v_sm := v_m1;
     end if;
 
 
@@ -384,7 +480,7 @@ begin
 --      b => sr,
 --      c => r_diff11
 --    );
-    r_diff11 <= std_logic_vector(unsigned('0' & lr) - unsigned('0' & sr));
+    v_r_diff11 := std_logic_vector(unsigned('0' & v_lr) - unsigned('0' & v_sr));
 
     
 --  uut_add1 : entity work.add_N
@@ -396,7 +492,7 @@ begin
 --      b => sr,
 --      c => r_diff12
 --    );
-    r_diff12 <= std_logic_vector(unsigned('0' & lr) + unsigned('0' & sr));
+    v_r_diff12 := std_logic_vector(unsigned('0' & v_lr) + unsigned('0' & v_sr));
 
 
     
@@ -409,19 +505,19 @@ begin
 --      b => lr,
 --      c => r_diff2
 --    );
-    r_diff2 <= std_logic_vector(unsigned('0' & sr) - unsigned('0' & lr));
+    v_r_diff2 := std_logic_vector(unsigned('0' & v_sr) - unsigned('0' & v_lr));
     
     
 --    r_diff <= r_diff11 when lrc = '1' and src = '1' else
 --              r_diff12 when lrc = '1' and src = '0' else
 --              r_diff2;
     
-    if lrc = '1' and src = '1' then
-        r_diff <= r_diff11;
-    elsif lrc = '1' and src = '0' then
-        r_diff <= r_diff12;
+    if v_lrc = '1' and v_src = '1' then
+        v_r_diff := v_r_diff11;
+    elsif v_lrc = '1' and v_src = '0' then
+        v_r_diff := v_r_diff12;
     else
-        r_diff <= r_diff2;
+        v_r_diff := v_r_diff2;
     end if;
     
     
@@ -435,8 +531,8 @@ begin
     -- exponent difference
     -- LE-SE
     
-    r_diff_le <= r_diff & le;
-    se_extended <= std_logic_vector(resize(unsigned(se), N));
+    v_r_diff_le := v_r_diff & v_le;
+    v_se_extended := std_logic_vector(resize(unsigned(v_se), N));
   
 --  sub_diff : entity work.sub_N
 --    generic map (
@@ -447,64 +543,66 @@ begin
 --      b => se_extended,
 --      c => diff
 --    );
-    diff <= std_logic_vector(unsigned('0' & r_diff_le) - unsigned('0' & se_extended));
+    v_diff := std_logic_vector(unsigned('0' & v_r_diff_le) - unsigned('0' & v_se_extended));
 
 
 --  exp_diff <= (others => '1') when or_reduce(diff(es+Bs downto Bs)) = '1' else diff(Bs-1 downto 0);
-    if or_reduce(diff(es+Bs downto Bs)) = '1' then
-        exp_diff <= (others => '1');
+    if or_reduce(v_diff(es+Bs downto Bs)) = '1' then
+        v_exp_diff := (others => '1');
     else
-        exp_diff <= diff(Bs-1 downto 0);
+        v_exp_diff := v_diff(Bs-1 downto 0);
     end if;
 
   
-
+-- TODO ##############################################################!!!!!!!!!!
   -- DSR Right Shifting of Small Mantissa
   
-  gen_DSR_right_in: if es >= 2 generate
+--  gen_DSR_right_in: if es >= 2 generate
     
     -- DSR_right_in <= sm & (es-1)'("0");
-    DSR_right_in_up <= sm;
-    DSR_right_in_low <= (others => '0');
+    v_DSR_right_in_up := v_sm;
+    v_DSR_right_in_low := (others => '0');
   --else
     -- assign DSR_right_in = sm;   
     --DSR_right_in <= sm;
-  end generate;
+--  end generate;
   
-  gen_DSR_right_in_else: if es < 2 generate
+--  gen_DSR_right_in_else: if es < 2 generate
     -- else case
     -- assign DSR_right_in = sm;   
-    DSR_right_in <= sm;
-  end generate;
+--    v_DSR_right_in := v_sm;
+--  end generate;
   
   
-  DSR_e_diff <= exp_diff(Bs-1 downto 0);
+  v_DSR_e_diff := v_exp_diff(Bs-1 downto 0);
 
-  dsr1 : entity work.DSR_right_N_S
-    generic map (
-      N => N,
-      S => Bs
-    )
-    port map (
-      a => DSR_right_in,
-      b => DSR_e_diff,
-      c => DSR_right_out
-    ); 
+--  dsr1 : entity work.DSR_right_N_S
+--    generic map (
+--      N => N,
+--      S => Bs
+--    )
+--    port map (
+--      a => DSR_right_in,
+--      b => DSR_e_diff,
+--      c => DSR_right_out
+--    );
+    v_DSR_right_out := std_logic_vector(shift_right(unsigned(v_DSR_right_in), to_integer(unsigned(v_DSR_e_diff))));
+  
 
-
+-- TODO ##############################################################!!!!!!!!!!
   -- Mantissa Addition
-  gen_add_m_in1: if es >= 2 generate
+--  gen_add_m_in1: if es >= 2 generate
     --add_m_in1 <= lm & (es-1)'("0");
-    add_m_in1_up <= lm;
-    add_m_in1_low <= (others => '0');
+    v_add_m_in1_up := v_lm;
+    v_add_m_in1_low := (others => '0');
   --else
     --add_m_in1 <= lm;
-  end generate;
+--  end generate;
   
-  gen_add_m_in1_else: if es < 2 generate
+--  gen_add_m_in1_else: if es < 2 generate
     -- else case
-    add_m_in1 <= lm;
-  end generate;
+--    v_add_m_in1 := v_lm;
+--  end generate;
 
 --  uut_add_m1 : entity work.add_N
 --    generic map (
@@ -515,7 +613,7 @@ begin
 --      b => DSR_right_out,
 --      c => add_m1
 --    );
-    add_m1 <= std_logic_vector(unsigned('0' & add_m_in1) + unsigned('0' & DSR_right_out));
+    v_add_m1 := std_logic_vector(unsigned('0' & v_add_m_in1) + unsigned('0' & v_DSR_right_out));
   
 --  uut_sub_m2 : entity work.sub_N
 --    generic map (
@@ -526,20 +624,20 @@ begin
 --      b => DSR_right_out,
 --      c => add_m2
 --    );
-    add_m2 <= std_logic_vector(unsigned('0' & add_m_in1) - unsigned('0' & DSR_right_out));
+    v_add_m2 := std_logic_vector(unsigned('0' & v_add_m_in1) - unsigned('0' & v_DSR_right_out));
 
     
     -- Select if Add or Sub
 --  add_m <= add_m1 when op = '1' else add_m2;
-    if op = '1' then
-        add_m <= add_m1;
+    if v_op = '1' then
+        v_add_m := v_add_m1;
     else
-        add_m <= add_m2;
+        v_add_m := v_add_m2;
     end if;
 
   
   -- check for Overflow of Mant
-  mant_ovf <= add_m(N) & add_m(N-1);
+  v_mant_ovf := v_add_m(N) & v_add_m(N-1);
   
   -- Add_M is checked for mantissa overflow (Movf) by checking its MSB and shifted 1-bit to left
   -- accordingly if found false, which requires an N-1 bit 2:1 MUX (Line 32-33)
@@ -547,16 +645,9 @@ begin
   
   
   -- LOD of mantissa addition result
-  LOD_in <= ((add_m(N) or add_m(N-1)) & add_m(N-2 downto 0));
+  v_LOD_in := ((v_add_m(N) or v_add_m(N-1)) & v_add_m(N-2 downto 0));
 
-  l2 : entity work.LOD_N
-    generic map (
-      N => N
-    )
-    port map (
-      input_vector => LOD_in,
-      output_vector => left_shift_val   -- Nshift
-    );
+  
   
   -- DSR Left Shifting of mantissa result
 --  dsl1 : entity work.DSR_left_N_S
@@ -569,31 +660,36 @@ begin
 --      b => left_shift_val,
 --      c => DSR_left_out_t
 --    );
-    DSR_left_out_t <= std_logic_vector(left_shift(unsigned(add_m(N downto 1)), to_integer(unsigned(left_shift_val))));    
+    v_DSR_left_out_t := std_logic_vector(shift_left(unsigned(v_add_m(N downto 1)), to_integer(unsigned(v_left_shift_val))));    
     
   
   -- Extra Left Shift
 --  DSR_left_out <= DSR_left_out_t when mant_ovf = '0' else DSR_left_out_t(N-1) & DSR_left_out_t(N-1 downto 1);
-    DSR_left_out <= DSR_left_out_t(N-1 downto 0) when DSR_left_out_t(N-1) = '1' else DSR_left_out_t(N-2 downto 0) & '0';
+--    DSR_left_out <= DSR_left_out_t(N-1 downto 0) when DSR_left_out_t(N-1) = '1' else DSR_left_out_t(N-2 downto 0) & '0';
+    if v_DSR_left_out_t(N-1) = '1' then
+        v_DSR_left_out := v_DSR_left_out_t(N-1 downto 0);
+    else
+        v_DSR_left_out := v_DSR_left_out_t(N-2 downto 0) & '0';
+    end if;
   
   
   -- Regime Alignment
   
 
 --    lr_N <= '0' & lr when lrc = '1' else std_logic_vector( - signed('0' & lr));
-    if lrc = '1' then
-        lr_N <= '0' & lr;
+    if v_lrc = '1' then
+        v_lr_N := '0' & v_lr;
     else
-        lr_N <= std_logic_vector( - signed('0' & lr));
+        v_lr_N := std_logic_vector( - signed('0' & v_lr));
     end if;  
   
 
 
     -- {(LRC ? LR : -LR),LE}
-    lr_N_le <= lr_n & le;
+    v_lr_N_le := v_lr_n & v_le;
     
     -- {{es+1{1'b0}},left_shift}
-    left_shift_extended <= std_logic_vector(resize(unsigned(left_shift_val), es + Bs + 1));
+    v_left_shift_extended := std_logic_vector(resize(unsigned(v_left_shift_val), es + Bs + 1));
 
     -- {(LRC ? LR : -LR),LE} - Nshift
 --  sub3 : entity work.sub_N
@@ -605,7 +701,7 @@ begin
 --      b => left_shift_extended,
 --      c => le_o_tmp
 --    );
-    le_o_tmp <= std_logic_vector(unsigned('0' & lr_N_le) - unsigned('0' & left_shift_extended));
+    v_le_o_tmp := std_logic_vector(unsigned('0' & v_lr_N_le) - unsigned('0' & v_left_shift_extended));
     
     
     -- LE_O = {(LRC ? LR : -LR),LE} - Nshift + Movf
@@ -618,15 +714,15 @@ begin
 --      mant_ovf => mant_ovf(1),
 --      c => le_o
 --    );
-    le_o <= std_logic_vector(unsigned(le_o_tmp) + unsigned(mant_ovf(1)));
+    v_le_o := std_logic_vector(unsigned(v_le_o_tmp) + unsigned(v_mant_ovf(1)));
 
     
     -- LE_ON = LE_O[ES+RS] ? -LE_O : LE_O
 --    le_oN <= std_logic_vector(- signed(le_o(es+Bs downto 0))) when le_o(es+Bs) = '1' else le_o(es+Bs downto 0);
-    if le_o(es+Bs) = '1' then
-        le_oN <= std_logic_vector(- signed(le_o(es+Bs downto 0)));
+    if v_le_o(es+Bs) = '1' then
+        v_le_oN := std_logic_vector(- signed(v_le_o(es+Bs downto 0)));
     else
-        le_oN <= le_o(es+Bs downto 0);
+        v_le_oN := v_le_o(es+Bs downto 0);
     end if;
 
   -- Extract exponent bits
@@ -634,10 +730,10 @@ begin
     -- of LE_ON, which is compensated by an increase in R_O, else LSB ES bits of LE_ON would become E_O
   
 --    e_o <= le_o(es-1 downto 0) when le_o(es+Bs) = '1' and or_reduce(le_oN(es-1 downto 0)) = '1' else le_oN(es-1 downto 0);
-    if le_o(es+Bs) = '1' and or_reduce(le_oN(es-1 downto 0)) = '1' then
-        e_o <= le_o(es-1 downto 0);
+    if v_le_o(es+Bs) = '1' and or_reduce(v_le_oN(es-1 downto 0)) = '1' then
+        v_e_o := v_le_o(es-1 downto 0);
     else
-        e_o <= le_oN(es-1 downto 0);
+        v_e_o := v_le_oN(es-1 downto 0);
     end if;  
   
   
@@ -646,17 +742,17 @@ begin
 --  r_o <= std_logic_vector(unsigned(le_oN(es+Bs-1 downto es)) + 1) 
 --        when le_o(es+Bs) = '0' or (le_o(es+Bs) = '1' and or_reduce(le_oN(es-1 downto 0)) = '1') 
 --        else le_oN(es+Bs-1 downto es);
-    if le_o(es+Bs) = '0' or (le_o(es+Bs) = '1' and or_reduce(le_oN(es-1 downto 0)) = '1') then
-        r_o <= std_logic_vector(unsigned(le_oN(es+Bs-1 downto es)) + 1);
+    if v_le_o(es+Bs) = '0' or (v_le_o(es+Bs) = '1' and or_reduce(v_le_oN(es-1 downto 0)) = '1') then
+        v_r_o := std_logic_vector(unsigned(v_le_oN(es+Bs-1 downto es)) + 1);
     else
-        r_o <= le_oN(es+Bs-1 downto es);
+        v_r_o := v_le_oN(es+Bs-1 downto es);
     end if;  
   
 
   -- Mantissa Bits
   -- {N{~le_o[es+Bs]}}
-  not_le_o <= (others => not le_o(es+Bs)); 
-  tmp_o <= not_le_o & le_o(es + Bs) & e_o & DSR_left_out(N-2 downto es);
+  v_not_le_o := (others => not v_le_o(es+Bs)); 
+  v_tmp_o := v_not_le_o & v_le_o(es + Bs) & v_e_o & v_DSR_left_out(N-2 downto es);
   
   
 --  dsr2 : entity work.DSR_right_N_S
@@ -669,35 +765,35 @@ begin
 --    b => r_o,
 --    c => tmp1_o
 --  );
-  tmp1_o <= std_logic_vector(left_shift(unsigned(tmp_o), to_integer(unsigned(ro))));  
+  v_tmp1_o := std_logic_vector(shift_left(unsigned(v_tmp_o), to_integer(unsigned(v_r_o))));  
   
   
   
   -- Extra Sign Bit
   -- If large sign (LS) is true, shifted TMP requires being negated (Line 46), as per the requirement of -ve posit.
 --  tmp1_oN <= std_logic_vector( - signed(tmp1_o)) when ls = '1' else tmp1_o;
-  if ls = '1' then 
-    tmp1_oN <= std_logic_vector( - signed(tmp1_o));
+  if v_ls = '1' then 
+    v_tmp1_oN := std_logic_vector( - signed(v_tmp1_o));
   else
-    tmp1_oN <= tmp1_o;
+    v_tmp1_oN := v_tmp1_o;
   end if;
   
   
   -- Output
-  out_zeros <= (others => '0');
+  v_out_zeros := (others => '0');
 --  out_val <= inf_sig & out_zeros when (inf_sig = '1' or zero_sig = '1') or (DSR_left_out(N-1) = '0') else ls & tmp1_oN(N-1 downto 1);
-    if (inf_sig = '1' or zero_sig = '1') or (DSR_left_out(N-1) = '0') then
-        out_val <= inf_sig & out_zeros;
+    if (v_inf_sig = '1' or v_zero_sig = '1') or (v_DSR_left_out(N-1) = '0') then
+        out_val <= v_inf_sig & v_out_zeros;
     else
-        out_val <= ls & tmp1_oN(N-1 downto 1);
+        out_val <= v_ls & v_tmp1_oN(N-1 downto 1);
     end if;
   
   
   -- inf <= (r_o(Bs-1) and (not r_o(Bs-2))) or (r_o(Bs-2) and (r_o(Bs-3 downto 0) = (Bs-3)'("0"))) or ((not r_o(Bs-1)) and (not r_o(Bs-2)) and (tmp1_oN(N-1 downto 0) = (N-1)'("0"))) or ((not r_o(Bs-1)) and (r_o(Bs-2)) and (tmp1_oN(N-1 downto 0) = (N-1)'("1")));
-  inf <= inf_sig;
+  inf <= v_inf_sig;
   -- zero <= (r_o(Bs-1) and (not r_o(Bs-2)) and (tmp1_oN(N-1 downto 0) = (N-1)'("0"))) or ((not r_o(Bs-1)) and (not r_o(Bs-2)) and (tmp1_oN(N-1 downto 0) = (N-1)'("0")));
-  zero <= zero_sig;
-  done <= start0;
+  zero <= v_zero_sig;
+  done <= v_start0;
   
   
   
