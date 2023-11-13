@@ -35,7 +35,9 @@ entity tb_posit_adder_pipeline is
     generic (
         N_tb : integer := 8;
         Bs_tb : integer := 3; -- log2(N)
-        es_tb : integer := 4
+        es_tb : integer := 4;
+        
+        Pipe_stages_tb : integer := 2      -- between 2 and 3 possible
         
     );
 --  Port ( );
@@ -114,7 +116,9 @@ begin
     generic map (
         N => N_tb,
         Bs => Bs_tb,
-        es => es_tb
+        es => es_tb,
+        
+        Pipe_stages => Pipe_stages_tb
     )
     port map (
         clk => clk_tb,
