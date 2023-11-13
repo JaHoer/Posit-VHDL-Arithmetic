@@ -105,6 +105,7 @@ constant CLOCK_PERIOD : time := 200 ns;
     signal e_o_tb : std_logic_vector(es_tb-1 downto 0);
     signal r_o_tb : std_logic_vector(Bs_tb-1 downto 0);
     signal tmp_o_tb : std_logic_vector(2*N_tb-1 downto 0);
+    signal tmp1_o_tb : std_logic_vector(2*N_tb-1 downto 0);
     signal tmp1_oN_tb : std_logic_vector(2*N_tb-1 downto 0);
 
 begin
@@ -174,6 +175,7 @@ begin
         e_o_o => e_o_tb,
         r_o_o => r_o_tb,
         tmp_o_o => tmp_o_tb,
+        tmp1_o_o => tmp1_o_tb,
         tmp1_oN_o => tmp1_oN_tb
        
     );
@@ -205,6 +207,59 @@ begin
 --        assert out_val_tb = "00000000" report "Should be 00000000";
 --        start_tb <= '0';
         wait for CLOCK_PERIOD;
+        
+                -- Zeile 9325
+        in1_tb <= "01101100";
+        in2_tb <= "00100100";
+        start_tb <= '1';
+        out_val_ref_tb <= "01101100";
+--        wait for CLOCK_PERIOD;
+--        assert done_tb = '1' report "Should be 1";
+--        assert out_val_tb = "01101100" report "Should be 01101100";
+--        wait for CLOCK_PERIOD;
+        
+--        start_tb <= '0';
+        wait for CLOCK_PERIOD;
+        
+        
+        --************************************************************************************
+
+        -- Null * Null
+        in1_tb <= "00000000";
+        in2_tb <= "00000000";
+        out_val_ref_tb <= "00000000";
+        start_tb <= '1';
+--        wait for CLOCK_PERIOD;
+--        assert done_tb = '1' report "Done Should be 1";
+--        assert out_val_tb = "00000000" report "Should be 00000000";
+--        start_tb <= '0';
+        wait for CLOCK_PERIOD;
+        
+        -- Null * Null
+        in1_tb <= "00000000";
+        in2_tb <= "00000000";
+        out_val_ref_tb <= "00000000";
+        start_tb <= '1';
+--        wait for CLOCK_PERIOD;
+--        assert done_tb = '1' report "Done Should be 1";
+--        assert out_val_tb = "00000000" report "Should be 00000000";
+--        start_tb <= '0';
+        wait for CLOCK_PERIOD;
+        
+        -- Null * Null
+        in1_tb <= "00000000";
+        in2_tb <= "00000000";
+        out_val_ref_tb <= "00000000";
+        start_tb <= '1';
+--        wait for CLOCK_PERIOD;
+--        assert done_tb = '1' report "Done Should be 1";
+--        assert out_val_tb = "00000000" report "Should be 00000000";
+--        start_tb <= '0';
+        wait for CLOCK_PERIOD;
+        
+        
+        
+        --**********************************************************
         
         -- Zeile 129
         -- Inf * Null

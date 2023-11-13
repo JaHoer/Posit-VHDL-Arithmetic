@@ -110,6 +110,7 @@ entity posit_adder_pipeline is
     e_o_o : out std_logic_vector(es-1 downto 0);
     r_o_o : out std_logic_vector(Bs-1 downto 0);
     tmp_o_o : out std_logic_vector(2*N-1 downto 0);
+    tmp1_o_o : out std_logic_vector(2*N-1 downto 0);
     tmp1_oN_o : out std_logic_vector(2*N-1 downto 0)
   );
 
@@ -123,6 +124,8 @@ architecture Behavioral of posit_adder_pipeline is
 
   
   signal start0 : std_logic;
+  signal start0_p2 : std_logic;
+  signal start0_p3 : std_logic;
   signal s1 : std_logic;
   signal s2 : std_logic;
   signal zero_tmp1 : std_logic;
@@ -280,6 +283,9 @@ begin
 addition : process (clk)
     
     variable v_start0 : std_logic;
+    variable v_start0_p2 : std_logic;
+    variable v_start0_p3 : std_logic;
+    variable v_start0_p4 : std_logic;
     variable v_s1 : std_logic;
     variable v_s2 : std_logic;
     variable v_zero_tmp1 : std_logic;
@@ -392,18 +398,19 @@ addition : process (clk)
 
 begin
 
+    if rising_edge(clk) then
 
     v_start0 := start;
     v_s1 := in1(N-1);
     v_s2 := in2(N-1);
     v_zero_tmp1 := or_reduce(in1(N-2 downto 0));
     v_zero_tmp2 := or_reduce(in2(N-2 downto 0));
-    v_inf1 := s1 and (not zero_tmp1);
-    v_inf2 := s2 and (not zero_tmp2);
-    v_zero1 := not (s1 or zero_tmp1);
-    v_zero2 := not (s2 or zero_tmp2);
-    v_inf_sig := inf1 or inf2;
-    v_zero_sig := zero1 and zero2;
+    v_inf1 := v_s1 and (not v_zero_tmp1);
+    v_inf2 := v_s2 and (not v_zero_tmp2);
+    v_zero1 := not (v_s1 or v_zero_tmp1);
+    v_zero2 := not (v_s2 or v_zero_tmp2);
+    v_inf_sig := v_inf1 or v_inf2;
+    v_zero_sig := v_zero1 and v_zero2;
 
     
     
@@ -459,6 +466,9 @@ begin
     v_mant2 := mant2;
     
     -- Synchronisation of Variables with Data Extraction
+    start0 <= v_start0;
+    v_start0_p2 := start0;
+    
     zero_tmp1 <= v_zero_tmp1;
     zero_tmp2 <= v_zero_tmp2;
     v_zero_tmp1_p2 := zero_tmp1;
@@ -702,6 +712,9 @@ begin
     v_lr_N_le_p3 := lr_N_le_p2;
    
     
+    start0_p2 <= v_start0_p2;
+    v_start0_p3 := start0_p2;
+    
     op_p2 <= v_op_p2;
     ls_p2 <= v_ls_p2;
     v_op_p3 := op_p2;
@@ -808,6 +821,9 @@ begin
     v_mant_ovf_p4 := mant_ovf;
     v_add_m_p4 := add_m;
     v_lr_N_le_p4 := lr_N_le_p3;
+    
+    start0_p3 <= v_start0_p3;
+    v_start0_p4 := start0_p3;
 
     ls_p3 <= v_ls_p3;
     v_ls_p4 := ls_p3;
@@ -833,7 +849,7 @@ begin
 --      b => left_shift_val,
 --      c => DSR_left_out_t
 --    );
-    v_DSR_left_out_t := std_logic_vector(shift_left(unsigned(v_add_m(N downto 1)), to_integer(unsigned(v_left_shift_val))));    
+    v_DSR_left_out_t := std_logic_vector(shift_left(unsigned(v_add_m_p4(N downto 1)), to_integer(unsigned(v_left_shift_val))));    
     
   
   -- Extra Left Shift
@@ -879,7 +895,7 @@ begin
 --    );
 
     -- Create Vector with Mant_ovf as lowest bit
-    v_mant_ovf_extended := (0 => v_mant_ovf(1), others => '0'); 
+    v_mant_ovf_extended := (0 => v_mant_ovf_p4(1), others => '0'); 
 
     v_le_o := std_logic_vector(unsigned(v_le_o_tmp) + unsigned(std_logic_vector(v_mant_ovf_extended)));
 
@@ -932,7 +948,7 @@ begin
 --    b => r_o,
 --    c => tmp1_o
 --  );
-  v_tmp1_o := std_logic_vector(shift_left(unsigned(v_tmp_o), to_integer(unsigned(v_r_o))));  
+  v_tmp1_o := std_logic_vector(shift_right(unsigned(v_tmp_o), to_integer(unsigned(v_r_o))));  
   
   
   
@@ -950,74 +966,75 @@ begin
   v_out_zeros := (others => '0');
 --  out_val <= inf_sig & out_zeros when (inf_sig = '1' or zero_sig = '1') or (DSR_left_out(N-1) = '0') else ls & tmp1_oN(N-1 downto 1);
     if (v_inf_sig_p4 = '1' or v_zero_sig_p4 = '1') or (v_DSR_left_out(N-1) = '0') then
-        out_val <= v_inf_sig & v_out_zeros;
+        out_val <= v_inf_sig_p4 & v_out_zeros;
     else
         out_val <= v_ls_p4 & v_tmp1_oN(N-1 downto 1);
     end if;
   
   
   -- inf <= (r_o(Bs-1) and (not r_o(Bs-2))) or (r_o(Bs-2) and (r_o(Bs-3 downto 0) = (Bs-3)'("0"))) or ((not r_o(Bs-1)) and (not r_o(Bs-2)) and (tmp1_oN(N-1 downto 0) = (N-1)'("0"))) or ((not r_o(Bs-1)) and (r_o(Bs-2)) and (tmp1_oN(N-1 downto 0) = (N-1)'("1")));
-  inf <= v_inf_sig;
+  inf <= v_inf_sig_p4;
   -- zero <= (r_o(Bs-1) and (not r_o(Bs-2)) and (tmp1_oN(N-1 downto 0) = (N-1)'("0"))) or ((not r_o(Bs-1)) and (not r_o(Bs-2)) and (tmp1_oN(N-1 downto 0) = (N-1)'("0")));
-  zero <= v_zero_sig;
-  done <= v_start0;
+  zero <= v_zero_sig_p4;
+  done <= v_start0_p4;
   
   
   
     -- Debug Outputs
     
-    inf1_o <= inf1;
-    inf2_o <= inf2;
-    zero1_o <= zero1;
-    zero2_o <= zero2;
+    inf1_o <= v_inf1;
+    inf2_o <= v_inf2;
+    zero1_o <= v_zero1;
+    zero2_o <= v_zero2;
     
-    rc1_o <= rc1;
-    rc2_o <= rc2;
-    regime1_o <= regime1;
-    regime2_o <= regime2;
+    rc1_o <= v_rc1;
+    rc2_o <= v_rc2;
+    regime1_o <= v_regime1;
+    regime2_o <= v_regime2;
     Lshift1_o <= Lshift1;
     Lshift2_o <= Lshift2;
-    e1_o <= e1;
-    e2_o <= e2;
-    mant1_o <= mant1;
-    mant2_o <= mant2;
+    e1_o <= v_e1;
+    e2_o <= v_e2;
+    mant1_o <= v_mant1;
+    mant2_o <= v_mant2;
     
-    in1_gt_in2_o <= in1_gt_in2;
-    r_diff11_o <= r_diff11;
-    r_diff12_o <= r_diff12;
-    r_diff2_o <= r_diff2;
-    r_diff_o <= r_diff;
-    r_diff_shift_o <= r_diff_shift;
-    diff_o <= diff;
-    diff_eig_o <= diff_eig;
-    exp_diff_o <= exp_diff;
+    in1_gt_in2_o <= v_in1_gt_in2;
+    r_diff11_o <= v_r_diff11;
+    r_diff12_o <= v_r_diff12;
+    r_diff2_o <= v_r_diff2;
+    r_diff_o <= v_r_diff;
+    r_diff_shift_o <= v_r_diff_shift;
+    diff_o <= v_diff;
+    diff_eig_o <= v_diff_eig;
+    exp_diff_o <= v_exp_diff;
     
-    DSR_right_in_o <= DSR_right_in;
-    DSR_right_out_o <= DSR_right_out;
+    DSR_right_in_o <= v_DSR_right_in;
+    DSR_right_out_o <= v_DSR_right_out;
     
-    add_m_in1_o <= add_m_in1;
-    add_m1_o <= add_m1;
-    add_m2_o <= add_m2;
-    add_m_o <= add_m;
-    mant_ovf_o <= mant_ovf;
+    add_m_in1_o <= v_add_m_in1;
+    add_m1_o <= v_add_m1;
+    add_m2_o <= v_add_m2;
+    add_m_o <= v_add_m;
+    mant_ovf_o <= v_mant_ovf;
     
-    left_shift_val_o <= left_shift_val;
-    left_shift_extended_o <= left_shift_extended;
+    left_shift_val_o <= v_left_shift_val;
+    left_shift_extended_o <= v_left_shift_extended;
     
-    DSR_left_out_t_o <= DSR_left_out_t;
-    DSR_left_out_o <= DSR_left_out;
-    lr_N_o <= lr_N;
-    le_o_tmp_o <= le_o_tmp;
-    le_o_o <= le_o;
-    le_oN_o <= le_oN;
+    DSR_left_out_t_o <= v_DSR_left_out_t;
+    DSR_left_out_o <= v_DSR_left_out;
+    lr_N_o <= v_lr_N;
+    le_o_tmp_o <= v_le_o_tmp;
+    le_o_o <= v_le_o;
+    le_oN_o <= v_le_oN;
     
-    e_o_o <= e_o;
-    r_o_o <= r_o;
+    e_o_o <= v_e_o;
+    r_o_o <= v_r_o;
     
-    tmp_o_o <= tmp_o;
-    tmp1_oN_o <= tmp1_oN;
+    tmp_o_o <= v_tmp_o;
+    tmp1_o_o <= v_tmp1_o;
+    tmp1_oN_o <= v_tmp1_oN;
   
-  
+    end if;
 end process;  
   
 end Behavioral;
