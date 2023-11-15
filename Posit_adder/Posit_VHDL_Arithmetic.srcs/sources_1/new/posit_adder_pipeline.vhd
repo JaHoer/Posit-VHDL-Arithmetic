@@ -44,9 +44,9 @@ use ieee.std_logic_misc.all;
 entity posit_adder_pipeline is
 
   generic (
-    N : integer := 16;
-    Bs : integer := 4;
-    es : integer := 2;
+    N : integer := 8;
+    Bs : integer := 3;
+    es : integer := 4;
     
     Pipe_stages : integer := 3      -- between 2 and 3 possible
   );
@@ -238,7 +238,7 @@ begin
 
 
       -- Data Extraction
-    uut_de1 : data_extract
+    uut_de1 : entity work.data_extract
     generic map (
       N => N,
       Bs => Bs,
@@ -253,7 +253,7 @@ begin
       mant => mant1
     );
 
-    uut_de2 : data_extract
+    uut_de2 : entity work.data_extract
     generic map (
       N => N,
       Bs => Bs,
@@ -272,7 +272,8 @@ begin
     
     l2 : entity work.LOD_N
     generic map (
-      N => N
+      N => N,
+      log2N => Bs
     )
     port map (
       input_vector => LOD_in,
@@ -569,7 +570,7 @@ begin
                     end if;
 
                     -- exponent difference
-                    v_r_diff_le := v_r_diff & v_le;
+                    v_r_diff_le := std_logic_vector(resize(unsigned(v_r_diff & v_le), N));
                     v_se_extended := std_logic_vector(resize(unsigned(v_se), N));
 
                     v_diff := std_logic_vector(unsigned('0' & v_r_diff_le) - unsigned('0' & v_se_extended));
@@ -1119,7 +1120,7 @@ begin
                     end if;
 
                     -- exponent difference
-                    v_r_diff_le := v_r_diff & v_le;
+                    v_r_diff_le := std_logic_vector(resize(unsigned(v_r_diff & v_le), N));
                     v_se_extended := std_logic_vector(resize(unsigned(v_se), N));
 
                     v_diff := std_logic_vector(unsigned('0' & v_r_diff_le) - unsigned('0' & v_se_extended));
@@ -1674,7 +1675,7 @@ begin
                     end if;
 
                     -- exponent difference
-                    v_r_diff_le := v_r_diff & v_le;
+                    v_r_diff_le := std_logic_vector(resize(unsigned(v_r_diff & v_le), N));
                     v_se_extended := std_logic_vector(resize(unsigned(v_se), N));
 
                     v_diff := std_logic_vector(unsigned('0' & v_r_diff_le) - unsigned('0' & v_se_extended));
@@ -2224,7 +2225,7 @@ begin
                     end if;
 
                     -- exponent difference
-                    v_r_diff_le := v_r_diff & v_le;
+                    v_r_diff_le := std_logic_vector(resize(unsigned(v_r_diff & v_le), N));
                     v_se_extended := std_logic_vector(resize(unsigned(v_se), N));
 
                     v_diff := std_logic_vector(unsigned('0' & v_r_diff_le) - unsigned('0' & v_se_extended));

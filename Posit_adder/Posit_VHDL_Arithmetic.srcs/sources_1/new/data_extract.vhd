@@ -35,9 +35,9 @@ entity data_extract is
 
 -- ChatGPT
   generic (
-    N : integer := 16;
-    Bs : integer := 4;      -- log2(N)
-    es : integer := 2
+    N : integer := 8;
+    Bs : integer := 3;      -- log2(N)
+    es : integer := 4
   );
   port (
     in_val : in std_logic_vector(N-1 downto 0);
@@ -116,8 +116,14 @@ begin
         
     -- from PACoGen    
     xinst_k : entity work.LOD_N
-        generic map (N => N, log2N => Bs)
-        port map (input_vector => xin_r(N-2 downto 0) & (rc_tmp xor '0') , output_vector => k);
+        generic map (
+            N => N, 
+            log2N => Bs
+        )
+        port map (
+            input_vector => xin_r(N-2 downto 0) & (rc_tmp xor '0') , 
+            output_vector => k
+        );
 
     --k_o <= k;
     

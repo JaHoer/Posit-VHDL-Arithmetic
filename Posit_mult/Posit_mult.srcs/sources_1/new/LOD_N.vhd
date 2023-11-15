@@ -44,7 +44,7 @@ entity LOD_N is
     --clk : std_logic;
     input_vector : in std_logic_vector(N-1 downto 0);
     --output_vector : out std_logic_vector(natural(log2(real(N)))-1 downto 0)
-    output_vector : out std_logic_vector(3-1 downto 0)
+    output_vector : out std_logic_vector(log2N-1 downto 0)
 
   );
 
