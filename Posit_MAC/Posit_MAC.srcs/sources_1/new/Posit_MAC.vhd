@@ -50,6 +50,24 @@ end Posit_MAC;
 
 architecture Behavioral of Posit_MAC is
 
+    signal operand_A : std_logic_vector(N-2 downto 0);
+    signal sign_A : STD_LOGIC;
+    signal exp_A : STD_LOGIC_VECTOR (es-1 downto 0);
+    signal mant_A : STD_LOGIC_VECTOR (N-es downto 0);
+    signal exp_eff_A : STD_LOGIC_VECTOR (Bs+es downto 0);
+    
+    signal operand_B : std_logic_vector(N-2 downto 0);
+    signal sign_B : STD_LOGIC;
+    signal exp_B : STD_LOGIC_VECTOR (es-1 downto 0);
+    signal mant_B : STD_LOGIC_VECTOR (N-es downto 0);
+    signal exp_eff_B : STD_LOGIC_VECTOR (Bs+es downto 0);
+    
+    signal operand_C : std_logic_vector(N-2 downto 0);
+    signal sign_C : STD_LOGIC;
+    signal exp_C : STD_LOGIC_VECTOR (es-1 downto 0);
+    signal mant_C : STD_LOGIC_VECTOR (N-es downto 0);
+    signal exp_eff_C : STD_LOGIC_VECTOR (Bs+es downto 0);
+
 begin
     
     comp_ext_A : entity work.comp_extraction
@@ -60,11 +78,11 @@ begin
     )
     port map (
         clk => clk,
-        operand => ,
-        sign => ,
-        exp =>,
-        exp_eff => ,
-        mant =>
+        operand => operand_A,
+        sign => sign_A,
+        exp => exp_A,
+        mant => mant_A,
+        exp_eff => exp_eff_A
     );
     
     comp_ext_B : entity work.comp_extraction
@@ -75,11 +93,11 @@ begin
     )
     port map (
         clk => clk,
-        operand => ,
-        sign => ,
-        exp =>,
-        exp_eff => ,
-        mant =>
+        operand => operand_B,
+        sign => sign_B,
+        exp => exp_B,
+        mant => mant_B,
+        exp_eff => exp_eff_B
     );
     
     comp_ext_C : entity work.comp_extraction
@@ -90,11 +108,11 @@ begin
     )
     port map (
         clk => clk,
-        operand => ,
-        sign => ,
-        exp =>,
-        exp_eff => ,
-        mant =>
+        operand => operand_C,
+        sign => sign_C,
+        exp => exp_C,
+        mant => mant_C,
+        exp_eff => exp_eff_C
     );
     
 
@@ -126,7 +144,7 @@ begin
             
             
             
-            result <= result;
+            result <= v_result;
             
         end if;
     end process;

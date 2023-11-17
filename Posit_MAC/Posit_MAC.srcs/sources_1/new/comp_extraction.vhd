@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
+-- Company: FAU
+-- Engineer: Jan Hoertig
 -- 
 -- Create Date: 15.11.2023 11:30:54
 -- Design Name: 
@@ -42,11 +42,11 @@ entity comp_extraction is
 
     Port ( 
         clk : in STD_LOGIC;
-        operand : in STD_LOGIC_VECTOR (0 downto 0);
+        operand : in STD_LOGIC_VECTOR (N-2 downto 0);
         sign : in STD_LOGIC;
-        exp : out STD_LOGIC_VECTOR (0 downto 0);
-        mant : out STD_LOGIC_VECTOR (0 downto 0);
-        exp_eff : out STD_LOGIC_VECTOR (0 downto 0)
+        exp : out STD_LOGIC_VECTOR (es-1 downto 0);
+        mant : out STD_LOGIC_VECTOR (N-es downto 0);
+        exp_eff : out STD_LOGIC_VECTOR (Bs+es downto 0)
     );
            
 end comp_extraction;
