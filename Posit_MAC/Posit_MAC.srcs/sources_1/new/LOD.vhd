@@ -43,8 +43,8 @@ entity LOD is
     );
     Port (
         clk : in std_logic;
-        operand : in STD_LOGIC_VECTOR (N-2 downto 0);
-        cone : out STD_LOGIC_VECTOR (Bs downto 0);
+        operand : in STD_LOGIC_VECTOR (N-1 downto 0);
+        cone : out STD_LOGIC_VECTOR (Bs-1 downto 0);
         -- TODO: Don't know what vo does !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         vo : out STD_LOGIC
     );
@@ -64,7 +64,7 @@ begin
 
             found := '0';
             -- itariere durch Vector und breche bei erster 1 ab
-            fl: for i in N-2 downto 0 loop
+            fl: for i in N-1 downto 0 loop
         
                 if(operand(i) = '1' and found = '0') then
                     out_var := std_logic_vector(to_unsigned(N-1 - i,Bs));

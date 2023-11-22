@@ -43,8 +43,8 @@ entity LZD is
     );
     Port (
         clk : in std_logic; 
-        operand : in STD_LOGIC_VECTOR (N-2 downto 0);
-        czip : out STD_LOGIC_VECTOR (Bs downto 0);
+        operand : in STD_LOGIC_VECTOR (N-1 downto 0);
+        czip : out STD_LOGIC_VECTOR (Bs-1 downto 0);
         -- TODO: don't know what vz does !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         vz : out STD_LOGIC
     );
@@ -63,7 +63,7 @@ begin
 
             found := '0';
             -- itariere durch Vector und breche bei erster 1 ab
-            fl: for i in N-2 downto 0 loop
+            fl: for i in N-1 downto 0 loop
         
                 if(operand(i) = '0' and found = '0') then
                     out_var := std_logic_vector(to_unsigned(N-1 - i,Bs));
@@ -80,7 +80,7 @@ begin
                 out_var := std_logic_vector(to_unsigned(N-1,Bs));
             end if;
         
-            czip <= out_var; 
+            czip <= out_var;     
         
         end if;
   
