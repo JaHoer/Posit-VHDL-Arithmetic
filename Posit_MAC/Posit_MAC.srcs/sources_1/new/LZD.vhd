@@ -8,7 +8,7 @@
 -- Project Name: 
 -- Target Devices: 
 -- Tool Versions: 
--- Description: 
+-- Description: counts the number of leading Zeros
 -- 
 -- Dependencies: 
 -- 
@@ -43,9 +43,8 @@ entity LZD is
     );
     Port (
         clk : in std_logic; 
-        operand : in STD_LOGIC_VECTOR (N-1 downto 0);
+        operand : in STD_LOGIC_VECTOR (N-2 downto 0);
         czip : out STD_LOGIC_VECTOR (Bs-1 downto 0);
-        -- TODO: don't know what vz does !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         vz : out STD_LOGIC
     );
 end LZD;
@@ -55,20 +54,20 @@ architecture Behavioral of LZD is
 begin
     process(clk)
   
-        variable found : std_logic := '0';
+        variable found_one : std_logic := '0';
         variable out_var : std_logic_vector(Bs-1 downto 0);
     
     begin
         if rising_edge(clk) then
 
-            found := '0';
+            found_one := '0';
             -- itariere durch Vector und breche bei erster 1 ab
-            fl: for i in N-1 downto 0 loop
+            fl: for i in N-2 downto 0 loop
         
-                if(operand(i) = '0' and found = '0') then
-                    out_var := std_logic_vector(to_unsigned(N-1 - i,Bs));
+                if(operand(i) = '1' and found_one = '0') then
+                    out_var := std_logic_vector(to_unsigned(N-2 - i,Bs));
                     --                                          ^-- berechne die Anzahl der 0 vor der ersten 1
-                    found := '1';
+                    found_one := '1';
             
                 end if;
     
@@ -76,10 +75,11 @@ begin
         
         
             -- Falls keine Null gefunden wurde -> laenge des Regimes = ganze Laenge
-            if found = '0' then
+            if found_one = '0' then
                 out_var := std_logic_vector(to_unsigned(N-1,Bs));
             end if;
         
+            vz <= found_one;
             czip <= out_var;     
         
         end if;

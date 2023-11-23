@@ -54,13 +54,16 @@ end comp_extraction;
 
 architecture Behavioral of comp_extraction is
 
-    signal operand_LOD : std_logic_vector(N-1 downto 0);
+    signal operand_LOD : std_logic_vector(N-2 downto 0);
     signal cone : std_logic_vector(Bs-1 downto 0);
     signal vo : std_logic;
     
-    signal operand_LZD : std_logic_vector(N-1 downto 0);
+    signal operand_LZD : std_logic_vector(N-2 downto 0);
     signal czip : std_logic_vector(Bs-1 downto 0);
     signal vz : std_logic;
+    
+
+    
 
 begin
     
@@ -76,7 +79,7 @@ begin
             cone => cone,
             vo => vo
         );
-        
+       
     comp_LZD : entity work.LZD
         generic map (
             N => N,
@@ -89,39 +92,32 @@ begin
             czip => czip,
             vz => vz
         );    
-    
-    
+
+
     
     comp_extraction : process (clk)
         
-        --variable v_operand : std_logic_vector(N-2 downto 0);
-        variable v_operand_neg : std_logic_vector(N-1 downto 0);
-        
-        --variable v_czip : std_logic_vector(Bs-1 downto 0);
-        --variable v_vz : std_logic;
-        --variable v_cone : std_logic_vector(Bs-1 downto 0);
-        --variable v_vo : std_logic;
+        variable v_operand_neg : std_logic_vector(N-2 downto 0);
         variable v_shift_rg_zip : std_logic_vector(Bs-1 downto 0);
         variable v_shift_rg_one : std_logic_vector(Bs-1 downto 0);
         variable v_shift_rg : std_logic_vector(Bs-1 downto 0);
         variable v_rg_zip : std_logic_vector(Bs downto 0);
         variable v_rg_one : std_logic_vector(Bs downto 0);
         variable v_rg : std_logic_vector(Bs downto 0);
-        variable v_op_no_rg : std_logic_vector(N-1 downto 0);
+        variable v_op_no_rg : std_logic_vector(N-2 downto 0);
         variable v_exp : std_logic_vector(es-1 downto 0);
         variable v_zeros : std_logic_vector(es-1 downto 0);
-        
-        
-        
+
     begin
         if rising_edge(clk) then
         
             if sign = '1' then
-                v_operand_neg := (not ("0" & operand));
+                v_operand_neg := (not operand);
             else
-                v_operand_neg := "0" & operand;
+                v_operand_neg := operand;
             end if;
             
+--### Entity call ### -------------------------------------------
             operand_LOD <= v_operand_neg;
             operand_LZD <= v_operand_neg;
             

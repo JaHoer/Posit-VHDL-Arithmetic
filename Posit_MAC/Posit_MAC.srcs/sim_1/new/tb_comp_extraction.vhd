@@ -88,7 +88,13 @@ begin
     
     begin
     
-    
+        wait for CLOCK_PERIOD;
+        
+        operand_tb <= "0001011";
+        sign_tb <= '0';
+        
+        wait for CLOCK_PERIOD;
+        
     
     
     end process;
