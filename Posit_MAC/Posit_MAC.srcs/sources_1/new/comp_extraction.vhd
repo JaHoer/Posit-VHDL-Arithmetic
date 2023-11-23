@@ -63,37 +63,61 @@ architecture Behavioral of comp_extraction is
     signal vz : std_logic;
     
 
+    signal operand_neg : std_logic_vector(N-2 downto 0);
+--    signal shift_rg_zip : std_logic_vector(Bs-1 downto 0);
+--    signal shift_rg_one : std_logic_vector(Bs-1 downto 0);
+--    signal shift_rg : std_logic_vector(Bs-1 downto 0);
+--    signal rg_zip : std_logic_vector(Bs downto 0);
+--    signal rg_one : std_logic_vector(Bs downto 0);
+--    signal rg : std_logic_vector(Bs downto 0);
+--    signal op_no_rg : std_logic_vector(N-2 downto 0);
+--    signal exp_sig : std_logic_vector(es-1 downto 0);
+--    signal zeros : std_logic_vector(es-1 downto 0);
     
 
 begin
     
-    comp_LOD : entity work.LOD
+    comp_LOD : entity work.LOD_comb
         generic map (
             N => N,
             Bs => Bs,      -- log2(N)
             es => es
         )
         port map (
-            clk => clk,
+--            clk => clk,
             operand => operand_LOD,
             cone => cone,
             vo => vo
         );
        
-    comp_LZD : entity work.LZD
+    comp_LZD : entity work.LZD_comb
         generic map (
             N => N,
             Bs => Bs,      -- log2(N)
             es => es
         )
         port map (
-            clk => clk,
+--            clk => clk,
             operand => operand_LZD,
             czip => czip,
             vz => vz
         );    
 
 
+
+    operand_neg <= std_logic_vector(- signed(operand)) when sign = '1' else operand;
+
+--    if sign = '1' then
+--                v_operand_neg := (not operand);
+--            else
+--                v_operand_neg := operand;
+--            end if;
+            
+            
+--### Entity call ### -------------------------------------------
+            operand_LOD <= operand_neg;
+            operand_LZD <= operand_neg;
+    
     
     comp_extraction : process (clk)
         
@@ -111,15 +135,7 @@ begin
     begin
         if rising_edge(clk) then
         
-            if sign = '1' then
-                v_operand_neg := (not operand);
-            else
-                v_operand_neg := operand;
-            end if;
             
---### Entity call ### -------------------------------------------
-            operand_LOD <= v_operand_neg;
-            operand_LZD <= v_operand_neg;
             
             if vz = '1' then            
                 v_shift_rg_zip := std_logic_vector(unsigned(czip) + 1);
@@ -133,7 +149,7 @@ begin
                 v_shift_rg_one := cone;
             end if;
             
-            v_rg_zip := std_logic_vector(resize(unsigned(not czip), Bs+1));
+            v_rg_zip := std_logic_vector(resize(unsigned(std_logic_vector(- signed(czip))), Bs+1));
             v_rg_one := std_logic_vector(resize(unsigned(cone) - 1, Bs+1));
             
             
