@@ -35,7 +35,7 @@ entity tb_comp_extraction is
     generic (
         N_tb : integer := 8;
         Bs_tb : integer := 3; -- log2(N)
-        es_tb : integer := 4
+        es_tb : integer := 2
         
         -- Pipe_stages_tb : integer := 2      -- between 2 and 3 possible
 
@@ -53,6 +53,21 @@ architecture Behavioral of tb_comp_extraction is
     signal exp_tb : STD_LOGIC_VECTOR (es_tb-1 downto 0);
     signal mant_tb : STD_LOGIC_VECTOR (N_tb-es_tb-1 downto 0);
     signal exp_eff_tb : STD_LOGIC_VECTOR (Bs_tb+es_tb downto 0);
+    
+    
+    -- Debug
+    signal operand_neg_tb : std_logic_vector(N_tb-2 downto 0);
+    signal cone_tb : std_logic_vector(Bs_tb-1 downto 0);
+    signal vo_tb : std_logic;
+    signal czip_tb : std_logic_vector(Bs_tb-1 downto 0);
+    signal vz_tb : std_logic;
+    signal shift_rg_zip_tb : std_logic_vector(Bs_tb-1 downto 0);
+    signal shift_rg_one_tb : std_logic_vector(Bs_tb-1 downto 0);
+    signal shift_rg_tb : std_logic_vector(Bs_tb-1 downto 0);
+    signal rg_zip_tb : std_logic_vector(Bs_tb downto 0);
+    signal rg_one_tb : std_logic_vector(Bs_tb downto 0);
+    signal rg_tb : std_logic_vector(Bs_tb downto 0);
+    signal op_no_rg_tb : std_logic_vector(N_tb-2 downto 0);    
 
 begin
 
@@ -70,7 +85,20 @@ begin
         sign => sign_tb,
         exp => exp_tb,
         mant => mant_tb,
-        exp_eff => exp_eff_tb
+        exp_eff => exp_eff_tb,
+        
+        operand_neg_o => operand_neg_tb,
+        cone_o => cone_tb,
+        vo_o => vo_tb,
+        czip_o => czip_tb,
+        vz_o => vz_tb,
+        shift_rg_zip_o => shift_rg_zip_tb,
+        shift_rg_one_o => shift_rg_one_tb,
+        shift_rg_o => shift_rg_tb,
+        rg_zip_o => rg_zip_tb,
+        rg_one_o => rg_one_tb,
+        rg_o => rg_tb,
+        op_no_rg_o => op_no_rg_tb
     );
     
     
