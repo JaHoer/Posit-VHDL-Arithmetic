@@ -51,20 +51,32 @@ begin
   
         variable found_one : std_logic := '0';
         variable out_var : std_logic_vector(Bs-1 downto 0);
+        variable counter : integer := N-1;
     
     begin
 
         found_one := '0';
+        counter := N-2;
         -- itariere durch Vector und breche bei erster 1 ab
         fl: for i in N-2 downto 0 loop
         
             if(operand(i) = '1' and found_one = '0') then
-                out_var := std_logic_vector(to_unsigned(N-2 - i,Bs));
+                out_var := std_logic_vector(to_unsigned(N-2 - counter,Bs));
                 --                                          ^-- berechne die Anzahl der 0 vor der ersten 1
                 found_one := '1';
+                counter := counter;
+                
+            elsif found_one = '1' then
+                out_var := std_logic_vector(to_unsigned(N-2 - counter,Bs));
+                found_one := '1';    
+                counter := counter;
+                
+            else
+                out_var := (others => '0');
+                found_one := '0';  
+                counter := counter - 1;
             end if;
         end loop fl;
-        
         
         -- Falls keine Null gefunden wurde -> laenge des Regimes = ganze Laenge
         if found_one = '0' then
