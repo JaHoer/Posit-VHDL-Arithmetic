@@ -34,9 +34,9 @@ use IEEE.STD_LOGIC_1164.ALL;
 entity PE is
     generic(
         -- Posit Values
-        N_tb : integer := 8;
-        Bs_tb : integer := 3; -- log2(N)
-        es_tb : integer := 2
+        N : integer := 8;
+        Bs : integer := 3; -- log2(N)
+        es : integer := 2
     );
     Port ( 
         clk : in std_logic;
