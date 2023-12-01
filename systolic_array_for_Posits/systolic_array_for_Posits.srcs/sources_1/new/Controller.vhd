@@ -38,7 +38,9 @@ entity Controller is
         Bs : integer := 3; -- log2(N)
         es : integer := 2
     );
---  Port ( );
+    Port (
+        clk : in std_logic
+    );
 end Controller;
 
 architecture Behavioral of Controller is
