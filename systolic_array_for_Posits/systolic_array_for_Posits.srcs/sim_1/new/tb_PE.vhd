@@ -91,6 +91,28 @@ begin
     begin
     
         wait for CLOCK_PERIOD;
+        w_en_tb <= '1';
+        weight_in_tb <= "00001111";
+        psum_in_tb <= "00000000";
+        
+        wait for CLOCK_PERIOD;
+        w_en_tb <= '1';
+        weight_in_tb <= "00110011";
+        
+        wait for CLOCK_PERIOD;
+        input_in_tb <= "00001100";
+        psum_in_tb <= "00000000";
+        
+        wait for CLOCK_PERIOD;
+        input_in_tb <= "00001100";
+        psum_in_tb <= "00001000";
+        
+        wait for CLOCK_PERIOD;
+        input_in_tb <= "00001010";
+        psum_in_tb <= "00111100";
+        
+        
+        
         
         
         

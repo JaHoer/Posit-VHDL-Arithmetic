@@ -65,13 +65,9 @@ architecture Behavioral of PE is
     
 
 begin
-    
     psum_old <= psum_in;
     input <= input_in;
     weight <= weight_in;
-    
-    input_out <= input;
-    weight_out <= weight;
     
 
     calc : process (clk)
@@ -79,8 +75,8 @@ begin
     begin
         if rising_edge(clk) then
             if w_en = '1' then
-                input_out <= input_in;
-                weight_out <= weight_in;
+                input_out <= input;
+                weight_out <= weight;
                 
                 
                 -- ### TODO: here Posit operations ###
