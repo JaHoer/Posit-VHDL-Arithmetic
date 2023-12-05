@@ -44,9 +44,13 @@ entity systolic_array is
         
         -- Mem Size
         -- depth of shift register
-        mem_depth : integer := 8;
+        mem_depth : integer := 4;
         -- number of parallel shift register
-        mem_width : integer := 8
+        -- doubles as systolic array dimentions
+        mem_width : integer := 4
+        
+        -- generates an array_size^2 PEs
+        --array_size : integer := 4
         
         
     );
@@ -56,6 +60,24 @@ entity systolic_array is
 end systolic_array;
 
 architecture Behavioral of systolic_array is
+
+    type posit_array is array (mem_width-1 downto 0)
+        of std_logic_vector(N-1 downto 0);
+        
+    type outer_array is array (mem_width downto 0)
+        of posit_array;
+        
+    signal weight_signal_array : outer_array;
+    
+    signal input_signal_array : outer_array;
+    
+    signal output_signal_array : outer_array;
+    
+    
+    
+
+
+
 
     -- PE signals
     signal w_en_PE : std_logic;
@@ -69,20 +91,41 @@ architecture Behavioral of systolic_array is
     -- input_mem signals
     signal rst_input : std_logic;
     signal w_en_input : std_logic;
-    signal input_vektor_input : std_logic_vector(input_width-1 downto 0);
-    signal output_vector_input : std_logic_vector(output_width-1 downto 0);
+    signal in_vektor_input : std_logic_vector(input_width-1 downto 0);
+    signal out_vector_input : std_logic_vector(output_width-1 downto 0);
     
     -- weight_mem signals
     signal rst_weight : std_logic;
     signal w_en_weight : std_logic;
-    signal input_vektor_weight : std_logic_vector(input_width-1 downto 0);
-    signal output_vector_weight : std_logic_vector(output_width-1 downto 0);
+    signal in_vektor_weight : std_logic_vector(input_width-1 downto 0);
+    signal out_vector_weight : std_logic_vector(output_width-1 downto 0);
     
     -- output_mem signals
     signal rst_output : std_logic;
     signal w_en_output : std_logic;
-    signal input_vektor_output : std_logic_vector(input_width-1 downto 0);
-    signal output_vector_output : std_logic_vector(output_width-1 downto 0);
+    signal in_vektor_output : std_logic_vector(input_width-1 downto 0);
+    signal out_vector_output : std_logic_vector(output_width-1 downto 0);
+
+
+    
+--    component PE
+--    generic(
+--        N : integer;
+--        Bs : integer;
+--        es : integer
+--    );
+--    port(
+--        clk : in std_logic;
+--        w_en : in std_logic;
+--        weight_in : in STD_LOGIC_VECTOR (N-1 downto 0);
+--        input_in : in STD_LOGIC_VECTOR (N-1 downto 0);
+--        psum_in : in STD_LOGIC_VECTOR (N-1 downto 0);
+--        --instr_in : in STD_LOGIC_VECTOR (N-1 downto 0);
+--        weight_out : out STD_LOGIC_VECTOR (N-1 downto 0);
+--        input_out : out STD_LOGIC_VECTOR (N-1 downto 0);
+--        psum_out : out STD_LOGIC_VECTOR (N-1 downto 0)
+--    );
+--    end component PE;
 
 begin
 
@@ -94,23 +137,6 @@ begin
     )
     port map(
         clk => clk
-    );
-    
-    PE : entity work.PE
-    generic map (
-        N => N,
-        Bs => Bs,
-        es => es
-    )
-    port map(
-        clk => clk,
-        w_en => w_en_PE,
-        weight_in => weight_in_PE,
-        input_in => input_in_PE,
-        psum_in => psum_in_PE,
-        weight_out => weight_out_PE,
-        input_out => input_out_PE,
-        psum_out => psum_out_PE
     );
     
     input_mem : entity work.input_mem
@@ -127,8 +153,8 @@ begin
         clk => clk,
         rst => rst_input,
         w_en => w_en_input,
-        input_vektor => input_vektor_input,
-        output_vector => output_vector_input
+        input_vektor => in_vektor_input,
+        output_vector => out_vector_input
     );
     
     weight_mem : entity work.weight_mem
@@ -145,8 +171,8 @@ begin
         clk => clk,
         rst => rst_weight,
         w_en => w_en_weight,
-        input_vektor => input_vektor_weight,
-        output_vector => output_vector_weight
+        input_vektor => in_vektor_weight,
+        output_vector => out_vector_weight
     );
     
     output_mem : entity work.output_mem
@@ -163,10 +189,105 @@ begin
         clk => clk,
         rst => rst_output,
         w_en => w_en_output,
-        input_vektor => input_vektor_output,
-        output_vector => output_vector_output
+        input_vektor => in_vektor_output,
+        output_vector => out_vector_output
     );
+    
+    
+    
+    
+    -- fill first line of signal_arrays
+    initialize_loop : for k in mem_width-1 downto 0 generate
+        weight_signal_array(mem_width)(k) <= out_vector_weight((k+1)*N-1 downto k*N);
+        input_signal_array (mem_width)(k) <= out_vector_input((k+1)*N-1 downto k*N);
+        output_signal_array(0)(k) <= in_vektor_output((k+1)*N-1 downto k*N);
+        output_signal_array(mem_width)(k) <= (others => '0');
+        
+    end generate;   
+    
+    
+    
+    --  x dim1 0 1 - - - - size 
+    --  dim 2
+    --  0
+    --  1
+    --  -
+    --  -
+    --  -
+    --  size
+    
+    dim2 : for i in mem_width-1 downto 0 generate
+        dim1 : for j in mem_width-1 downto 0 generate
+        
+            PE_entity : entity work.PE
+                    generic map (
+                        N => N,
+                        Bs => Bs,
+                        es => es
+                    )
+                    port map(
+                        clk => clk,
+                        w_en => w_en_PE,
+                        weight_in => weight_signal_array(i+1)(j),
+                        input_in => input_signal_array(j+1)(i),
+                                                   --   ^-- swapped Indices
+                        psum_in => output_signal_array(i+1)(j),
+                        weight_out => weight_signal_array(i)(j),
+                        input_out => input_signal_array(j)(i),
+                                                    --   ^-- swapped Indices
+                        psum_out => output_signal_array(i)(j)
+                    );
+        
+        
+            -- first row -> connected to Weight_mem
+--            first : if i = array_size-1 generate
+--                input_connect : if j = array_size-1 generate
+--                    
+--                end generate;
+--                
+--                middle_connect : if j < array_size-1 and j > 0 generate
+                    
+--                end generate;
+                
+--                last_connect : if j = 0 generate
+                
+--                end generate;
+--            end generate;
+            
+            
+--            middle : if i > 0 and i < array_size -1 generate
+            
+--            end generate;
+            
+            -- last row
+--            last : if i = 0 generate
+            
+--            end generate;
+            
+                        
+        end generate;
+    end generate;
+    
+    
+    
+    
+--    PE_entity : entity work.PE
+--    generic map (
+--        N => N,
+--        Bs => Bs,
+--        es => es
+--    )
+--    port map(
+--        clk => clk,
+--        w_en => w_en_PE,
+--        weight_in => weight_in_PE,
+--        input_in => input_in_PE,
+--        psum_in => psum_in_PE,
+--        weight_out => weight_out_PE,
+--        input_out => input_out_PE,
+--        psum_out => psum_out_PE
+--    );
 
-
+    
 
 end Behavioral;
