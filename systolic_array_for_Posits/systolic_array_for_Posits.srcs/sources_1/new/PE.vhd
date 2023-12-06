@@ -36,17 +36,20 @@ entity PE is
         -- Posit Values
         N : integer := 8;
         Bs : integer := 3; -- log2(N)
-        es : integer := 2
+        es : integer := 2;
+        inst_length : integer := 6
     );
     Port ( 
         clk : in std_logic;
-        w_en : in std_logic;
+        --w_en : in std_logic;
         
+        inst_in : in std_logic_vector(inst_length-1 downto 0);
         weight_in : in STD_LOGIC_VECTOR (N-1 downto 0);
         input_in : in STD_LOGIC_VECTOR (N-1 downto 0);
         psum_in : in STD_LOGIC_VECTOR (N-1 downto 0);
         --instr_in : in STD_LOGIC_VECTOR (N-1 downto 0);
         
+        inst_out : out std_logic_vector(inst_length-1 downto 0);
         weight_out : out STD_LOGIC_VECTOR (N-1 downto 0);
         input_out : out STD_LOGIC_VECTOR (N-1 downto 0);
         psum_out : out STD_LOGIC_VECTOR (N-1 downto 0)
@@ -74,7 +77,7 @@ begin
         
     begin
         if rising_edge(clk) then
-            if w_en = '1' then
+            if inst_in(inst_in'high) = '1' then
                 input_out <= input;
                 weight_out <= weight;
                 

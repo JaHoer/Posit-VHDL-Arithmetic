@@ -38,6 +38,8 @@ entity systolic_array is
         Bs : integer := 3; -- log2(N)
         es : integer := 2;
         
+        inst_length : integer := 6;
+        
         -- mem vectors
         input_width : integer := 128;
         output_width : integer := 128;
@@ -55,23 +57,36 @@ entity systolic_array is
         
     );
     Port ( 
-        clk : in std_logic
+        clk : in std_logic;
+        
+        Data_in_weight : in std_logic_vector(input_width-1 downto 0);
+        Data_in_input : in std_logic_vector(input_width-1 downto 0);
+        Data_out_output : out std_logic_vector(output_width-1 downto 0)
     );
 end systolic_array;
 
 architecture Behavioral of systolic_array is
 
+    -- Arrays for interconnect Signals between PEs
     type posit_array is array (mem_width-1 downto 0)
         of std_logic_vector(N-1 downto 0);
         
     type outer_array is array (mem_width downto 0)
         of posit_array;
         
+    type inst_array is array (mem_width-1 downto 0)
+        of std_logic_vector(inst_length-1 downto 0);
+        
+    type outer_inst_array is array (mem_width downto 0)
+        of inst_array;
+        
     signal weight_signal_array : outer_array;
     
     signal input_signal_array : outer_array;
     
     signal output_signal_array : outer_array;
+    
+    signal inst_signal_array : outer_inst_array;
     
     
     
@@ -80,10 +95,12 @@ architecture Behavioral of systolic_array is
 
 
     -- PE signals
-    signal w_en_PE : std_logic;
+    --signal w_en_PE : std_logic;
+    signal inst_in_PE : std_logic_vector (5 downto 0);
     signal weight_in_PE : STD_LOGIC_VECTOR (N-1 downto 0);
     signal input_in_PE : STD_LOGIC_VECTOR (N-1 downto 0);
-    signal psum_in_PE : STD_LOGIC_VECTOR (N-1 downto 0);   
+    signal psum_in_PE : STD_LOGIC_VECTOR (N-1 downto 0); 
+    signal inst_out_PE : std_logic_vector (5 downto 0);  
     signal weight_out_PE : STD_LOGIC_VECTOR (N-1 downto 0);
     signal input_out_PE : STD_LOGIC_VECTOR (N-1 downto 0);
     signal psum_out_PE : STD_LOGIC_VECTOR (N-1 downto 0);
@@ -223,15 +240,18 @@ begin
                     generic map (
                         N => N,
                         Bs => Bs,
-                        es => es
+                        es => es,
+                        inst_length => inst_length
                     )
                     port map(
                         clk => clk,
-                        w_en => w_en_PE,
+                        --w_en => w_en_PE,
+                        inst_in => inst_signal_array(j+1)(i),
                         weight_in => weight_signal_array(i+1)(j),
                         input_in => input_signal_array(j+1)(i),
                                                    --   ^-- swapped Indices
                         psum_in => output_signal_array(i+1)(j),
+                        inst_out => inst_signal_array(j)(i),
                         weight_out => weight_signal_array(i)(j),
                         input_out => input_signal_array(j)(i),
                                                     --   ^-- swapped Indices

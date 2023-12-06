@@ -59,7 +59,11 @@ architecture Behavioral of tb_systolic_array is
     constant CLOCK_PERIOD : time := 50 ns;
 
     signal clk_tb : std_logic;
-
+    
+    signal Data_in_weight_tb : std_logic_vector(input_width_tb-1 downto 0);
+    signal Data_in_input_tb : std_logic_vector(input_width_tb-1 downto 0);
+    signal Data_out_output_tb : std_logic_vector(output_width_tb-1 downto 0);
+        
 begin
 
     uut : entity work.systolic_array
@@ -73,7 +77,10 @@ begin
         mem_width => mem_width_tb
     )
     port map(
-        clk => clk_tb
+        clk => clk_tb,
+        Data_in_input => Data_in_input_tb,
+        Data_in_weight => Data_in_weight_tb,
+        Data_out_output => Data_out_output_tb        
     );
 
 
