@@ -40,16 +40,18 @@ entity systolic_array is
         
         inst_length : integer := 6;
         
-        -- mem vectors
-        input_width : integer := 128;
-        output_width : integer := 128;
-        
         -- Mem Size
         -- depth of shift register
         mem_depth : integer := 4;
         -- number of parallel shift register
         -- doubles as systolic array dimentions
         mem_width : integer := 4
+        
+        -- mem vectors
+        --input_width : integer := 128;
+        --output_width : integer := 128
+        
+        
         
         -- generates an array_size^2 PEs
         --array_size : integer := 4
@@ -59,13 +61,20 @@ entity systolic_array is
     Port ( 
         clk : in std_logic;
         
-        Data_in_weight : in std_logic_vector(input_width-1 downto 0);
-        Data_in_input : in std_logic_vector(input_width-1 downto 0);
-        Data_out_output : out std_logic_vector(output_width-1 downto 0)
+        Data_in_weight : in std_logic_vector(N * mem_width -1 downto 0);
+                                            -- input_width-1
+        Data_in_input : in std_logic_vector(N * mem_width -1 downto 0);
+                                            -- input_width-1
+        Data_out_output : out std_logic_vector(N * mem_width -1 downto 0)
+                                            -- output_width-1
     );
 end systolic_array;
 
 architecture Behavioral of systolic_array is
+
+    -- mem vectors
+    constant INPUT_WIDTH_CONST : integer := N * mem_width;
+    constant OUTPUT_WIDTH_CONST : integer := N * mem_width;
 
     -- Arrays for interconnect Signals between PEs
     type posit_array is array (mem_width-1 downto 0)
@@ -114,20 +123,20 @@ architecture Behavioral of systolic_array is
     -- input_mem signals
     signal rst_input : std_logic;
     signal w_en_input : std_logic;
-    signal in_vektor_input : std_logic_vector(input_width-1 downto 0);
-    signal out_vector_input : std_logic_vector(output_width-1 downto 0);
+    signal in_vektor_input : std_logic_vector(INPUT_WIDTH_CONST -1 downto 0);
+    signal out_vector_input : std_logic_vector(OUTPUT_WIDTH_CONST-1 downto 0);
     
     -- weight_mem signals
     signal rst_weight : std_logic;
     signal w_en_weight : std_logic;
-    signal in_vektor_weight : std_logic_vector(input_width-1 downto 0);
-    signal out_vector_weight : std_logic_vector(output_width-1 downto 0);
+    signal in_vektor_weight : std_logic_vector(INPUT_WIDTH_CONST -1 downto 0);
+    signal out_vector_weight : std_logic_vector(OUTPUT_WIDTH_CONST-1 downto 0);
     
     -- output_mem signals
     signal rst_output : std_logic;
     signal w_en_output : std_logic;
-    signal in_vektor_output : std_logic_vector(input_width-1 downto 0);
-    signal out_vector_output : std_logic_vector(output_width-1 downto 0);
+    signal in_vektor_output : std_logic_vector(INPUT_WIDTH_CONST -1 downto 0);
+    signal out_vector_output : std_logic_vector(OUTPUT_WIDTH_CONST-1 downto 0);
 
 
     
@@ -167,8 +176,8 @@ begin
         N => N,
         Bs => Bs,
         es => es,
-        input_width => input_width,
-        output_width => output_width,
+        input_width => INPUT_WIDTH_CONST,
+        output_width => OUTPUT_WIDTH_CONST,
         mem_depth => mem_depth,
         mem_width => mem_width
     )
@@ -185,8 +194,8 @@ begin
         N => N,
         Bs => Bs,
         es => es,
-        input_width => input_width,
-        output_width => output_width,
+        input_width => INPUT_WIDTH_CONST,
+        output_width => OUTPUT_WIDTH_CONST,
         mem_depth => mem_depth,
         mem_width => mem_width
     )
@@ -203,8 +212,8 @@ begin
         N => N,
         Bs => Bs,
         es => es,
-        input_width => input_width,
-        output_width => output_width,
+        input_width => INPUT_WIDTH_CONST,
+        output_width => OUTPUT_WIDTH_CONST,
         mem_depth => mem_depth,
         mem_width => mem_width
     )
