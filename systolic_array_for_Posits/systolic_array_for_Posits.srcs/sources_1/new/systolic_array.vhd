@@ -80,6 +80,9 @@ architecture Behavioral of systolic_array is
     type outer_inst_array is array (mem_width downto 0)
         of inst_array;
         
+    type weight_write_bit_array is array (mem_width downto 0)
+        of std_logic_vector(mem_width-1 downto 0);
+        
     signal weight_signal_array : outer_array;
     
     signal input_signal_array : outer_array;
@@ -88,22 +91,25 @@ architecture Behavioral of systolic_array is
     
     signal inst_signal_array : outer_inst_array;
     
+    signal weight_write_array : weight_write_bit_array;
     
     
-
+    signal inst_in : std_logic_vector (inst_length-1 downto 0);
+    
+    signal weight_write_en : std_logic;
 
 
 
     -- PE signals
     --signal w_en_PE : std_logic;
-    signal inst_in_PE : std_logic_vector (5 downto 0);
-    signal weight_in_PE : STD_LOGIC_VECTOR (N-1 downto 0);
-    signal input_in_PE : STD_LOGIC_VECTOR (N-1 downto 0);
-    signal psum_in_PE : STD_LOGIC_VECTOR (N-1 downto 0); 
-    signal inst_out_PE : std_logic_vector (5 downto 0);  
-    signal weight_out_PE : STD_LOGIC_VECTOR (N-1 downto 0);
-    signal input_out_PE : STD_LOGIC_VECTOR (N-1 downto 0);
-    signal psum_out_PE : STD_LOGIC_VECTOR (N-1 downto 0);
+    --signal inst_in_PE : std_logic_vector (5 downto 0);
+    --signal weight_in_PE : STD_LOGIC_VECTOR (N-1 downto 0);
+    --signal input_in_PE : STD_LOGIC_VECTOR (N-1 downto 0);
+    --signal psum_in_PE : STD_LOGIC_VECTOR (N-1 downto 0); 
+    --signal inst_out_PE : std_logic_vector (5 downto 0);  
+    --signal weight_out_PE : STD_LOGIC_VECTOR (N-1 downto 0);
+    --signal input_out_PE : STD_LOGIC_VECTOR (N-1 downto 0);
+    --signal psum_out_PE : STD_LOGIC_VECTOR (N-1 downto 0);
     
     -- input_mem signals
     signal rst_input : std_logic;
@@ -219,6 +225,8 @@ begin
         input_signal_array (mem_width)(k) <= out_vector_input((k+1)*N-1 downto k*N);
         output_signal_array(0)(k) <= in_vektor_output((k+1)*N-1 downto k*N);
         output_signal_array(mem_width)(k) <= (others => '0');
+        inst_signal_array(mem_width)(k) <= inst_in;
+        weight_write_array(mem_width)(k) <= weight_write_en;
         
     end generate;   
     
@@ -250,11 +258,13 @@ begin
                         weight_in => weight_signal_array(i+1)(j),
                         input_in => input_signal_array(j+1)(i),
                                                    --   ^-- swapped Indices
+                        weight_w_en_in => weight_write_array(j+1)(i),
                         psum_in => output_signal_array(i+1)(j),
                         inst_out => inst_signal_array(j)(i),
                         weight_out => weight_signal_array(i)(j),
                         input_out => input_signal_array(j)(i),
                                                     --   ^-- swapped Indices
+                        weight_w_en_out => weight_write_array(j)(i),
                         psum_out => output_signal_array(i)(j)
                     );
         

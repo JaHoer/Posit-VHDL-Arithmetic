@@ -47,12 +47,14 @@ entity PE is
         weight_in : in STD_LOGIC_VECTOR (N-1 downto 0);
         input_in : in STD_LOGIC_VECTOR (N-1 downto 0);
         psum_in : in STD_LOGIC_VECTOR (N-1 downto 0);
+        weight_w_en_in : in std_logic;
         --instr_in : in STD_LOGIC_VECTOR (N-1 downto 0);
         
         inst_out : out std_logic_vector(inst_length-1 downto 0);
         weight_out : out STD_LOGIC_VECTOR (N-1 downto 0);
         input_out : out STD_LOGIC_VECTOR (N-1 downto 0);
-        psum_out : out STD_LOGIC_VECTOR (N-1 downto 0)
+        psum_out : out STD_LOGIC_VECTOR (N-1 downto 0);
+        weight_w_en_out : out std_logic
         --instr_out : out STD_LOGIC_VECTOR (N-1 downto 0)
     );
 end PE;
@@ -64,6 +66,8 @@ architecture Behavioral of PE is
     signal psum_new : std_logic_vector(N-1 downto 0);
     signal input : std_logic_vector(N-1 downto 0);
     signal weight : std_logic_vector(N-1 downto 0);
+    signal weight_mem : std_logic_vector(N-1 downto 0);
+    signal weight_write : std_logic;
     
     
 
@@ -71,7 +75,7 @@ begin
     psum_old <= psum_in;
     input <= input_in;
     weight <= weight_in;
-    
+    weight_write <= weight_w_en_in;
 
     calc : process (clk)
         
@@ -80,10 +84,13 @@ begin
             if inst_in(inst_in'high) = '1' then
                 input_out <= input;
                 weight_out <= weight;
-                
+                weight_w_en_out <= weight_write;
+                if weight_write = '1' then
+                    weight_mem <= weight;
+                end if;
                 
                 -- ### TODO: here Posit operations ###
-                psum_out <= std_logic_vector(resize( (signed(psum_old) + (signed(input) * signed(weight))), N));
+                psum_out <= std_logic_vector(resize( (signed(psum_old) + (signed(input) * signed(weight_mem))), N));
                 -- ###
             end if;
         end if;
