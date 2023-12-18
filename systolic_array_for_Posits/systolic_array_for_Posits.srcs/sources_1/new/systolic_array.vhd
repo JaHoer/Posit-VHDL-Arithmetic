@@ -66,10 +66,15 @@ entity systolic_array is
     );
     Port ( 
         clk : in std_logic;
+        rst : in std_logic;
         
         Data_in_weight : in std_logic_vector(data_port_width -1 downto 0);
+        weight_valid : in std_logic;
         Data_in_input : in std_logic_vector(data_port_width -1 downto 0);
-        Data_out_output : out std_logic_vector(data_port_width -1 downto 0)
+        input_valid : in std_logic;
+        Data_out_output : out std_logic_vector(data_port_width -1 downto 0);
+        output_valid : out std_logic
+        
     );
 end systolic_array;
 
@@ -109,6 +114,7 @@ architecture Behavioral of systolic_array is
     signal inst_in : std_logic_vector (inst_length-1 downto 0);
     
     signal weight_write_en : std_logic;
+    signal enable_PEs : std_logic;
 
 
 
@@ -124,44 +130,30 @@ architecture Behavioral of systolic_array is
     --signal psum_out_PE : STD_LOGIC_VECTOR (N-1 downto 0);
     
     -- input_mem signals
+    signal enable_input_mem : std_logic;
     signal rst_input : std_logic;
     signal w_en_input : std_logic;
     signal in_vector_input : std_logic_vector(INTERNAL_DATA_WIDTH -1 downto 0);
     signal out_vector_input : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
     
     -- weight_mem signals
+    signal enable_weight_mem : std_logic;
     signal rst_weight : std_logic;
     signal w_en_weight : std_logic;
     signal in_vector_weight : std_logic_vector(INTERNAL_DATA_WIDTH -1 downto 0);
     signal out_vector_weight : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
     
     -- output_mem signals
+    signal enable_output_mem : std_logic;
     signal rst_output : std_logic;
     signal w_en_output : std_logic;
     signal in_vector_output : std_logic_vector(INTERNAL_DATA_WIDTH -1 downto 0);
-    signal out_vector_output : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
+    --signal out_vector_output : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
     signal out_diagonal_vector_output : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
 
 
     
---    component PE
---    generic(
---        N : integer;
---        Bs : integer;
---        es : integer
---    );
---    port(
---        clk : in std_logic;
---        w_en : in std_logic;
---        weight_in : in STD_LOGIC_VECTOR (N-1 downto 0);
---        input_in : in STD_LOGIC_VECTOR (N-1 downto 0);
---        psum_in : in STD_LOGIC_VECTOR (N-1 downto 0);
---        --instr_in : in STD_LOGIC_VECTOR (N-1 downto 0);
---        weight_out : out STD_LOGIC_VECTOR (N-1 downto 0);
---        input_out : out STD_LOGIC_VECTOR (N-1 downto 0);
---        psum_out : out STD_LOGIC_VECTOR (N-1 downto 0)
---    );
---    end component PE;
+
 
 begin
 
@@ -177,14 +169,22 @@ begin
     )
     port map(
         clk => clk,
+        rst => rst,
         
         data_weight_in => Data_in_weight,
+        weight_valid => weight_valid,
         data_input_in => Data_in_input,
+        input_valid => input_valid,
         data_output_in => out_diagonal_vector_output,
         
         data_weight_out => in_vector_weight,
         data_input_out => in_vector_input,
         data_output_out => Data_out_output,
+        output_valid => output_valid,
+        enable_PE => enable_PEs,
+        enable_weight_mem => enable_weight_mem,
+        enable_input_mem => enable_input_mem,
+        enable_output_mem => enable_output_mem,
         
         inst => inst_in,
         weight_write => weight_write_en
@@ -203,9 +203,10 @@ begin
     port map(
         clk => clk,
         rst => rst_input,
-        w_en => w_en_input,
+        --w_en => w_en_input,
+        w_en => enable_input_mem,
         input_vektor => in_vector_input,
-        output_vector => out_vector_input
+        diagonal_output_vector => out_vector_input
     );
     
     weight_mem : entity work.weight_mem
@@ -221,9 +222,10 @@ begin
     port map(
         clk => clk,
         rst => rst_weight,
-        w_en => w_en_weight,
+        --w_en => w_en_weight,
+        w_en => enable_weight_mem,
         input_vektor => in_vector_weight,
-        output_vector => out_vector_weight
+        diagonal_output_vector => out_vector_weight
     );
     
     output_mem : entity work.output_mem
@@ -239,9 +241,10 @@ begin
     port map(
         clk => clk,
         rst => rst_output,
-        w_en => w_en_output,
+        --w_en => w_en_output,
+        w_en => enable_output_mem,
         input_vektor => in_vector_output,
-        output_vector => out_vector_output,
+        --output_vector => out_vector_output,
         diagonal_output_vector => out_diagonal_vector_output
     );
     
@@ -283,6 +286,7 @@ begin
                     port map(
                         clk => clk,
                         --w_en => w_en_PE,
+                        enable => enable_PEs,
                         inst_in => inst_signal_array(j+1)(i),
                         weight_in => weight_signal_array(i+1)(j),
                         input_in => input_signal_array(j+1)(i),
@@ -296,33 +300,7 @@ begin
                         weight_w_en_out => weight_write_array(j)(i),
                         psum_out => output_signal_array(i)(j)
                     );
-        
-        
-            -- first row -> connected to Weight_mem
---            first : if i = array_size-1 generate
---                input_connect : if j = array_size-1 generate
---                    
---                end generate;
---                
---                middle_connect : if j < array_size-1 and j > 0 generate
-                    
---                end generate;
-                
---                last_connect : if j = 0 generate
-                
---                end generate;
---            end generate;
-            
-            
---            middle : if i > 0 and i < array_size -1 generate
-            
---            end generate;
-            
-            -- last row
---            last : if i = 0 generate
-            
---            end generate;
-            
+
                         
         end generate;
     end generate;

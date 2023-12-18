@@ -42,6 +42,7 @@ entity PE is
     Port ( 
         clk : in std_logic;
         --w_en : in std_logic;
+        enable : in std_logic;
         
         inst_in : in std_logic_vector(inst_length-1 downto 0);
         weight_in : in STD_LOGIC_VECTOR (N-1 downto 0);
@@ -81,7 +82,8 @@ begin
         
     begin
         if rising_edge(clk) then
-            if inst_in(inst_in'high) = '1' then
+            --if inst_in(inst_in'high) = '1' then
+            if enable = '1' then
                 input_out <= input;
                 weight_out <= weight;
                 weight_w_en_out <= weight_write;

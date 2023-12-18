@@ -52,13 +52,14 @@ entity input_mem is
         rst : in std_logic;
         w_en : in std_logic;
         input_vektor : in std_logic_vector(input_width-1 downto 0);
-        output_vector : out std_logic_vector(output_width-1 downto 0)
+        --output_vector : out std_logic_vector(output_width-1 downto 0);
+        diagonal_output_vector : out std_logic_vector(output_width-1 downto 0)
     );
 end input_mem;
 
 architecture Behavioral of input_mem is
 
-    type posit_array is array (mem_depth-1 downto 0)
+    type posit_array is array (mem_width-1 downto 0)
         of std_logic_vector(N-1 downto 0);
         
     type outer_array is array (mem_width-1 downto 0)
@@ -81,7 +82,8 @@ begin
             elsif w_en = '1' then
                 for i in mem_width-1 downto 0 loop
                     shift_array(i) <= shift_array(i)(shift_array(i)'high -1 downto shift_array(i)'low) & input_vektor(((i+1)*N)-1 downto (i)*N);
-                    output_vector(((i+1)*N)-1 downto (i)*N) <= shift_array(i)(shift_array'high);
+                    --output_vector(((i+1)*N)-1 downto (i)*N) <= shift_array(i)(shift_array'high);
+                    diagonal_output_vector(((i+1)*N)-1 downto (i)*N) <= shift_array(i)(mem_width-1-i);
                 end loop;
                 
                 --output_vector <= tmp_output;

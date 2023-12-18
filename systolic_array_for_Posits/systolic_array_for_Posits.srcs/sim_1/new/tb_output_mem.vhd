@@ -1,10 +1,10 @@
 ----------------------------------------------------------------------------------
--- Company: FAU
--- Engineer: Jan Hoertig
+-- Company: 
+-- Engineer: 
 -- 
--- Create Date: 30.11.2023 10:01:21
+-- Create Date: 12/18/2023 11:02:47 AM
 -- Design Name: 
--- Module Name: tb_input_mem - Behavioral
+-- Module Name: tb_output_mem - Behavioral
 -- Project Name: 
 -- Target Devices: 
 -- Tool Versions: 
@@ -31,7 +31,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity tb_input_mem is
+entity tb_output_mem is
     generic(
         input_width_tb : integer := 32;
         output_width_tb : integer := 32;
@@ -48,10 +48,9 @@ entity tb_input_mem is
         mem_width_tb : integer := 4
     );
 --  Port ( );
-end tb_input_mem;
+end tb_output_mem;
 
-architecture Behavioral of tb_input_mem is
-
+architecture Behavioral of tb_output_mem is
     constant CLOCK_PERIOD : time := 50 ns;
 
     signal clk_tb : std_logic;
@@ -62,7 +61,7 @@ architecture Behavioral of tb_input_mem is
 
 begin
 
-    uut : entity work.input_mem
+    uut : entity work.output_mem
     generic map (
         input_width => input_width_tb,
         output_width => output_width_tb,
@@ -106,11 +105,11 @@ begin
         
         
         wait for CLOCK_PERIOD;
-        input_vektor_tb <= "11110000111100001111000011110000";
+        input_vektor_tb <= "10001000110011001110111011111111";
         w_en_tb <= '1';
         
         wait for CLOCK_PERIOD;
-        input_vektor_tb <= "11001100110011001100110011001100";
+        input_vektor_tb <= "00010001001100110111011111111111";
         w_en_tb <= '1';
         
         wait for CLOCK_PERIOD;
