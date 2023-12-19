@@ -73,8 +73,17 @@ end Controller;
 architecture Behavioral of Controller is
     signal both_valid : std_logic;
     
-    signal control_shift_register : std_logic_vector(2*array_width -1 downto 0);
+    signal output_control_shift_register : std_logic_vector(2*array_width -1 downto 0);
+    -- load the Wieght into the PEs after array_width clks
+    signal weight_control_shift_register : std_logic_vector(array_width downto 0);
+    
+    --signal PE_control_shift_register : std_logic_vector(1 downto 0);
     signal output_valid_sig : std_logic;
+    
+    --signal weight_token : std_logic;
+    signal weight_is_loaded : std_logic;
+    
+    signal weight_loading : std_logic;
 
 begin
 
@@ -82,17 +91,89 @@ begin
     output_valid <= output_valid_sig;
     
     
+    both_valid <= (weight_valid or weight_is_loaded) and input_valid;
+    
+    data_weight_out <= data_weight_in when both_valid = '1' else (others => '0');
+    data_input_out <= data_input_in when both_valid = '1' else (others => '0');
+    
+    -- TODO needs Delay to wright out values from mem to PEs
+    enable_weight_mem <= weight_valid;
+    
+    enable_input_mem <= both_valid;
+    
+    enable_output_mem <= both_valid;
+    
+    
+    
+    
     process (clk)
+    
+        variable weight_token : std_logic;
+        variable v_weight_loading : std_logic;
+        variable v_weight_is_loaded : std_logic;
+    
     begin
         if rising_edge(clk) then
+        
+            --if weight_valid = '1' and weight_token = '0' and weight_is_loaded = '1' then
+            --    weight_token := '1';
+            --else
+            --    weight_token := '0';
+            --end if;
+            
+            
+            
+            
+            -- controls when the new Weight Matrix should be loaded intor PEs
             if rst = '1' then
-                control_shift_register <= (others => '0');
-            elsif both_valid = '1' then
+                weight_control_shift_register <= (others => '0');
+            elsif weight_valid = '1' then
                 
-                control_shift_register <= control_shift_register(control_shift_register'high -1 downto control_shift_register'low) & both_valid;
-                output_valid_sig <= control_shift_register(control_shift_register'high);
-               
+                -- set token when currently no Weight is in loading process -> start new weight Matrix
+                if weight_loading = '0' then
+                    weight_token := '1';
+                else
+                    weight_token := '0';
+                end if;
+                
+                weight_control_shift_register <= weight_control_shift_register(weight_control_shift_register'high -1 downto weight_control_shift_register'low) & weight_token;
+                weight_write <= weight_control_shift_register(weight_control_shift_register'high);
+                
+                -- set loaded bit when loading is finished
+                if weight_valid = '0' and weight_is_loaded = '0' then
+                    v_weight_is_loaded := weight_control_shift_register(weight_control_shift_register'high);
+                elsif weight_valid = '0' and weight_is_loaded = '1' then
+                    v_weight_is_loaded := '1';
+                else
+                    v_weight_is_loaded := '0';
+                end if; 
+                
+                weight_is_loaded <= v_weight_is_loaded;
+                
+                -- reset loading_reg when loading is finished
+                if weight_token = '1' then 
+                    weight_loading <= '1';
+                elsif v_weight_is_loaded = '1' then
+                    weight_loading <= '0';
+                end if;
+                
+                
             end if;
+            
+            
+            
+            -- controls when output is ready
+            if rst = '1' then
+                output_control_shift_register <= (others => '0');
+            elsif both_valid = '1' then
+                output_control_shift_register <= output_control_shift_register(output_control_shift_register'high -1 downto output_control_shift_register'low) & both_valid;
+                output_valid_sig <= output_control_shift_register(output_control_shift_register'high);
+            end if;
+            
+            -- needs Delay of 1 clk
+            enable_PE <= both_valid;
+            
+            
         end if;
     end process;
     

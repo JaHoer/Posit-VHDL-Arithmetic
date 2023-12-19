@@ -39,14 +39,25 @@ entity tb_systolic_array is
         es_tb : integer := 2;
         
         -- mem vectors
-        input_width_tb : integer := 128;
-        output_width_tb : integer := 128;
+        --input_width_tb : integer := 32;
+        --output_width_tb : integer := 32;
+        
+        inst_length_tb : integer := 6;
         
         -- Mem Size
         -- depth of shift register
-        mem_depth_tb : integer := 8;
+        mem_depth_tb : integer := 4;
+        
+
         -- number of parallel shift register
-        mem_width_tb : integer := 8
+        -- doubles as systolic array dimentions
+        array_width_tb : integer := 4;
+        
+        
+        
+        -- width of Data Bus inputs
+        -- should be N * array_width
+        data_port_width_tb : integer := 32
         
         
     );
@@ -57,12 +68,18 @@ end tb_systolic_array;
 architecture Behavioral of tb_systolic_array is
 
     constant CLOCK_PERIOD : time := 50 ns;
+    constant INTERNAL_DATA_WIDTH : integer := N_tb * array_width_tb;
 
     signal clk_tb : std_logic;
+    signal rst_tb : std_logic;
     
-    signal Data_in_weight_tb : std_logic_vector(input_width_tb-1 downto 0);
-    signal Data_in_input_tb : std_logic_vector(input_width_tb-1 downto 0);
-    signal Data_out_output_tb : std_logic_vector(output_width_tb-1 downto 0);
+    signal Data_in_weight_tb : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
+    signal Data_in_input_tb : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
+    signal Data_out_output_tb : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
+    
+    signal weight_valid_tb : std_logic;
+    signal input_valid_tb : std_logic;
+    signal output_valid_tb : std_logic;
         
 begin
 
@@ -71,16 +88,22 @@ begin
         N => N_tb,
         Bs => Bs_tb,
         es => es_tb,
-        input_width => input_width_tb,
-        output_width => output_width_tb,
+        inst_length => inst_length_tb,
+        --input_width => input_width_tb,
+        --output_width => output_width_tb,
         mem_depth => mem_depth_tb,
-        mem_width => mem_width_tb
+        array_width => array_width_tb,
+        data_port_width => data_port_width_tb
     )
     port map(
         clk => clk_tb,
+        rst => rst_tb,
         Data_in_input => Data_in_input_tb,
+        input_valid => input_valid_tb,
         Data_in_weight => Data_in_weight_tb,
-        Data_out_output => Data_out_output_tb        
+        weight_valid => weight_valid_tb,
+        Data_out_output => Data_out_output_tb,
+        output_valid => output_valid_tb
     );
 
 
@@ -97,7 +120,13 @@ begin
     stimuli: process
     
     begin
-    
+        
+        wait for CLOCK_PERIOD;
+        
+        
+        
+        
+        
     
     end process;
 
