@@ -113,8 +113,12 @@ architecture Behavioral of systolic_array is
     
     signal inst_in : std_logic_vector (inst_length-1 downto 0);
     
+    -- enable if weights should be written to reg
     signal weight_write_en : std_logic;
-    signal enable_PEs : std_logic;
+    -- enable if weight should be routed through Network
+    signal weight_en : std_logic;
+    -- enable if PEs should compute Outputvalues from inputs and route inputs and outputs through Network
+    signal comp_en_PEs : std_logic;
 
 
 
@@ -181,7 +185,8 @@ begin
         data_input_out => in_vector_input,
         data_output_out => Data_out_output,
         output_valid => output_valid,
-        enable_PE => enable_PEs,
+        comp_en_PE => comp_en_PEs,
+        weight_en_PE => weight_en,
         enable_weight_mem => enable_weight_mem,
         enable_input_mem => enable_input_mem,
         enable_output_mem => enable_output_mem,
@@ -286,7 +291,8 @@ begin
                     port map(
                         clk => clk,
                         --w_en => w_en_PE,
-                        enable => enable_PEs,
+                        comp_en => comp_en_PEs,
+                        weight_en => weight_en,
                         inst_in => inst_signal_array(j+1)(i),
                         weight_in => weight_signal_array(i+1)(j),
                         input_in => input_signal_array(j+1)(i),

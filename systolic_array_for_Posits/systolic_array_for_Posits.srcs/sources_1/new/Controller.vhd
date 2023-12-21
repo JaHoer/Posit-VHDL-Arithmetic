@@ -60,7 +60,8 @@ entity Controller is
         data_input_out : out std_logic_vector(internal_data_width -1 downto 0);
         data_output_out : out std_logic_vector(data_port_width -1 downto 0);
         output_valid : out std_logic;
-        enable_PE : out std_logic;
+        comp_en_PE : out std_logic;
+        weight_en_PE : out std_logic;
         enable_weight_mem : out std_logic;
         enable_input_mem : out std_logic;
         enable_output_mem : out std_logic;
@@ -84,6 +85,8 @@ architecture Behavioral of Controller is
     signal weight_is_loaded : std_logic;
     
     signal weight_loading : std_logic;
+    
+    --signal weight_mem_extended_valid : std_logic;
 
 begin
 
@@ -91,7 +94,7 @@ begin
     output_valid <= output_valid_sig;
     
     
-    both_valid <= (weight_valid or weight_is_loaded) and input_valid;
+    both_valid <= weight_is_loaded and input_valid;
     
     data_weight_out <= data_weight_in when both_valid = '1' else (others => '0');
     data_input_out <= data_input_in when both_valid = '1' else (others => '0');
@@ -103,7 +106,8 @@ begin
     
     enable_output_mem <= both_valid;
     
-    
+    -- TODO maybe a little bit longer or one clock later ?
+    weight_en_PE <= weight_valid;
     
     
     process (clk)
@@ -140,9 +144,12 @@ begin
                 weight_write <= weight_control_shift_register(weight_control_shift_register'high);
                 
                 -- set loaded bit when loading is finished
-                if weight_valid = '0' and weight_is_loaded = '0' then
+                -- weight_valid = '0' and
+                if  weight_is_loaded = '0' then
                     v_weight_is_loaded := weight_control_shift_register(weight_control_shift_register'high);
-                elsif weight_valid = '0' and weight_is_loaded = '1' then
+                    
+                -- weight_valid = '0' and
+                elsif  weight_is_loaded = '1' then
                     v_weight_is_loaded := '1';
                 else
                     v_weight_is_loaded := '0';
@@ -171,7 +178,7 @@ begin
             end if;
             
             -- needs Delay of 1 clk
-            enable_PE <= both_valid;
+            comp_en_PE <= both_valid;
             
             
         end if;
