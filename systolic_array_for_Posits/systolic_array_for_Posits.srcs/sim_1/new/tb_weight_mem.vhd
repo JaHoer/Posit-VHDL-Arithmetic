@@ -58,6 +58,7 @@ architecture Behavioral of tb_weight_mem is
     signal w_en_tb : std_logic;
     signal input_vektor_tb : std_logic_vector(input_width_tb-1 downto 0);
     signal output_vector_tb : std_logic_vector(output_width_tb-1 downto 0);
+    signal load_cooldown_tb : std_logic;
 
 begin
 
@@ -76,7 +77,8 @@ begin
         rst => rst_tb,
         w_en => w_en_tb,
         input_vektor => input_vektor_tb,
-        diagonal_output_vector => output_vector_tb
+        diagonal_output_vector => output_vector_tb,
+        load_cooldown => load_cooldown_tb
     );
     
     
@@ -96,8 +98,8 @@ begin
     
         wait for CLOCK_PERIOD;
         rst_tb <= '0';
-        input_vektor_tb <= "00001111000011110000111100001111";
-        w_en_tb <= '0';
+        --input_vektor_tb <= "00001111000011110000111100001111";
+        --w_en_tb <= '0';
         
         wait for CLOCK_PERIOD;
         input_vektor_tb <= "00001111000011110000111100001111";
@@ -126,8 +128,49 @@ begin
         w_en_tb <= '1';
         
         wait for CLOCK_PERIOD;
+        load_cooldown_tb <= '1';
+        w_en_tb <= '0';
         
         
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        
+        wait for CLOCK_PERIOD;
+        input_vektor_tb <= "00001111000011110000111100001111";
+        w_en_tb <= '1';
+        
+        
+        wait for CLOCK_PERIOD;
+        input_vektor_tb <= "10001000110011001110111011111111";
+        w_en_tb <= '1';
+        
+        wait for CLOCK_PERIOD;
+        input_vektor_tb <= "00010001001100110111011111111111";
+        w_en_tb <= '1';
+        
+        wait for CLOCK_PERIOD;
+        input_vektor_tb <= "00000000111111110000111100110011";
+        w_en_tb <= '1';
+        
+        
+        wait for CLOCK_PERIOD;
+        input_vektor_tb <= "00110011001100110011001100110011";
+        w_en_tb <= '1';
+        
+        wait for CLOCK_PERIOD;
+        input_vektor_tb <= "10101010101010101010101010101010";
+        w_en_tb <= '1';
+        
+        wait for CLOCK_PERIOD;
+        load_cooldown_tb <= '1';
+        w_en_tb <= '0';
+        
+        
+        wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;

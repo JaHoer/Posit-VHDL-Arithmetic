@@ -67,7 +67,7 @@ entity Controller is
         enable_output_mem : out std_logic;
         
         inst : out std_logic_vector(inst_length-1 downto 0);
-        weight_write : out std_logic
+        weight_write : out std_logic        -- controls if weight should be written into mem of PEs
     );
 end Controller;
 
@@ -75,7 +75,7 @@ architecture Behavioral of Controller is
     signal both_valid : std_logic;
     
     signal output_control_shift_register : std_logic_vector(2*array_width -1 downto 0);
-    -- load the Wieght into the PEs after array_width clks
+    -- load the Wieght into the PEs after array_width + 1 clks
     signal weight_control_shift_register : std_logic_vector(array_width downto 0);
     
     --signal PE_control_shift_register : std_logic_vector(1 downto 0);

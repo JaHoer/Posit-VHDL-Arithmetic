@@ -230,7 +230,8 @@ begin
         --w_en => w_en_weight,
         w_en => enable_weight_mem,
         input_vektor => in_vector_weight,
-        diagonal_output_vector => out_vector_weight
+        diagonal_output_vector => out_vector_weight,
+        load_cooldown => weight_write_en
     );
     
     output_mem : entity work.output_mem
