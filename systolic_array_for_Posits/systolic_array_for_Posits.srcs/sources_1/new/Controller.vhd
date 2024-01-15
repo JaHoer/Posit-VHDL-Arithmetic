@@ -74,7 +74,7 @@ entity Controller is
         ;
         weight_is_loaded_out : out std_logic;
         weight_loading_out : out std_logic;
-        weight_control_shift_register_out : out std_logic_vector(array_width-2 downto 0);
+        weight_control_shift_register_out : out std_logic_vector(array_width-1 downto 0);
         weight_enougth_valids_out : out std_logic
         
         
@@ -86,16 +86,19 @@ architecture Behavioral of Controller is
     
     signal output_control_shift_register : std_logic_vector(2*array_width -1 downto 0);
     -- load the Wieght into the PEs after array_width + 1 clks
-    signal weight_control_shift_register : std_logic_vector(array_width-2 downto 0);
+    signal weight_control_shift_register : std_logic_vector(array_width-1 downto 0) := (0 => '1', others => '0');
+    signal weight_ringcounter : std_logic_vector(array_width-1 downto 0) := (0 => '1', others => '0');
     
     --signal PE_control_shift_register : std_logic_vector(1 downto 0);
     signal output_valid_sig : std_logic;
     
     --signal weight_token : std_logic;
-    signal weight_is_loaded : std_logic;
+    signal weight_is_loaded : std_logic := '0';
     
     signal weight_loading : std_logic;
     
+    signal ringcounter_output : std_logic := '0';
+    signal weight_load_new : std_logic;
     signal weight_enougth_valids : std_logic;
     signal ready_for_new_weight : std_logic;
     
@@ -127,8 +130,8 @@ begin
     
     -- Debug
     weight_is_loaded_out <= weight_is_loaded;
-    weight_loading_out <= weight_loading;
-    weight_control_shift_register_out <= weight_control_shift_register;
+    weight_loading_out <= ringcounter_output;
+    weight_control_shift_register_out <= weight_ringcounter;
     weight_enougth_valids_out <= weight_enougth_valids;
     
     
@@ -153,7 +156,11 @@ begin
             
             -- controls when the new Weight Matrix should be loaded intor PEs
             if rst = '1' then
-                weight_control_shift_register <= (others => '0');
+                --weight_control_shift_register <= (0 => '1', others => '0');
+                weight_ringcounter <= (0 => '1', others => '0');
+                ringcounter_output <= '0';
+                weight_write <= '0';
+                weight_is_loaded <= '0';
                 weight_loading <= '0';
                 weight_token := '0';
                 weight_enougth_valids <= '0';
@@ -188,45 +195,38 @@ begin
                 --v_w_reg_out := weight_control_shift_register(weight_control_shift_register'high);
                 
                 
-                if ready_for_new_weight = '1' then
-                    weight_control_shift_register <= (others => '1');
-                    weight_is_loaded <= '0';
-                    ready_for_new_weight <= '0';
-                else
-                    weight_control_shift_register <= weight_control_shift_register(weight_control_shift_register'high -1 downto weight_control_shift_register'low) & '0';
-                    weight_enougth_valids <= not weight_control_shift_register(weight_control_shift_register'high);
-                end if;
+                -- puts out 1 when enought weight_valids came
+                weight_ringcounter <= weight_ringcounter(weight_ringcounter'high -1 downto weight_ringcounter'low) & weight_ringcounter(weight_ringcounter'high);
+                ringcounter_output <= weight_ringcounter(weight_ringcounter'high);
+                
+                -- debug
+                weight_enougth_valids <= weight_ringcounter(weight_ringcounter'high);
                 
                 
+                -- one clk extra delay
                 
+                weight_is_loaded <= '0';
+                weight_write <= '0';
                 
                 
 
+             
+            
                 
-                -- reset loading_reg when loading is finished
-                if weight_token = '1' then 
-                    weight_loading <= '1';
-                elsif v_weight_is_loaded = '1' then
-                    weight_loading <= '0';
+            else
+                
+                if weight_is_loaded = '1' then
+                    weight_is_loaded <= '1';
+                    weight_write <= '0';
+                else
+                    weight_is_loaded <= ringcounter_output;
+                    weight_write <= ringcounter_output;
                 end if;
                 
-                
             end if;
             
             
-            
-            -- only activates if enougth write_valids already came => doesn't need another write_valid
-            if weight_enougth_valids = '1' then
-                weight_write <= '1';
-                weight_is_loaded <= '1';
-                weight_enougth_valids <= '0';
-                ready_for_new_weight <= '1';
-            else
-                weight_write <= '0';
-            end if;
-            
-            
-            
+
             
             -- controls when output is ready
             if rst = '1' then
