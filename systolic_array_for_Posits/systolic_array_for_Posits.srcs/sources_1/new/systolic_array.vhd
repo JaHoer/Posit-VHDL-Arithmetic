@@ -73,7 +73,13 @@ entity systolic_array is
         Data_in_input : in std_logic_vector(data_port_width -1 downto 0);
         input_valid : in std_logic;
         Data_out_output : out std_logic_vector(data_port_width -1 downto 0);
-        output_valid : out std_logic
+        output_valid : out std_logic;
+        
+        
+        -- Debug
+        
+        out_vector_input_o : out std_logic_vector(N * array_width-1 downto 0);
+        out_vector_weight_o : out std_logic_vector(N * array_width-1 downto 0)
         
     );
 end systolic_array;
@@ -332,7 +338,12 @@ begin
 --        input_out => input_out_PE,
 --        psum_out => psum_out_PE
 --    );
-
+    
+    
+    -- Debug
+    out_vector_input_o <= out_vector_input;
+    out_vector_weight_o <= out_vector_weight;
+    
     
 
 end Behavioral;

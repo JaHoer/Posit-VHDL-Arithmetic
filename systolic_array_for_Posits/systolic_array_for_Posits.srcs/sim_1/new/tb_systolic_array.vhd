@@ -80,6 +80,9 @@ architecture Behavioral of tb_systolic_array is
     signal weight_valid_tb : std_logic;
     signal input_valid_tb : std_logic;
     signal output_valid_tb : std_logic;
+    
+    signal out_vector_input_tb : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
+    signal out_vector_weight_tb : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
         
 begin
 
@@ -103,7 +106,11 @@ begin
         Data_in_weight => Data_in_weight_tb,
         weight_valid => weight_valid_tb,
         Data_out_output => Data_out_output_tb,
-        output_valid => output_valid_tb
+        output_valid => output_valid_tb,
+        
+        
+        out_vector_input_o => out_vector_input_tb,
+        out_vector_weight_o => out_vector_weight_tb
     );
 
 
