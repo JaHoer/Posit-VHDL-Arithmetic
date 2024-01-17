@@ -76,6 +76,7 @@ begin
         if rising_edge(clk) then
             if rst = '1' then
                 shift_array <= (others => (others => (others => '0')));
+                diagonal_output_vector <= (others => '0');
             elsif w_en = '1' then
                 for i in mem_width-1 downto 0 loop
                     shift_array(i) <= shift_array(i)(shift_array(i)'high -1 downto shift_array(i)'low) & input_vektor(((i+1)*N)-1 downto (i)*N);

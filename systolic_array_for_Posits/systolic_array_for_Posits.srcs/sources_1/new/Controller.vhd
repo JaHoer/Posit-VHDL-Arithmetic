@@ -103,6 +103,13 @@ architecture Behavioral of Controller is
     signal ready_for_new_weight : std_logic;
     
     --signal weight_mem_extended_valid : std_logic;
+    
+    signal enable_w_mem : std_logic;
+    
+    -- continue loading after load of first column is finished for remaining columns
+    signal delayed_load_shift_register : std_logic_vector(array_width-2 downto 0);
+    
+    signal load_cooldown_active : std_logic;
 
 begin
 
@@ -116,6 +123,8 @@ begin
     data_input_out <= data_input_in when both_valid = '1' else (others => '0');
     
     -- has Delay to wright out values from mem to PEs
+    --enable_w_mem <= ;
+--    enable_w_mem <= delayed_load_shift_register(delayed_load_shift_register'high);
     enable_weight_mem <= weight_valid;
     
     enable_input_mem <= both_valid;
@@ -141,6 +150,8 @@ begin
         --variable v_weight_loading : std_logic;
         variable v_weight_is_loaded : std_logic;
         variable v_w_reg_out : std_logic;
+        
+        variable delayed_enable : std_logic;
     
     begin
         if rising_edge(clk) then
@@ -223,6 +234,28 @@ begin
                     weight_write <= ringcounter_output;
                 end if;
                 
+                
+                -- extend write_enable for Weight_mem
+                
+                
+--                if weight_write = '1' and load_cooldown_active = '0' then
+--                    delayed_load_shift_register <= (others => '0');
+--                    load_cooldown_active <= '1';
+--                else 
+--                    delayed_load_shift_register <= delayed_load_shift_register(delayed_load_shift_register'high -1 downto delayed_load_shift_register'low) & '0';
+--                end if;
+            
+            
+                -- reset load_cooldown only when new Weights arrive
+--                if weight_valid = '1' then
+--                    load_cooldown_active <= '0';
+            
+--                end if;
+            
+                --enable_w_mem <= delayed_load_shift_register(delayed_load_shift_register'high);
+                
+                
+                
             end if;
             
             
@@ -243,7 +276,7 @@ begin
         end if;
     end process;
     
-    
+
 
 
 

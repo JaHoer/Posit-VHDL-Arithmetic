@@ -59,6 +59,7 @@ architecture Behavioral of tb_weight_mem is
     signal input_vektor_tb : std_logic_vector(input_width_tb-1 downto 0);
     signal output_vector_tb : std_logic_vector(output_width_tb-1 downto 0);
     signal load_cooldown_tb : std_logic;
+    signal enable_out_tb : std_logic;
 
 begin
 
@@ -69,7 +70,7 @@ begin
         N => N_tb,
         Bs => Bs_tb,
         es => es_tb,
-        mem_depth => mem_depth_tb,
+        --mem_depth => mem_depth_tb,
         mem_width => mem_width_tb
     )
     port map (
@@ -79,6 +80,7 @@ begin
         input_vektor => input_vektor_tb,
         diagonal_output_vector => output_vector_tb,
         load_cooldown => load_cooldown_tb
+        --enable_out => enable_out_tb
     );
     
     

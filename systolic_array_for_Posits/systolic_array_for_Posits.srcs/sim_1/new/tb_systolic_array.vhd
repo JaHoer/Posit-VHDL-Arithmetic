@@ -83,6 +83,9 @@ architecture Behavioral of tb_systolic_array is
     
     signal out_vector_input_tb : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
     signal out_vector_weight_tb : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
+    signal weight_write_en_tb : std_logic;
+    signal weight_en_tb : std_logic;
+    signal comp_en_PEs_tb : std_logic;
         
 begin
 
@@ -110,7 +113,10 @@ begin
         
         
         out_vector_input_o => out_vector_input_tb,
-        out_vector_weight_o => out_vector_weight_tb
+        out_vector_weight_o => out_vector_weight_tb,
+        weight_write_en_o => weight_write_en_tb,
+        weight_en_o => weight_en_tb,
+        comp_en_PEs_o => comp_en_PEs_tb
     );
 
 
@@ -140,16 +146,22 @@ begin
         Data_in_weight_tb <= X"01010101";        
         wait for CLOCK_PERIOD;
         
+        weight_valid_tb <= '0';
+        wait for CLOCK_PERIOD;
+        
         weight_valid_tb <= '1';
-        Data_in_weight_tb <= X"01010101";
+        Data_in_weight_tb <= X"10101010";
         wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '1';
         Data_in_weight_tb <= X"01010101";
         wait for CLOCK_PERIOD;
         
+        weight_valid_tb <= '0';
+        wait for CLOCK_PERIOD;
+        
         weight_valid_tb <= '1';
-        Data_in_weight_tb <= X"01010101";
+        Data_in_weight_tb <= X"10101010";
         wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '0';
@@ -170,6 +182,13 @@ begin
         wait for CLOCK_PERIOD;
         
         
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;

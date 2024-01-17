@@ -79,7 +79,11 @@ entity systolic_array is
         -- Debug
         
         out_vector_input_o : out std_logic_vector(N * array_width-1 downto 0);
-        out_vector_weight_o : out std_logic_vector(N * array_width-1 downto 0)
+        out_vector_weight_o : out std_logic_vector(N * array_width-1 downto 0);
+        weight_write_en_o : out std_logic;
+        weight_en_o : out std_logic;
+        comp_en_PEs_o : out std_logic
+        
         
     );
 end systolic_array;
@@ -228,7 +232,7 @@ begin
         es => es,
         input_width => INTERNAL_DATA_WIDTH,
         output_width => INTERNAL_DATA_WIDTH,
-        mem_depth => mem_depth,
+        --mem_depth => mem_depth,
         mem_width => array_width
     )
     port map(
@@ -343,6 +347,9 @@ begin
     -- Debug
     out_vector_input_o <= out_vector_input;
     out_vector_weight_o <= out_vector_weight;
+    weight_write_en_o <= weight_write_en;
+    weight_en_o <= weight_en;
+    comp_en_PEs_o <= comp_en_PEs;
     
     
 
