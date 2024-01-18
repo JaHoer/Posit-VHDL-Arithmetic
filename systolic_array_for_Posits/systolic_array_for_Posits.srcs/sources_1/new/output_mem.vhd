@@ -69,30 +69,46 @@ architecture Behavioral of output_mem is
 
 begin
 
-    process (clk)
+    create_register : for k in 1 to mem_width generate
+        
+        register_entity : entity work.shift_register
+            generic map(
+                length => k,
+                data_width => N
+            )
+            port map(
+                clk => clk,
+                enable => w_en,
+                data_in => input_vektor(((mem_width-k+1)*N)-1 downto (mem_width-k)*N),
+                data_out => diagonal_output_vector(((mem_width-k+1)*N)-1 downto (mem_width-k)*N)
+            );
+        
+    end generate;
+
+--    process (clk)
         --variable tmp_output : std_logic_vector(output_width-1 downto 0);
     
-    begin
-        if rising_edge(clk) then
-            if rst = '1' then
-                shift_array <= (others => (others => (others => '0')));
-                diagonal_output_vector <= (others => '0');
-            elsif w_en = '1' then
-                for i in mem_width-1 downto 0 loop
-                    shift_array(i) <= shift_array(i)(shift_array(i)'high -1 downto shift_array(i)'low) & input_vektor(((i+1)*N)-1 downto (i)*N);
-                    --output_vector(((i+1)*N)-1 downto (i)*N) <= shift_array(i)(shift_array'high);
-                    diagonal_output_vector(((i+1)*N)-1 downto (i)*N) <= shift_array(i)(i);
-                end loop;
+--    begin
+--        if rising_edge(clk) then
+--            if rst = '1' then
+--                shift_array <= (others => (others => (others => '0')));
+--                diagonal_output_vector <= (others => '0');
+--            elsif w_en = '1' then
+--                for i in mem_width-1 downto 0 loop
+--                    shift_array(i) <= shift_array(i)(shift_array(i)'high -1 downto shift_array(i)'low) & input_vektor(((i+1)*N)-1 downto (i)*N);
+--                    --output_vector(((i+1)*N)-1 downto (i)*N) <= shift_array(i)(shift_array'high);
+--                    diagonal_output_vector(((i+1)*N)-1 downto (i)*N) <= shift_array(i)(i);
+--                end loop;
                 
                 --output_vector <= tmp_output;
-            end if;
+--            end if;
             
            
             
              
-        end if;
+--        end if;
     
-    end process;
+--    end process;
 
 
 end Behavioral;
