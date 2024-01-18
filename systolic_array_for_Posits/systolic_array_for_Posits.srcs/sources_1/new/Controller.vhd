@@ -131,7 +131,7 @@ begin
     
     enable_output_mem <= both_valid;
     
-    -- TODO maybe a little bit longer or one clock later ?
+    -- TODO a lot longer, needs to travel through complete array !!!
     weight_en_PE <= weight_valid;
     
     

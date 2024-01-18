@@ -45,14 +45,14 @@ entity PE is
         comp_en : in std_logic;
         weight_en : in std_logic;
         
-        inst_in : in std_logic_vector(inst_length-1 downto 0);
+        --inst_in : in std_logic_vector(inst_length-1 downto 0);
         weight_in : in STD_LOGIC_VECTOR (N-1 downto 0);
         input_in : in STD_LOGIC_VECTOR (N-1 downto 0);
         psum_in : in STD_LOGIC_VECTOR (N-1 downto 0);
         weight_w_en_in : in std_logic;
         --instr_in : in STD_LOGIC_VECTOR (N-1 downto 0);
         
-        inst_out : out std_logic_vector(inst_length-1 downto 0);
+        --inst_out : out std_logic_vector(inst_length-1 downto 0);
         weight_out : out STD_LOGIC_VECTOR (N-1 downto 0);
         input_out : out STD_LOGIC_VECTOR (N-1 downto 0);
         psum_out : out STD_LOGIC_VECTOR (N-1 downto 0);

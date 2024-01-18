@@ -86,6 +86,10 @@ architecture Behavioral of tb_systolic_array is
     signal weight_write_en_tb : std_logic;
     signal weight_en_tb : std_logic;
     signal comp_en_PEs_tb : std_logic;
+    signal in_vector_output_tb : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
+    signal PE_intermediate_psum_tb : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
+    signal PE_intermediate_input_tb : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
+    signal PE_intermediate_weight_tb : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
         
 begin
 
@@ -116,7 +120,11 @@ begin
         out_vector_weight_o => out_vector_weight_tb,
         weight_write_en_o => weight_write_en_tb,
         weight_en_o => weight_en_tb,
-        comp_en_PEs_o => comp_en_PEs_tb
+        comp_en_PEs_o => comp_en_PEs_tb,
+        in_vector_output_o => in_vector_output_tb,
+        PE_intermediate_psum_o => PE_intermediate_psum_tb,
+        PE_intermediate_input_o => PE_intermediate_weight_tb,
+        PE_intermediate_weight_o => PE_intermediate_weight_tb
     );
 
 
