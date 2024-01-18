@@ -258,7 +258,7 @@ begin
         es => es,
         input_width => INTERNAL_DATA_WIDTH,
         output_width => INTERNAL_DATA_WIDTH,
-        mem_depth => mem_depth,
+        mem_depth => mem_depth, 
         mem_width => array_width
     )
     port map(
