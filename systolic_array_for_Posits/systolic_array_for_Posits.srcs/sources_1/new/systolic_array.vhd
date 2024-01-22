@@ -278,7 +278,7 @@ begin
     initialize_loop : for k in array_width-1 downto 0 generate
         weight_signal_array(array_width)(k) <= out_vector_weight((k+1)*N-1 downto k*N);
         input_signal_array (array_width)(k) <= out_vector_input((k+1)*N-1 downto k*N);
-        output_signal_array(0)(k) <= in_vector_output((k+1)*N-1 downto k*N);
+        in_vector_output((k+1)*N-1 downto k*N) <= output_signal_array(0)(k);
         output_signal_array(array_width)(k) <= (others => '0');
         --inst_signal_array(array_width)(k) <= inst_in;
         weight_write_array(array_width)(k) <= weight_write_en;
