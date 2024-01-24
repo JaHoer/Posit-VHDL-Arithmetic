@@ -69,6 +69,10 @@ architecture Behavioral of tb_systolic_array is
 
     constant CLOCK_PERIOD : time := 50 ns;
     constant INTERNAL_DATA_WIDTH : integer := N_tb * array_width_tb;
+    
+    
+    type vector_array is array (array_width_tb downto 0)
+        of std_logic_vector((N_tb*array_width_tb)-1 downto 0);
 
     signal clk_tb : std_logic;
     signal rst_tb : std_logic;
@@ -90,6 +94,8 @@ architecture Behavioral of tb_systolic_array is
     signal PE_intermediate_psum_tb : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
     signal PE_intermediate_input_tb : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
     signal PE_intermediate_weight_tb : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
+    signal PE_intermediate_weight_tb_2 : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
+    signal external_weight_signal_array : vector_array;
         
 begin
 
@@ -127,7 +133,10 @@ begin
         PE_intermediate_weight_o => PE_intermediate_weight_tb
     );
 
-
+    
+    -- Hierarchical references to signal in Logic Simulation (needs VHDL 2008)
+    PE_intermediate_weight_tb_2 <= << signal uut.PE_intermediate_weight_o : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0) >>;
+    external_weight_signal_array <= << signal uut.weight_signal_array : vector_array >>;
 
     generate_sim_clock: process
     begin

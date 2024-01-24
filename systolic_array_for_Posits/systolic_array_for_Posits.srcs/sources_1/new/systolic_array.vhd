@@ -114,7 +114,13 @@ architecture Behavioral of systolic_array is
     type weight_write_bit_array is array (array_width downto 0)
         of std_logic_vector(array_width-1 downto 0);
         
-    signal weight_signal_array : outer_array;
+        
+    type vector_array is array (array_width downto 0)
+        of std_logic_vector((N*array_width)-1 downto 0);
+        
+        
+    --signal weight_signal_array : outer_array;
+    signal weight_signal_array : vector_array;
     
     signal input_signal_array : outer_array;
     
@@ -276,10 +282,10 @@ begin
     
     -- fill first line of signal_arrays
     initialize_loop : for k in array_width-1 downto 0 generate
-        weight_signal_array(array_width)(k) <= out_vector_weight((k+1)*N-1 downto k*N);
-        input_signal_array (array_width)(k) <= out_vector_input((k+1)*N-1 downto k*N);
-        in_vector_output((k+1)*N-1 downto k*N) <= output_signal_array(0)(k);
-        output_signal_array(array_width)(k) <= (others => '0');
+--        weight_signal_array(array_width)(k)(N-1 downto 0) <= out_vector_weight((k+1)*N-1 downto k*N);
+        input_signal_array (array_width)(k)(N-1 downto 0) <= out_vector_input((k+1)*N-1 downto k*N);
+        in_vector_output((k+1)*N-1 downto k*N) <= output_signal_array(0)(k)(N-1 downto 0);
+        output_signal_array(array_width)(k)(N-1 downto 0) <= (others => '0');
         --inst_signal_array(array_width)(k) <= inst_in;
         weight_write_array(array_width)(k) <= weight_write_en;
         
@@ -287,11 +293,15 @@ begin
         -- Debug
         PE_intermediate_psum_o((k+1)*N-1 downto k*N) <= output_signal_array(array_width-1)(k);
         PE_intermediate_input_o((k+1)*N-1 downto k*N) <= input_signal_array(array_width)(k);
-        PE_intermediate_weight_o((k+1)*N-1 downto k*N) <= weight_signal_array(array_width)(k);
+--        PE_intermediate_weight_o((k+1)*N-1 downto k*N) <= weight_signal_array(array_width)(k);
+        
+        
         
     end generate;   
     
-    
+    PE_intermediate_weight_o <= weight_signal_array(array_width);
+
+        weight_signal_array(array_width) <= out_vector_weight;
     
     --  x dim1 0 1 - - - - size 
     --  dim 2
@@ -309,8 +319,8 @@ begin
                     generic map (
                         N => N,
                         Bs => Bs,
-                        es => es,
-                        inst_length => inst_length
+                        es => es
+                        --inst_length => inst_length
                     )
                     port map(
                         clk => clk,
@@ -318,13 +328,15 @@ begin
                         comp_en => comp_en_PEs,
                         weight_en => weight_en,
                         --inst_in => inst_signal_array(j+1)(i),
-                        weight_in => weight_signal_array(i+1)(j),
+                        --weight_in => weight_signal_array(i+1)(j),
+                        weight_in => weight_signal_array(i+1)(((j+1)*N)-1 downto j*N),
                         input_in => input_signal_array(j+1)(i),
                                                    --   ^-- swapped Indices
                         weight_w_en_in => weight_write_array(j+1)(i),
                         psum_in => output_signal_array(j+1)(i),
                         --inst_out => inst_signal_array(j)(i),
-                        weight_out => weight_signal_array(i)(j),
+                        --weight_out => weight_signal_array(i)(j),
+                        weight_out => weight_signal_array(i)(((j+1)*N)-1 downto j*N),
                         input_out => input_signal_array(j)(i),
                                                     --   ^-- swapped Indices
                         weight_w_en_out => weight_write_array(j)(i),

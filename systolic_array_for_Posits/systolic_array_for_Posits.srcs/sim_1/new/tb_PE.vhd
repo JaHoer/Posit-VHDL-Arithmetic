@@ -49,15 +49,20 @@ architecture Behavioral of tb_PE is
     signal rst_tb : std_logic;
     signal w_en_tb : std_logic;
     
+    signal comp_en_tb : std_logic;
+    signal weight_en_tb : std_logic;
+    
     --signal inst_in_tb : std_logic_vector(5 downto 0);
     signal weight_in_tb : STD_LOGIC_VECTOR (N_tb-1 downto 0);
     signal input_in_tb : STD_LOGIC_VECTOR (N_tb-1 downto 0);
     signal psum_in_tb : STD_LOGIC_VECTOR (N_tb-1 downto 0);
+    signal weight_w_en_in_tb : std_logic;
     
     --signal inst_out_tb : std_logic_vector(5 downto 0);
     signal weight_out_tb : STD_LOGIC_VECTOR (N_tb-1 downto 0);
     signal input_out_tb : STD_LOGIC_VECTOR (N_tb-1 downto 0);
     signal psum_out_tb : STD_LOGIC_VECTOR (N_tb-1 downto 0);
+    signal weight_w_en_out_tb : std_logic;
 
 begin
 
@@ -65,20 +70,25 @@ begin
     generic map(
         N => N_tb,
         Bs => Bs_tb,
-        es => es_tb,
-        inst_length => inst_length_tb
+        es => es_tb
+        --inst_length => inst_length_tb
     )
     port map(
         clk => clk_tb,
+        comp_en => comp_en_tb,
+        weight_en => weight_en_tb,
         --w_en => w_en_tb,
         --inst_in => inst_in_tb,
         weight_in => weight_in_tb,
         input_in => input_in_tb,
         psum_in => psum_in_tb,
+        weight_w_en_in => weight_w_en_in_tb,
+        
         --inst_out => input_out_tb,
         weight_out => weight_out_tb,
         input_out => input_out_tb,
-        psum_out => psum_out_tb
+        psum_out => psum_out_tb,
+        weight_w_en_out => weight_w_en_out_tb
     );
 
 
