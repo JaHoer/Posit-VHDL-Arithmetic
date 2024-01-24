@@ -42,10 +42,10 @@ entity systolic_array is
         
         -- Mem Size
         -- depth of shift register
-        mem_depth : integer := 4;
+        mem_depth : integer := 2;
         -- number of parallel shift register
         -- doubles as systolic array dimentions
-        array_width : integer := 4;
+        array_width : integer := 2;
         
         -- mem vectors
         --input_width : integer := 128;
@@ -54,7 +54,7 @@ entity systolic_array is
         
         -- width of Data Bus inputs
         -- should be N * array_width
-        data_port_width : integer := 32
+        data_port_width : integer := 16
         
         
         
