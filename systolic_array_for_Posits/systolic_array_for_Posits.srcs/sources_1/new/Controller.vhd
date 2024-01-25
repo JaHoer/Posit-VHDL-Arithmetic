@@ -38,27 +38,27 @@ entity Controller is
         Bs : integer := 3; -- log2(N)
         es : integer := 2;
         
-        inst_length : integer := 6;
-        array_width : integer := 4;
+        --inst_length : integer := 6;
+        array_width : integer := 4
         
         -- width of Data Bus inputs
         -- should be N * array_width
-        data_port_width : integer := 32;
-        internal_data_width : integer := 32
+        --data_port_width : integer := 32;
+        --internal_data_width : integer := 32
     );
     Port (
         clk : in std_logic;
         rst : in std_logic;
         
-        data_weight_in : in std_logic_vector(data_port_width -1 downto 0);
+        data_weight_in : in std_logic_vector(array_width*N -1 downto 0);
         weight_valid : in std_logic;
-        data_input_in : in std_logic_vector(data_port_width -1 downto 0);
+        data_input_in : in std_logic_vector(array_width*N -1 downto 0);
         input_valid : in std_logic;
-        data_output_in : in std_logic_vector(internal_data_width -1 downto 0);
+        data_output_in : in std_logic_vector(array_width*N -1 downto 0);
         
-        data_weight_out : out std_logic_vector(internal_data_width -1 downto 0);
-        data_input_out : out std_logic_vector(internal_data_width -1 downto 0);
-        data_output_out : out std_logic_vector(data_port_width -1 downto 0);
+        data_weight_out : out std_logic_vector(array_width*N -1 downto 0);
+        data_input_out : out std_logic_vector(array_width*N -1 downto 0);
+        data_output_out : out std_logic_vector(array_width*N -1 downto 0);
         output_valid : out std_logic;
         comp_en_PE : out std_logic;
         weight_en_PE : out std_logic;
@@ -66,7 +66,7 @@ entity Controller is
         enable_input_mem : out std_logic;
         enable_output_mem : out std_logic;
         
-        inst : out std_logic_vector(inst_length-1 downto 0);
+        --inst : out std_logic_vector(inst_length-1 downto 0);
         weight_write : out std_logic        -- controls if weight should be written into mem of PEs
         
         
@@ -113,7 +113,7 @@ architecture Behavioral of Controller is
 
 begin
 
-    data_output_out <= std_logic_vector(resize(unsigned(data_output_in), data_port_width));
+    data_output_out <= std_logic_vector(resize(unsigned(data_output_in), array_width*N));
     output_valid <= output_valid_sig;
     
     

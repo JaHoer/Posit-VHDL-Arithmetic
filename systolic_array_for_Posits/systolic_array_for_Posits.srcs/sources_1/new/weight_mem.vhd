@@ -33,10 +33,10 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity weight_mem is
     generic(
-        input_width : integer := 32;
+        --input_width : integer := 32;
         
         -- not used
-        output_width : integer := 32;
+        --output_width : integer := 32;
     
         -- Posit Values
         N : integer := 8;
@@ -54,9 +54,9 @@ entity weight_mem is
         clk : in std_logic;
         rst : in std_logic;
         w_en : in std_logic;
-        input_vektor : in std_logic_vector(input_width-1 downto 0);
+        input_vektor : in std_logic_vector(mem_width*N-1 downto 0);
         --output_vector : out std_logic_vector(output_width-1 downto 0);
-        diagonal_output_vector : out std_logic_vector(input_width-1 downto 0);
+        diagonal_output_vector : out std_logic_vector(mem_width*N-1 downto 0);
         load_cooldown : in std_logic
         
         

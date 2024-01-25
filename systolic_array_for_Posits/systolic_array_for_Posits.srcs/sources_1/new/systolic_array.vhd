@@ -42,10 +42,10 @@ entity systolic_array is
         
         -- Mem Size
         -- depth of shift register
-        mem_depth : integer := 2;
+        --mem_depth : integer := 4;
         -- number of parallel shift register
         -- doubles as systolic array dimentions
-        array_width : integer := 2;
+        array_width : integer := 4
         
         -- mem vectors
         --input_width : integer := 128;
@@ -54,7 +54,7 @@ entity systolic_array is
         
         -- width of Data Bus inputs
         -- should be N * array_width
-        data_port_width : integer := 16
+        --data_port_width : integer := 32
         
         
         
@@ -68,11 +68,11 @@ entity systolic_array is
         clk : in std_logic;
         rst : in std_logic;
         
-        Data_in_weight : in std_logic_vector(data_port_width -1 downto 0);
+        Data_in_weight : in std_logic_vector(array_width*N -1 downto 0);
         weight_valid : in std_logic;
-        Data_in_input : in std_logic_vector(data_port_width -1 downto 0);
+        Data_in_input : in std_logic_vector(array_width*N -1 downto 0);
         input_valid : in std_logic;
-        Data_out_output : out std_logic_vector(data_port_width -1 downto 0);
+        Data_out_output : out std_logic_vector(array_width*N -1 downto 0);
         output_valid : out std_logic;
         
         
@@ -140,7 +140,6 @@ architecture Behavioral of systolic_array is
     -- enable if PEs should compute Outputvalues from inputs and route inputs and outputs through Network
     signal comp_en_PEs : std_logic;
     
-    
 
 
 
@@ -189,10 +188,10 @@ begin
         N => N,
         Bs => Bs,
         es => es,
-        array_width => array_width,
-        inst_length => inst_length,
-        data_port_width => data_port_width,
-        internal_data_width => INTERNAL_DATA_WIDTH
+        array_width => array_width
+        --inst_length => inst_length,
+        --data_port_width => data_port_width,
+        --internal_data_width => INTERNAL_DATA_WIDTH
     )
     port map(
         clk => clk,
@@ -214,7 +213,7 @@ begin
         enable_input_mem => enable_input_mem,
         enable_output_mem => enable_output_mem,
         
-        inst => inst_in,
+        --inst => inst_in,
         weight_write => weight_write_en
     );
     
@@ -223,9 +222,9 @@ begin
         N => N,
         Bs => Bs,
         es => es,
-        input_width => INTERNAL_DATA_WIDTH,
-        output_width => INTERNAL_DATA_WIDTH,
-        mem_depth => mem_depth,
+        --input_width => INTERNAL_DATA_WIDTH,
+        --output_width => INTERNAL_DATA_WIDTH,
+        --mem_depth => mem_depth,
         mem_width => array_width
     )
     port map(
@@ -242,8 +241,8 @@ begin
         N => N,
         Bs => Bs,
         es => es,
-        input_width => INTERNAL_DATA_WIDTH,
-        output_width => INTERNAL_DATA_WIDTH,
+        --input_width => INTERNAL_DATA_WIDTH,
+        --output_width => INTERNAL_DATA_WIDTH,
         --mem_depth => mem_depth,
         mem_width => array_width
     )
@@ -262,9 +261,9 @@ begin
         N => N,
         Bs => Bs,
         es => es,
-        input_width => INTERNAL_DATA_WIDTH,
-        output_width => INTERNAL_DATA_WIDTH,
-        mem_depth => mem_depth, 
+        --input_width => INTERNAL_DATA_WIDTH,
+        --output_width => INTERNAL_DATA_WIDTH,
+        --mem_depth => mem_depth, 
         mem_width => array_width
     )
     port map(
@@ -281,25 +280,22 @@ begin
     
     
     -- fill first line of signal_arrays
-    initialize_loop : for k in array_width-1 downto 0 generate
+--    initialize_loop : for k in array_width-1 downto 0 generate
 --        weight_signal_array(array_width)(k)(N-1 downto 0) <= out_vector_weight((k+1)*N-1 downto k*N);
-        input_signal_array (array_width)(k)(N-1 downto 0) <= out_vector_input((k+1)*N-1 downto k*N);
-        in_vector_output((k+1)*N-1 downto k*N) <= output_signal_array(0)(k)(N-1 downto 0);
-        output_signal_array(array_width)(k)(N-1 downto 0) <= (others => '0');
+--        input_signal_array (array_width)(k)(N-1 downto 0) <= out_vector_input((k+1)*N-1 downto k*N);
+--        in_vector_output((k+1)*N-1 downto k*N) <= output_signal_array(0)(k)(N-1 downto 0);
+--        output_signal_array(array_width)(k)(N-1 downto 0) <= (others => '0');
         --inst_signal_array(array_width)(k) <= inst_in;
-        weight_write_array(array_width)(k) <= weight_write_en;
+--        weight_write_array(array_width)(k) <= weight_write_en;
         
         
         -- Debug
-        PE_intermediate_psum_o((k+1)*N-1 downto k*N) <= output_signal_array(array_width-1)(k);
-        PE_intermediate_input_o((k+1)*N-1 downto k*N) <= input_signal_array(array_width)(k);
---        PE_intermediate_weight_o((k+1)*N-1 downto k*N) <= weight_signal_array(array_width)(k);
-        
-        
-        
-    end generate;   
+--        PE_intermediate_psum_o((k+1)*N-1 downto k*N) <= output_signal_array(array_width-1)(k);
+--        PE_intermediate_input_o((k+1)*N-1 downto k*N) <= input_signal_array(array_width)(k);
+--        PE_intermediate_weight_o((k+1)*N-1 downto k*N) <= weight_signal_array(array_width)(k);      
+--    end generate;   
     
-    PE_intermediate_weight_o <= weight_signal_array(array_width);
+    --PE_intermediate_weight_o <= weight_signal_array(array_width);
 
         weight_signal_array(array_width) <= out_vector_weight;
     
@@ -312,40 +308,66 @@ begin
     --  -
     --  size
     
-    dim2 : for i in array_width-1 downto 0 generate
-        dim1 : for j in array_width-1 downto 0 generate
+    
+    
+    gen_PE_blocks : for i in array_width-1 downto 0 generate
+    
+        PE_block_entity : entity work.PE_block
+        generic map(
+            N => N,
+            Bs => Bs, -- log2(N)
+            es => es,
+            array_width => array_width    
+        )
+        port map(
+            clk => clk,
+            comp_en => comp_en_PEs,
+            weight_en => weight_en,
         
-            PE_entity : entity work.PE
-                    generic map (
-                        N => N,
-                        Bs => Bs,
-                        es => es
+            weight_in => weight_signal_array(i+1),
+            input_in => out_vector_input((i+1)*N-1 downto (i)*N),
+            psum_in => (others => '0'),
+            weight_w_en_in => weight_write_en,
+
+            weight_out => weight_signal_array(i),
+            psum_out => in_vector_output ((i+1)*N-1 downto (i)*N)
+        );
+    
+    end generate;
+    
+--    dim2 : for i in array_width-1 downto 0 generate
+--        dim1 : for j in array_width-1 downto 0 generate        
+--            PE_entity : entity work.PE
+--                    generic map (
+--                        N => N,
+--                        Bs => Bs,
+--                        es => es
                         --inst_length => inst_length
-                    )
-                    port map(
-                        clk => clk,
+--                    )
+--                    port map(
+--                        clk => clk,
                         --w_en => w_en_PE,
-                        comp_en => comp_en_PEs,
-                        weight_en => weight_en,
+--                        comp_en => comp_en_PEs,
+--                        weight_en => weight_en,
                         --inst_in => inst_signal_array(j+1)(i),
                         --weight_in => weight_signal_array(i+1)(j),
-                        weight_in => weight_signal_array(i+1)(((j+1)*N)-1 downto j*N),
-                        input_in => input_signal_array(j+1)(i),
+--                        weight_in => weight_signal_array(i+1)(((j+1)*N)-1 downto j*N),
+--                        input_in => input_signal_array(j+1)(i),
                                                    --   ^-- swapped Indices
-                        weight_w_en_in => weight_write_array(j+1)(i),
-                        psum_in => output_signal_array(j+1)(i),
+--                        weight_w_en_in => weight_write_array(j+1)(i),
+--                        psum_in => output_signal_array(j+1)(i),
                         --inst_out => inst_signal_array(j)(i),
                         --weight_out => weight_signal_array(i)(j),
-                        weight_out => weight_signal_array(i)(((j+1)*N)-1 downto j*N),
-                        input_out => input_signal_array(j)(i),
+--                        weight_out => weight_signal_array(i)(((j+1)*N)-1 downto j*N),
+--                        input_out => input_signal_array(j)(i),
                                                     --   ^-- swapped Indices
-                        weight_w_en_out => weight_write_array(j)(i),
-                        psum_out => output_signal_array(j)(i)
-                    );
+--                        weight_w_en_out => weight_write_array(j)(i),
+--                        psum_out => output_signal_array(j)(i)
+--                    );
 
                         
-        end generate;
-    end generate;
+--        end generate;
+--    end generate;
     
     
     

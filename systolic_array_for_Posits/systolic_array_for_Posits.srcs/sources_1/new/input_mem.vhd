@@ -33,8 +33,8 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity input_mem is
     generic(
-        input_width : integer := 128;
-        output_width : integer := 128;
+        --input_width : integer := 128;
+        --output_width : integer := 128;
     
         -- Posit Values
         N : integer := 8;
@@ -43,7 +43,7 @@ entity input_mem is
         
         -- Mem Size
         -- depth of shift register
-        mem_depth : integer := 8;
+        --mem_depth : integer := 8;
         -- number of parallel shift register
         mem_width : integer := 8
     );
@@ -51,9 +51,9 @@ entity input_mem is
         clk : in std_logic;
         rst : in std_logic;
         w_en : in std_logic;
-        input_vektor : in std_logic_vector(input_width-1 downto 0);
+        input_vektor : in std_logic_vector(mem_width*N-1 downto 0);
         --output_vector : out std_logic_vector(output_width-1 downto 0);
-        diagonal_output_vector : out std_logic_vector(output_width-1 downto 0)
+        diagonal_output_vector : out std_logic_vector(mem_width*N-1 downto 0)
     );
 end input_mem;
 
