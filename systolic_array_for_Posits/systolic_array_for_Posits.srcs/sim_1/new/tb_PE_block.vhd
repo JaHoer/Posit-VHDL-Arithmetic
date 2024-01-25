@@ -63,7 +63,19 @@ architecture Behavioral of tb_PE_block is
     signal input_out_tb : STD_LOGIC_VECTOR (N_tb-1 downto 0);
     signal psum_out_tb : STD_LOGIC_VECTOR (N_tb-1 downto 0);
     signal weight_w_en_out_tb : std_logic;
-
+    
+    
+    
+    signal external_intermediate_w_write : std_logic_vector(array_width_tb downto 0);
+    signal external_intermediate_input : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
+    signal external_intermediate_psum : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
+    
+    signal external_saved_weight_3 : std_logic_vector(N_tb-1 downto 0);
+    signal external_saved_weight_2 : std_logic_vector(N_tb-1 downto 0);
+    signal external_saved_weight_1 : std_logic_vector(N_tb-1 downto 0);
+    signal external_saved_weight_0 : std_logic_vector(N_tb-1 downto 0);
+    
+    --signal external_weight : std_logic_vector(array_width_tb*N_tb-1 downto 0);
 begin
 
     uut : entity work.PE_block
@@ -87,6 +99,100 @@ begin
             psum_out => psum_out_tb
 
         );
+    
+    
+    external_intermediate_w_write <= << signal uut.intermediate_w_write : std_logic_vector(array_width_tb downto 0)>>;
+    external_intermediate_input <= << signal uut.intermediate_input : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0)>>;
+    external_intermediate_psum <= << signal uut.intermediate_psum : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0)>>;
+    
+    external_saved_weight_3 <= << signal uut.gen_pe(3).PE_entity.weight_mem : std_logic_vector(N_tb-1 downto 0)>>;
+    external_saved_weight_2 <= << signal uut.gen_pe(2).PE_entity.weight_mem : std_logic_vector(N_tb-1 downto 0)>>;
+    external_saved_weight_1 <= << signal uut.gen_pe(1).PE_entity.weight_mem : std_logic_vector(N_tb-1 downto 0)>>;
+    external_saved_weight_0 <= << signal uut.gen_pe(0).PE_entity.weight_mem : std_logic_vector(N_tb-1 downto 0)>>;
+    
+    --external_weight <= << signal uut.weight : std_logic_vector(array_width_tb*N_tb-1 downto 0)>>;
+    
+    
+    
+    generate_sim_clock: process
+    begin
+    	clk_tb <= '1';
+    	wait for CLOCK_PERIOD/2;
+    	clk_tb <= '0';
+    	wait for CLOCK_PERIOD/2;
+    end process;
+    
+    
+    stimuli: process
+    
+    begin
+        
+        
+        wait for CLOCK_PERIOD;
+        comp_en_tb <= '0';
+        weight_en_tb <= '0';
+        weight_w_en_in_tb <= '0';
+        psum_in_tb <= "00000000";
+        
+        wait for CLOCK_PERIOD;
+        comp_en_tb <= '0';
+        weight_en_tb <= '1';
+        weight_w_en_in_tb <= '0';
+        weight_in_tb <= X"02020202";
+        
+        
+        wait for CLOCK_PERIOD;
+        weight_w_en_in_tb <= '0';
+        weight_in_tb <= X"02020202";
+        
+        
+        wait for CLOCK_PERIOD;
+        -- "03030303" will be saved in as Weight in PEs
+        weight_w_en_in_tb <= '1';
+        weight_in_tb <= X"02020202";
+        
+        
+        wait for CLOCK_PERIOD;
+        
+        weight_w_en_in_tb <= '0';
+        weight_in_tb <= X"02020202";
+        comp_en_tb <= '1';
+        input_in_tb <= "00000010";
+        
+        
+        wait for CLOCK_PERIOD;
+        input_in_tb <= "00000010";
+        weight_in_tb <= X"02020202";
+        
+        
+        
+        wait for CLOCK_PERIOD;        
+        input_in_tb <= "00000010";
+        weight_in_tb <= X"02020202";
+        
+        
+
+        wait for CLOCK_PERIOD;
+        input_in_tb <= "00000010";
+        weight_in_tb <= X"02020202";
+        
+        wait for CLOCK_PERIOD;
+        weight_en_tb <= '0';
+        
+        
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        
+        
+        
+        
+        
+        
+        
+    
+    
+    end process;
 
     
 

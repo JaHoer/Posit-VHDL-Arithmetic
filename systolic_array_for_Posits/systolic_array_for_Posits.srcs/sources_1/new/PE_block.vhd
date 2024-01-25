@@ -66,13 +66,14 @@ architecture Behavioral of PE_block is
 
 begin
 
+
     intermediate_w_write(array_width) <= weight_w_en_in;
     intermediate_input((array_width+1)*N-1 downto (array_width)*N) <= input_in;
     intermediate_psum((array_width+1)*N-1 downto (array_width)*N) <= psum_in;
     psum_out <= intermediate_psum(N-1 downto 0);
 
 
-    gen_block : for i in array_width-1 downto 0 generate 
+    gen_pe : for i in array_width-1 downto 0 generate 
 
         PE_entity : entity work.PE
         generic map(
