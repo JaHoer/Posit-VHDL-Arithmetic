@@ -87,8 +87,8 @@ begin
         --inst_out => input_out_tb,
         weight_out => weight_out_tb,
         input_out => input_out_tb,
-        psum_out => psum_out_tb,
-        weight_w_en_out => weight_w_en_out_tb
+        psum_out => psum_out_tb
+        --weight_w_en_out => weight_w_en_out_tb
     );
 
 

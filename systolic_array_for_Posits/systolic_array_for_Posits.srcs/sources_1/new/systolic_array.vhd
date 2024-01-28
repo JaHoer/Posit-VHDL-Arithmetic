@@ -38,7 +38,7 @@ entity systolic_array is
         Bs : integer := 3; -- log2(N)
         es : integer := 2;
         
-        inst_length : integer := 6;
+        --inst_length : integer := 6;
         
         -- Mem Size
         -- depth of shift register
@@ -73,21 +73,21 @@ entity systolic_array is
         Data_in_input : in std_logic_vector(array_width*N -1 downto 0);
         input_valid : in std_logic;
         Data_out_output : out std_logic_vector(array_width*N -1 downto 0);
-        output_valid : out std_logic;
+        output_valid : out std_logic
         
         
         -- Debug
         
-        out_vector_input_o : out std_logic_vector(N * array_width-1 downto 0);
-        out_vector_weight_o : out std_logic_vector(N * array_width-1 downto 0);
-        weight_write_en_o : out std_logic;
-        weight_en_o : out std_logic;
-        comp_en_PEs_o : out std_logic;
+        --out_vector_input_o : out std_logic_vector(N * array_width-1 downto 0);
+        --out_vector_weight_o : out std_logic_vector(N * array_width-1 downto 0);
+        --weight_write_en_o : out std_logic;
+        --weight_en_o : out std_logic;
+        --comp_en_PEs_o : out std_logic;
         
-        in_vector_output_o : out std_logic_vector(N * array_width-1 downto 0);
-        PE_intermediate_psum_o : out std_logic_vector(N * array_width-1 downto 0);
-        PE_intermediate_input_o : out std_logic_vector(N * array_width-1 downto 0);
-        PE_intermediate_weight_o : out std_logic_vector(N * array_width-1 downto 0)
+        --in_vector_output_o : out std_logic_vector(N * array_width-1 downto 0);
+        --PE_intermediate_psum_o : out std_logic_vector(N * array_width-1 downto 0);
+        --PE_intermediate_input_o : out std_logic_vector(N * array_width-1 downto 0);
+        --PE_intermediate_weight_o : out std_logic_vector(N * array_width-1 downto 0)
         
     );
 end systolic_array;
@@ -120,21 +120,23 @@ architecture Behavioral of systolic_array is
         
         
     --signal weight_signal_array : outer_array;
-    signal weight_signal_array : vector_array;
+    --signal weight_signal_array : vector_array;
     
-    signal input_signal_array : outer_array;
+    signal input_signal_array : vector_array;
     
-    signal output_signal_array : outer_array;
+    --signal input_signal_array : outer_array;
+    
+    --signal output_signal_array : outer_array;
     
     --signal inst_signal_array : outer_inst_array;
     
-    signal weight_write_array : weight_write_bit_array;
+    --signal weight_write_array : weight_write_bit_array;
     
     
-    signal inst_in : std_logic_vector (inst_length-1 downto 0);
+    --signal inst_in : std_logic_vector (inst_length-1 downto 0);
     
     -- enable if weights should be written to reg
-    signal weight_write_en : std_logic;
+    signal weight_write_en : std_logic_vector(array_width downto 0);
     -- enable if weight should be routed through Network
     signal weight_en : std_logic;
     -- enable if PEs should compute Outputvalues from inputs and route inputs and outputs through Network
@@ -214,7 +216,7 @@ begin
         enable_output_mem => enable_output_mem,
         
         --inst => inst_in,
-        weight_write => weight_write_en
+        weight_write => weight_write_en(array_width)
     );
     
     input_mem : entity work.input_mem
@@ -253,7 +255,7 @@ begin
         w_en => enable_weight_mem,
         input_vektor => in_vector_weight,
         diagonal_output_vector => out_vector_weight,
-        load_cooldown => weight_write_en
+        load_cooldown => weight_write_en(array_width)
     );
     
     output_mem : entity work.output_mem
@@ -297,7 +299,9 @@ begin
     
     --PE_intermediate_weight_o <= weight_signal_array(array_width);
 
-        weight_signal_array(array_width) <= out_vector_weight;
+        --weight_signal_array(array_width) <= out_vector_weight;
+        
+        input_signal_array(array_width) <= out_vector_input;
     
     --  x dim1 0 1 - - - - size 
     --  dim 2
@@ -324,13 +328,16 @@ begin
             comp_en => comp_en_PEs,
             weight_en => weight_en,
         
-            weight_in => weight_signal_array(i+1),
-            input_in => out_vector_input((i+1)*N-1 downto (i)*N),
+            --weight_in => weight_signal_array(i+1),
+            weight_in => out_vector_weight((i+1)*N-1 downto (i)*N),
+            --input_in => out_vector_input((i+1)*N-1 downto (i)*N),
+            input_in => input_signal_array(i+1),
             psum_in => (others => '0'),
-            weight_w_en_in => weight_write_en,
+            weight_w_en_in => weight_write_en(i+1),
 
-            weight_out => weight_signal_array(i),
-            psum_out => in_vector_output ((i+1)*N-1 downto (i)*N)
+            input_out => input_signal_array(i),
+            psum_out => in_vector_output ((i+1)*N-1 downto (i)*N),
+            weight_w_en_out => weight_write_en(i)
         );
     
     end generate;
@@ -391,12 +398,12 @@ begin
     
     
     -- Debug
-    out_vector_input_o <= out_vector_input;
-    out_vector_weight_o <= out_vector_weight;
-    weight_write_en_o <= weight_write_en;
-    weight_en_o <= weight_en;
-    comp_en_PEs_o <= comp_en_PEs;
-    in_vector_output_o <= in_vector_output;
+    --out_vector_input_o <= out_vector_input;
+    --out_vector_weight_o <= out_vector_weight;
+    --weight_write_en_o <= weight_write_en(array_width);
+    --weight_en_o <= weight_en;
+    --comp_en_PEs_o <= comp_en_PEs;
+    --in_vector_output_o <= in_vector_output;
     
     
 

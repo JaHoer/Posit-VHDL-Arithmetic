@@ -55,8 +55,8 @@ entity PE is
         --inst_out : out std_logic_vector(inst_length-1 downto 0);
         weight_out : out STD_LOGIC_VECTOR (N-1 downto 0);
         input_out : out STD_LOGIC_VECTOR (N-1 downto 0);
-        psum_out : out STD_LOGIC_VECTOR (N-1 downto 0);
-        weight_w_en_out : out std_logic
+        psum_out : out STD_LOGIC_VECTOR (N-1 downto 0)
+        --weight_w_en_out : out std_logic
         --instr_out : out STD_LOGIC_VECTOR (N-1 downto 0)
     );
 end PE;
@@ -97,7 +97,7 @@ begin
             if weight_en = '1' then
             
                 weight_out <= weight;
-                weight_w_en_out <= weight_write;
+                --weight_w_en_out <= weight_write;
                 
                 if weight_write = '1' then
                     weight_mem <= weight;

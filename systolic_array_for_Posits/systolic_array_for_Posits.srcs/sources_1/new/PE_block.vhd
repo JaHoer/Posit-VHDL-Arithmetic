@@ -45,21 +45,23 @@ entity PE_block is
         comp_en : in std_logic;
         weight_en : in std_logic;
         
-        weight_in : in STD_LOGIC_VECTOR (array_width*N-1 downto 0);
-        input_in : in STD_LOGIC_VECTOR (N-1 downto 0);
+        weight_in : in STD_LOGIC_VECTOR (N-1 downto 0);
+        input_in : in STD_LOGIC_VECTOR (array_width*N-1 downto 0);
         psum_in : in STD_LOGIC_VECTOR (N-1 downto 0);
         weight_w_en_in : in std_logic;
 
-        weight_out : out STD_LOGIC_VECTOR (array_width*N-1 downto 0);
-        psum_out : out STD_LOGIC_VECTOR (N-1 downto 0)
+        input_out : out STD_LOGIC_VECTOR (array_width*N-1 downto 0);
+        psum_out : out STD_LOGIC_VECTOR (N-1 downto 0);
+        weight_w_en_out : out std_logic
 
     );
 end PE_block;
 
 architecture Behavioral of PE_block is
 
-    signal intermediate_w_write : std_logic_vector(array_width downto 0);
-    signal intermediate_input : std_logic_vector((array_width+1)*N-1 downto 0);
+    --signal intermediate_w_write : std_logic_vector(array_width downto 0);
+    --signal weigth_write_mem : std_logic;
+    signal intermediate_weight : std_logic_vector((array_width+1)*N-1 downto 0);
     signal intermediate_psum : std_logic_vector((array_width+1)*N-1 downto 0);
     
     signal weight : std_logic_vector(array_width*N-1 downto 0);
@@ -67,8 +69,9 @@ architecture Behavioral of PE_block is
 begin
 
 
-    intermediate_w_write(array_width) <= weight_w_en_in;
-    intermediate_input((array_width+1)*N-1 downto (array_width)*N) <= input_in;
+    --intermediate_w_write(array_width) <= weight_w_en_in;
+    
+    intermediate_weight((array_width+1)*N-1 downto (array_width)*N) <= weight_in;
     intermediate_psum((array_width+1)*N-1 downto (array_width)*N) <= psum_in;
     psum_out <= intermediate_psum(N-1 downto 0);
 
@@ -86,18 +89,28 @@ begin
             comp_en => comp_en,
             weight_en => weight_en,
 
-            weight_in => weight_in((i+1)*N-1 downto i*N),
-            input_in => intermediate_input((i+2)*N-1 downto (i+1)*N),
+            --weight_in => weight_in((i+1)*N-1 downto i*N),
+            weight_in => intermediate_weight((i+2)*N-1 downto (i+1)*N),
+            input_in => input_in((i+1)*N-1 downto i*N),
             psum_in => intermediate_psum((i+2)*N-1 downto (i+1)*N),
-            weight_w_en_in => intermediate_w_write(i+1),
+            weight_w_en_in => weight_w_en_in,
 
-            weight_out => weight_out((i+1)*N-1 downto i*N),
-            input_out => intermediate_input((i+1)*N-1 downto (i)*N),
-            psum_out => intermediate_psum((i+1)*N-1 downto (i)*N),
-            weight_w_en_out => intermediate_w_write(i)
+            --weight_out => weight_out((i+1)*N-1 downto i*N),
+            weight_out => intermediate_weight((i+1)*N-1 downto (i)*N),
+            input_out => input_out((i+1)*N-1 downto i*N),
+            psum_out => intermediate_psum((i+1)*N-1 downto (i)*N)
+            --weight_w_en_out => intermediate_w_write(i)
         );
 
 
     end generate;
+    
+    w_mem : process (clk)
+    begin
+        if rising_edge(clk) then
+            --weigth_write_mem <= weight_w_en_in;
+            weight_w_en_out <= weight_w_en_in;
+        end if;
+    end process;
 
 end Behavioral;
