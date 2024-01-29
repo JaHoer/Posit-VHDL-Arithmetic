@@ -106,8 +106,8 @@ architecture Behavioral of Controller is
     
     signal enable_w_mem : std_logic;
     
-    -- continue loading after load of first column is finished for remaining columns
-    signal delayed_load_shift_register : std_logic_vector(array_width-2 downto 0);
+    -- continue loading weight after load of first column of PEs is finished for remaining columns
+    signal delayed_weight_en : std_logic_vector(array_width-2 downto 0);
     
     signal load_cooldown_active : std_logic;
 
@@ -123,7 +123,6 @@ begin
     data_input_out <= data_input_in when both_valid = '1' else (others => '0');
     
     -- has Delay to wright out values from mem to PEs
-    --enable_w_mem <= ;
 --    enable_w_mem <= delayed_load_shift_register(delayed_load_shift_register'high);
     enable_weight_mem <= weight_valid;
     
@@ -132,7 +131,7 @@ begin
     enable_output_mem <= both_valid;
     
     -- TODO a lot longer, needs to travel through complete array !!!
-    weight_en_PE <= weight_valid;
+    weight_en_PE <= weight_valid or delayed_weight_en(delayed_weight_en'high);
     
     
     
@@ -229,9 +228,12 @@ begin
                 if weight_is_loaded = '1' then
                     weight_is_loaded <= '1';
                     weight_write <= '0';
+                    delayed_weight_en <= delayed_weight_en(delayed_weight_en'high-1 downto delayed_weight_en'low) & '0';
+                    
                 else
                     weight_is_loaded <= ringcounter_output;
                     weight_write <= ringcounter_output;
+                    delayed_weight_en <= (others => ringcounter_output);
                 end if;
                 
                 

@@ -44,6 +44,7 @@ entity PE_block is
         clk : in std_logic;
         comp_en : in std_logic;
         weight_en : in std_logic;
+        --weight_en_out : out std_logic;
         
         weight_in : in STD_LOGIC_VECTOR (N-1 downto 0);
         input_in : in STD_LOGIC_VECTOR (array_width*N-1 downto 0);
@@ -91,7 +92,7 @@ begin
             clk => clk,
             comp_en => comp_en,
             weight_en => weight_en_tmp,
-
+            
             --weight_in => weight_in((i+1)*N-1 downto i*N),
             weight_in => intermediate_weight((i+2)*N-1 downto (i+1)*N),
             input_in => input_in((i+1)*N-1 downto i*N),
@@ -114,6 +115,8 @@ begin
             --weigth_write_mem <= weight_w_en_in;
             weight_w_en_out <= weight_w_en_in;
             weight_en_tmp <= weight_en;
+            
+            --weight_en_out <= weight_en;
             
 --            if weight_en = '1' then
 --                intermediate_weight((array_width+1)*N-1 downto (array_width)*N) <= weight_in;

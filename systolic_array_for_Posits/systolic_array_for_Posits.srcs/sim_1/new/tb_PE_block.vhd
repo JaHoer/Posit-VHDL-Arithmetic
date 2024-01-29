@@ -46,11 +46,12 @@ architecture Behavioral of tb_PE_block is
     constant CLOCK_PERIOD : time := 50 ns;
 
     signal clk_tb : std_logic;
-    signal rst_tb : std_logic;
-    signal w_en_tb : std_logic;
+    --signal rst_tb : std_logic;
+    --signal w_en_tb : std_logic;
     
     signal comp_en_tb : std_logic;
     signal weight_en_tb : std_logic;
+    --signal weight_en_out_tb : std_logic;
     
     --signal inst_in_tb : std_logic_vector(5 downto 0);
     signal weight_in_tb : STD_LOGIC_VECTOR (N_tb-1 downto 0);
@@ -94,6 +95,7 @@ begin
             clk => clk_tb,
             comp_en => comp_en_tb,
             weight_en => weight_en_tb,
+            --weight_en_out => weight_en_out_tb,
 
             weight_in => weight_in_tb,
             input_in => input_in_tb,

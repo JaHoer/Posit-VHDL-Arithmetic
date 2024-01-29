@@ -138,6 +138,7 @@ architecture Behavioral of systolic_array is
     -- enable if weights should be written to reg
     signal weight_write_en : std_logic_vector(array_width downto 0);
     -- enable if weight should be routed through Network
+    --signal weight_en : std_logic_vector(array_width downto 0);
     signal weight_en : std_logic;
     -- enable if PEs should compute Outputvalues from inputs and route inputs and outputs through Network
     signal comp_en_PEs : std_logic;
@@ -327,6 +328,7 @@ begin
             clk => clk,
             comp_en => comp_en_PEs,
             weight_en => weight_en,
+            --weight_en_out => weight_en,
         
             --weight_in => weight_signal_array(i+1),
             weight_in => out_vector_weight((i+1)*N-1 downto (i)*N),

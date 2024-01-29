@@ -86,6 +86,7 @@ architecture Behavioral of tb_systolic_array is
     signal output_valid_tb : std_logic;
     
     
+    --signal weight_en_tb : std_logic_vector(array_width_tb downto 0);
     signal weight_en_tb : std_logic;
     signal weight_write_en_tb : std_logic_vector(array_width_tb downto 0);
     signal out_vector_weight_tb : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
@@ -98,7 +99,11 @@ architecture Behavioral of tb_systolic_array is
     --signal PE_intermediate_weight_tb_2 : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
     --signal external_weight_signal_array : vector_array;
     
-    signal input_signal_array : vector_array;
+    --signal input_signal_array : vector_array;
+    --signal input_signal_array_3 : std_logic_vector((N_tb*array_width_tb)-1 downto 0);
+    --signal input_signal_array_2 : std_logic_vector((N_tb*array_width_tb)-1 downto 0);
+    --signal input_signal_array_1 : std_logic_vector((N_tb*array_width_tb)-1 downto 0);
+    --signal input_signal_array_0 : std_logic_vector((N_tb*array_width_tb)-1 downto 0);
     
     signal intermediate_weight_PE_3 : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
     signal intermediate_weight_PE_2 : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
@@ -152,6 +157,7 @@ begin
     
     -- Hierarchical references to signal in Logic Simulation (needs VHDL 2008)
     
+    --weight_en_tb <= << signal uut.weight_en : std_logic_vector(array_width_tb downto 0)>>;
     weight_en_tb <= << signal uut.weight_en : std_logic>>;
     comp_en_PEs_tb <= << signal uut.comp_en_PEs : std_logic>>;
     
@@ -159,6 +165,7 @@ begin
     weight_write_en_tb <= << signal uut.weight_write_en : std_logic_vector(array_width_tb downto 0)>>;
     out_vector_input_tb <= << signal uut.out_vector_input : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0)>>;
     in_vector_output_tb <= << signal uut.in_vector_output : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0)>>;
+    --input_signal_array_3 <= << signal uut.input_sigal_array(3) : std_logic_vector((N_tb*array_width_tb)-1 downto 0)>>;
     
     intermediate_weight_PE_3 <= << signal uut.gen_PE_blocks(3).PE_block_entity.intermediate_weight : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0)>>;
     intermediate_weight_PE_2 <= << signal uut.gen_PE_blocks(2).PE_block_entity.intermediate_weight : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0)>>;
@@ -216,8 +223,8 @@ begin
         Data_in_weight_tb <= X"03030303";
         wait for CLOCK_PERIOD;
         
-        weight_valid_tb <= '0';
-        wait for CLOCK_PERIOD;
+        --weight_valid_tb <= '1';
+        --wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '1';
         Data_in_weight_tb <= X"04040404";

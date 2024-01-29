@@ -93,6 +93,9 @@ architecture Behavioral of tb_controller is
     signal weight_loading_out_tb : std_logic;
     signal weight_control_shift_register_tb : std_logic_vector(array_width_tb-1 downto 0);
     signal weight_enougth_valids_tb : std_logic;
+    
+    
+    signal delayed_weight_en : std_logic_vector(array_width_tb-2 downto 0);
 
 begin
     uut : entity work.controller
@@ -100,10 +103,10 @@ begin
         N => N_tb,
         Bs => Bs_tb,
         es => es_tb,
-        inst_length => inst_length_tb,
-        internal_data_width => INTERNAL_DATA_WIDTH,
-        array_width => array_width_tb,
-        data_port_width => data_port_width_tb
+        --inst_length => inst_length_tb,
+        --internal_data_width => INTERNAL_DATA_WIDTH,
+        array_width => array_width_tb
+        --data_port_width => data_port_width_tb
     )
     port map(
         clk => clk_tb,
@@ -124,7 +127,7 @@ begin
         enable_input_mem => enable_input_mem_tb,
         enable_output_mem => enable_output_mem_tb,
         
-        inst => inst_tb,
+        --inst => inst_tb,
         weight_write => weight_write_tb,  
         
         weight_is_loaded_out => weight_is_loaded_out_tb,
@@ -132,6 +135,10 @@ begin
         weight_control_shift_register_out => weight_control_shift_register_tb,
         weight_enougth_valids_out => weight_enougth_valids_tb
     );
+    
+    
+    delayed_weight_en <= << signal uut.delayed_weight_en : std_logic_vector(array_width_tb-2 downto 0)>>;
+    
     
     
     
