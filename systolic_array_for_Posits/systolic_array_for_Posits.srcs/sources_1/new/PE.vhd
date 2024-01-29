@@ -65,19 +65,25 @@ architecture Behavioral of PE is
 
 
     signal psum_old : std_logic_vector(N-1 downto 0);
-    signal psum_new : std_logic_vector(N-1 downto 0);
+--    signal psum_new : std_logic_vector(N-1 downto 0);
     signal input : std_logic_vector(N-1 downto 0);
     signal weight : std_logic_vector(N-1 downto 0);
     signal weight_mem : std_logic_vector(N-1 downto 0);
-    signal weight_write : std_logic;
+--    signal weight_write : std_logic;
     
     
 
 begin
-    psum_old <= psum_in;
-    input <= input_in;
-    weight <= weight_in;
-    weight_write <= weight_w_en_in;
+    
+    input_out <= input;
+    weight_out <= weight;
+--    weight_write <= weight_w_en_in;
+    
+    -- ### TODO: here Posit operations ###
+    psum_out <= std_logic_vector(resize( (signed(psum_old) + (signed(input) * signed(weight_mem))), N));
+    -- ###
+
+
 
     calc : process (clk)
         
@@ -85,24 +91,22 @@ begin
         if rising_edge(clk) then
             --if inst_in(inst_in'high) = '1' then
             if comp_en = '1' then
-                input_out <= input;
                 
-                -- ### TODO: here Posit operations ###
-                psum_out <= std_logic_vector(resize( (signed(psum_old) + (signed(input) * signed(weight_mem))), N));
-                -- ###
+                input <= input_in;
+                psum_old <= psum_in;
+                
             end if;
             
             
             -- Disable if Delay from Weight-Bus
             if weight_en = '1' then
-            
-                weight_out <= weight;
+                weight <= weight_in;
                 --weight_w_en_out <= weight_write;
-                
-                if weight_write = '1' then
-                    weight_mem <= weight;
-                end if;
+            end if;
             
+            
+            if weight_w_en_in = '1' then
+                weight_mem <= weight_in;
             end if;
             
         end if;

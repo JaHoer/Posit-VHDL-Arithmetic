@@ -66,14 +66,19 @@ architecture Behavioral of tb_PE_block is
     
     
     
-    signal external_intermediate_w_write : std_logic_vector(array_width_tb downto 0);
-    signal external_intermediate_input : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
+--    signal external_intermediate_w_write : std_logic_vector(array_width_tb downto 0);
+    signal external_intermediate_weight : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
     signal external_intermediate_psum : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
     
     signal external_saved_weight_3 : std_logic_vector(N_tb-1 downto 0);
     signal external_saved_weight_2 : std_logic_vector(N_tb-1 downto 0);
     signal external_saved_weight_1 : std_logic_vector(N_tb-1 downto 0);
     signal external_saved_weight_0 : std_logic_vector(N_tb-1 downto 0);
+    
+    signal external_temp_weight_3 : std_logic_vector(N_tb-1 downto 0);
+    signal external_temp_weight_2 : std_logic_vector(N_tb-1 downto 0);
+    signal external_temp_weight_1 : std_logic_vector(N_tb-1 downto 0);
+    signal external_temp_weight_0 : std_logic_vector(N_tb-1 downto 0);
     
     --signal external_weight : std_logic_vector(array_width_tb*N_tb-1 downto 0);
 begin
@@ -102,13 +107,18 @@ begin
     
     
     --external_intermediate_w_write <= << signal uut.intermediate_w_write : std_logic_vector(array_width_tb downto 0)>>;
-    external_intermediate_input <= << signal uut.intermediate_weight : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0)>>;
+    external_intermediate_weight <= << signal uut.intermediate_weight : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0)>>;
     external_intermediate_psum <= << signal uut.intermediate_psum : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0)>>;
     
     external_saved_weight_3 <= << signal uut.gen_pe(3).PE_entity.weight_mem : std_logic_vector(N_tb-1 downto 0)>>;
     external_saved_weight_2 <= << signal uut.gen_pe(2).PE_entity.weight_mem : std_logic_vector(N_tb-1 downto 0)>>;
     external_saved_weight_1 <= << signal uut.gen_pe(1).PE_entity.weight_mem : std_logic_vector(N_tb-1 downto 0)>>;
     external_saved_weight_0 <= << signal uut.gen_pe(0).PE_entity.weight_mem : std_logic_vector(N_tb-1 downto 0)>>;
+    
+    external_temp_weight_3 <= << signal uut.gen_pe(3).PE_entity.weight : std_logic_vector(N_tb-1 downto 0)>>;
+    external_temp_weight_2 <= << signal uut.gen_pe(2).PE_entity.weight : std_logic_vector(N_tb-1 downto 0)>>;
+    external_temp_weight_1 <= << signal uut.gen_pe(1).PE_entity.weight : std_logic_vector(N_tb-1 downto 0)>>;
+    external_temp_weight_0 <= << signal uut.gen_pe(0).PE_entity.weight : std_logic_vector(N_tb-1 downto 0)>>;
     
     --external_weight <= << signal uut.weight : std_logic_vector(array_width_tb*N_tb-1 downto 0)>>;
     
@@ -133,12 +143,13 @@ begin
         weight_en_tb <= '0';
         weight_w_en_in_tb <= '0';
         psum_in_tb <= "00000000";
+        weight_in_tb <= X"00";
         
         wait for CLOCK_PERIOD;
         comp_en_tb <= '0';
         weight_en_tb <= '1';
         weight_w_en_in_tb <= '0';
-        weight_in_tb <= X"02";
+        weight_in_tb <= X"01";
         
         
         wait for CLOCK_PERIOD;
@@ -147,31 +158,43 @@ begin
         
         
         wait for CLOCK_PERIOD;
-        
         weight_w_en_in_tb <= '0';
-        weight_in_tb <= X"02";
+        weight_en_tb <= '0';
+        weight_in_tb <= X"03";
+        
+        
+        wait for CLOCK_PERIOD;
+        weight_en_tb <= '1';
+        weight_w_en_in_tb <= '0';
+        weight_in_tb <= X"04";
         
         
         
         wait for CLOCK_PERIOD;
         
-        weight_w_en_in_tb <= '1';
-        weight_in_tb <= X"02";
+        weight_w_en_in_tb <= '0';
+        weight_in_tb <= X"05";
         
         input_in_tb <= X"02020202";
         
         
         wait for CLOCK_PERIOD;
-        weight_w_en_in_tb <= '0';
+        weight_w_en_in_tb <= '1';
+        weight_in_tb <= X"06";
+        weight_en_tb <= '0';
+        
         comp_en_tb <= '1';
         input_in_tb <= X"02020202";
         --weight_in_tb <= "00000010";
         
-        
+
         
         wait for CLOCK_PERIOD;        
         input_in_tb <= X"02020202";
         --weight_in_tb <= "00000010";
+        weight_w_en_in_tb <= '0';
+        
+        
         
         
 
@@ -192,7 +215,7 @@ begin
         input_in_tb <= X"02020202";
         
         wait for CLOCK_PERIOD;
-        weight_en_tb <= '0';
+        
         
         
         wait for CLOCK_PERIOD;

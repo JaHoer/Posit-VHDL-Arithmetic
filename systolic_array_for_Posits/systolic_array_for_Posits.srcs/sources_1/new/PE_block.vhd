@@ -65,15 +65,18 @@ architecture Behavioral of PE_block is
     signal intermediate_psum : std_logic_vector((array_width+1)*N-1 downto 0);
     
     signal weight : std_logic_vector(array_width*N-1 downto 0);
+    
+    signal weight_en_tmp : std_logic;
 
 begin
 
 
     --intermediate_w_write(array_width) <= weight_w_en_in;
     
-    intermediate_weight((array_width+1)*N-1 downto (array_width)*N) <= weight_in;
+    
     intermediate_psum((array_width+1)*N-1 downto (array_width)*N) <= psum_in;
     psum_out <= intermediate_psum(N-1 downto 0);
+    intermediate_weight((array_width+1)*N-1 downto (array_width)*N) <= weight_in ;
 
 
     gen_pe : for i in array_width-1 downto 0 generate 
@@ -87,7 +90,7 @@ begin
         port map( 
             clk => clk,
             comp_en => comp_en,
-            weight_en => weight_en,
+            weight_en => weight_en_tmp,
 
             --weight_in => weight_in((i+1)*N-1 downto i*N),
             weight_in => intermediate_weight((i+2)*N-1 downto (i+1)*N),
@@ -110,6 +113,11 @@ begin
         if rising_edge(clk) then
             --weigth_write_mem <= weight_w_en_in;
             weight_w_en_out <= weight_w_en_in;
+            weight_en_tmp <= weight_en;
+            
+--            if weight_en = '1' then
+--                intermediate_weight((array_width+1)*N-1 downto (array_width)*N) <= weight_in;
+--            end if;
         end if;
     end process;
 
