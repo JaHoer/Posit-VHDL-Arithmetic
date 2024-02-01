@@ -232,30 +232,44 @@ begin
         
         weight_valid_tb <= '0';
         input_valid_tb <= '1';
-        Data_in_input_tb <= X"01010101";
+        Data_in_input_tb <= X"04030201";
         wait for CLOCK_PERIOD;        
         
         input_valid_tb <= '1';
-        Data_in_input_tb <= X"01010101";
+        Data_in_input_tb <= X"05040302";
+        wait for CLOCK_PERIOD;
+        
+        
+        input_valid_tb <= '0';
         wait for CLOCK_PERIOD;
         
         input_valid_tb <= '1';
-        Data_in_input_tb <= X"01010101";
+        Data_in_input_tb <= X"06050403";
         wait for CLOCK_PERIOD;
         
         input_valid_tb <= '1';
-        Data_in_input_tb <= X"01010101";
+        Data_in_input_tb <= X"07060504";
         wait for CLOCK_PERIOD;
+        
+        
+        
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        input_valid_tb <= '0';
+        wait for CLOCK_PERIOD;
+        
+        input_valid_tb <= '1';
         
         
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
-        wait for CLOCK_PERIOD;
-        wait for CLOCK_PERIOD;
-        wait for CLOCK_PERIOD;
-        wait for CLOCK_PERIOD;
-        wait for CLOCK_PERIOD;
-        wait for CLOCK_PERIOD;
+        
+        input_valid_tb <= '0';
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;

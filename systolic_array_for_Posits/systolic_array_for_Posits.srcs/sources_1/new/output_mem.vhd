@@ -71,8 +71,10 @@ begin
 
     create_register : for k in mem_width downto 1 generate
         
-        register_entity : entity work.shift_register
+--        if_k_large : if k > 1 generate
+            register_entity : entity work.shift_register
             generic map(
+--                length => k-1,
                 length => k,
                 data_width => N
             )
@@ -82,7 +84,11 @@ begin
                 data_in => input_vektor(((k)*N)-1 downto (k-1)*N),
                 data_out => diagonal_output_vector(((k)*N)-1 downto (k-1)*N)
             );
+--        end generate;
         
+--        if_k_small : if k <= 1 generate
+--            diagonal_output_vector(((k)*N)-1 downto (k-1)*N) <= input_vektor(((k)*N)-1 downto (k-1)*N) when w_en = '1';
+--        end generate;
     end generate;
 
 --    process (clk)
