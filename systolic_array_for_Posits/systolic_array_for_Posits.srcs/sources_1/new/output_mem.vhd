@@ -69,7 +69,7 @@ architecture Behavioral of output_mem is
 
 begin
 
-    create_register : for k in 1 to mem_width generate
+    create_register : for k in mem_width downto 1 generate
         
         register_entity : entity work.shift_register
             generic map(
@@ -79,8 +79,8 @@ begin
             port map(
                 clk => clk,
                 enable => w_en,
-                data_in => input_vektor(((mem_width-k+1)*N)-1 downto (mem_width-k)*N),
-                data_out => diagonal_output_vector(((mem_width-k+1)*N)-1 downto (mem_width-k)*N)
+                data_in => input_vektor(((k)*N)-1 downto (k-1)*N),
+                data_out => diagonal_output_vector(((k)*N)-1 downto (k-1)*N)
             );
         
     end generate;
