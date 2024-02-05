@@ -92,6 +92,7 @@ architecture Behavioral of tb_systolic_array is
     signal out_vector_weight_tb : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
     signal comp_en_PEs_tb : std_logic;
     signal out_vector_input_tb : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
+    signal enable_output_mem_tb : std_logic;
     signal in_vector_output_tb : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
     --signal PE_intermediate_psum_tb : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
     --signal PE_intermediate_input_tb : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
@@ -164,6 +165,7 @@ begin
     out_vector_weight_tb <= << signal uut.out_vector_weight : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0)>>;
     weight_write_en_tb <= << signal uut.weight_write_en : std_logic_vector(array_width_tb downto 0)>>;
     out_vector_input_tb <= << signal uut.out_vector_input : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0)>>;
+    enable_output_mem_tb <= << signal uut.enable_output_mem : std_logic>>;
     in_vector_output_tb <= << signal uut.in_vector_output : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0)>>;
     --input_signal_array_3 <= << signal uut.input_sigal_array(3) : std_logic_vector((N_tb*array_width_tb)-1 downto 0)>>;
     
@@ -255,6 +257,10 @@ begin
         
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
+        input_valid_tb <= '0';
+        wait for CLOCK_PERIOD;
+        
+        input_valid_tb <= '1';
         wait for CLOCK_PERIOD;
         
         wait for CLOCK_PERIOD;
@@ -267,6 +273,10 @@ begin
         
         
         wait for CLOCK_PERIOD;
+        input_valid_tb <= '0';
+        wait for CLOCK_PERIOD;
+        
+        input_valid_tb <= '1';
         wait for CLOCK_PERIOD;
         
         input_valid_tb <= '0';

@@ -63,12 +63,12 @@ begin
 
     uut : entity work.output_mem
     generic map (
-        input_width => input_width_tb,
-        output_width => output_width_tb,
+        --input_width => input_width_tb,
+        --output_width => output_width_tb,
         N => N_tb,
         Bs => Bs_tb,
         es => es_tb,
-        mem_depth => mem_depth_tb,
+        --mem_depth => mem_depth_tb,
         mem_width => mem_width_tb
     )
     port map (
@@ -96,33 +96,33 @@ begin
     
         wait for CLOCK_PERIOD;
         rst_tb <= '0';
-        input_vektor_tb <= "00001111000011110000111100001111";
+        input_vektor_tb <= X"01010101";
         w_en_tb <= '0';
         
         wait for CLOCK_PERIOD;
-        input_vektor_tb <= "00001111000011110000111100001111";
+        input_vektor_tb <= X"02020202";
         w_en_tb <= '1';
         
         
         wait for CLOCK_PERIOD;
-        input_vektor_tb <= "10001000110011001110111011111111";
+        input_vektor_tb <= X"03030303";
         w_en_tb <= '1';
         
         wait for CLOCK_PERIOD;
-        input_vektor_tb <= "00010001001100110111011111111111";
+        input_vektor_tb <= X"04040404";
+        w_en_tb <= '0';
+        
+        wait for CLOCK_PERIOD;
+        input_vektor_tb <= X"05050505";
+        w_en_tb <= '1';
+        
+        
+        wait for CLOCK_PERIOD;
+        input_vektor_tb <= X"06060606";
         w_en_tb <= '1';
         
         wait for CLOCK_PERIOD;
-        input_vektor_tb <= "00000000111111110000111100110011";
-        w_en_tb <= '1';
-        
-        
-        wait for CLOCK_PERIOD;
-        input_vektor_tb <= "00110011001100110011001100110011";
-        w_en_tb <= '1';
-        
-        wait for CLOCK_PERIOD;
-        input_vektor_tb <= "10101010101010101010101010101010";
+        input_vektor_tb <= X"07070707";
         w_en_tb <= '1';
         
         wait for CLOCK_PERIOD;

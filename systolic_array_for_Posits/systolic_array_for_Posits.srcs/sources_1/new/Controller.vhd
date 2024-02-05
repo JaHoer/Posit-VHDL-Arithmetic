@@ -123,6 +123,9 @@ begin
     data_weight_out <= data_weight_in when weight_valid = '1' else (others => '0');
     data_input_out <= data_input_in when both_valid = '1' else (others => '0');
     
+    
+    comp_en_PE <= both_valid;
+    
     -- has Delay to wright out values from mem to PEs
 --    enable_w_mem <= delayed_load_shift_register(delayed_load_shift_register'high);
     enable_weight_mem <= weight_valid;
@@ -273,8 +276,7 @@ begin
                 output_valid_sig <= output_control_shift_register(output_control_shift_register'high);
             end if;
             
-            -- needs Delay of 1 clk
-            comp_en_PE <= both_valid;
+            
             
             
         end if;
