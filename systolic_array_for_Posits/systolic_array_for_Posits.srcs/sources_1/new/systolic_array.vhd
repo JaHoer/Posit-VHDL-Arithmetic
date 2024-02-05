@@ -70,10 +70,13 @@ entity systolic_array is
         
         Data_in_weight : in std_logic_vector(array_width*N -1 downto 0);
         weight_valid : in std_logic;
+        weight_ready : out std_logic;
         Data_in_input : in std_logic_vector(array_width*N -1 downto 0);
         input_valid : in std_logic;
+        input_ready : out std_logic;
         Data_out_output : out std_logic_vector(array_width*N -1 downto 0);
-        output_valid : out std_logic
+        output_valid : out std_logic;
+        output_ready : in std_logic
         
         
         -- Debug
@@ -205,11 +208,15 @@ begin
         data_input_in => Data_in_input,
         input_valid => input_valid,
         data_output_in => out_diagonal_vector_output,
+        output_ready => output_ready,
         
         data_weight_out => in_vector_weight,
         data_input_out => in_vector_input,
         data_output_out => Data_out_output,
         output_valid => output_valid,
+        weight_ready => weight_ready,
+        input_ready => input_ready,
+        
         comp_en_PE => comp_en_PEs,
         weight_en_PE => weight_en,
         enable_weight_mem => enable_weight_mem,

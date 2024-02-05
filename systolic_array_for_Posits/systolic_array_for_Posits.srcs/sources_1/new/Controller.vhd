@@ -55,11 +55,15 @@ entity Controller is
         data_input_in : in std_logic_vector(array_width*N -1 downto 0);
         input_valid : in std_logic;
         data_output_in : in std_logic_vector(array_width*N -1 downto 0);
+        output_ready : in std_logic;
         
         data_weight_out : out std_logic_vector(array_width*N -1 downto 0);
         data_input_out : out std_logic_vector(array_width*N -1 downto 0);
         data_output_out : out std_logic_vector(array_width*N -1 downto 0);
         output_valid : out std_logic;
+        weight_ready : out std_logic;
+        input_ready : out std_logic;
+        
         comp_en_PE : out std_logic;
         weight_en_PE : out std_logic;
         enable_weight_mem : out std_logic;
@@ -134,10 +138,13 @@ begin
     
     enable_output_mem <= both_valid;
     
-    -- TODO a lot longer, needs to travel through complete array !!!
+    -- longer enable to allow weight to travel through the array
     weight_en_PE <= weight_valid or delayed_weight_en(delayed_weight_en'high);
     
-    
+    -- only allow new input and weight if there is space for the output
+    -- TODO: maybe connect both_valid to output_ready, so it only works of there is space for the output
+    weight_ready <= output_ready;
+    input_ready <= output_ready;
     
     
     -- Debug

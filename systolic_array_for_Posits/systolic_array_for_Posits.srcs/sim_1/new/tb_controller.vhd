@@ -75,11 +75,15 @@ architecture Behavioral of tb_controller is
     signal data_input_in_tb : std_logic_vector(data_port_width_tb -1 downto 0);
     signal input_valid_tb : std_logic;
     signal data_output_in_tb : std_logic_vector(internal_data_width -1 downto 0);
+    signal output_ready_tb : std_logic;
         
     signal data_weight_out_tb : std_logic_vector(internal_data_width -1 downto 0);
     signal data_input_out_tb : std_logic_vector(internal_data_width -1 downto 0);
     signal data_output_out_tb : std_logic_vector(data_port_width_tb -1 downto 0);
     signal output_valid_tb : std_logic;
+    signal weight_ready_tb : std_logic;
+    signal input_ready_tb : std_logic;
+    
     signal comp_en_PE_tb : std_logic;
     signal weight_en_PE_tb : std_logic;
     signal enable_weight_mem_tb : std_logic;
@@ -116,11 +120,15 @@ begin
         data_input_in => data_input_in_tb,
         input_valid => input_valid_tb,
         data_output_in => data_output_in_tb,
+        output_ready => output_ready_tb,
         
         data_weight_out => data_weight_out_tb,
         data_input_out => data_input_out_tb,
         data_output_out => data_output_out_tb,
         output_valid => output_valid_tb,
+        weight_ready => weight_ready_tb,
+        input_ready => input_ready_tb,
+        
         comp_en_PE => comp_en_PE_tb,
         weight_en_PE => weight_en_PE_tb,
         enable_weight_mem => enable_weight_mem_tb,
