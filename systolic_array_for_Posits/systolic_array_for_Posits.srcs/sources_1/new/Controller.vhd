@@ -99,7 +99,7 @@ architecture Behavioral of Controller is
     
     --signal weight_token : std_logic;
     signal weight_is_loaded : std_logic := '0';
-    
+    signal weight_write_sig : std_logic;
     signal weight_loading : std_logic;
     
     signal ringcounter_output : std_logic := '0';
@@ -127,6 +127,7 @@ begin
     data_weight_out <= data_weight_in when weight_valid = '1' else (others => '0');
     data_input_out <= data_input_in when both_valid = '1' else (others => '0');
     
+    weight_write <= weight_write_sig;
     
     comp_en_PE <= both_valid;
     
@@ -144,7 +145,8 @@ begin
     -- only allow new input and weight if there is space for the output
     -- TODO: maybe connect both_valid to output_ready, so it only works of there is space for the output
     weight_ready <= output_ready;
-    input_ready <= output_ready;
+    -- only allow new input when weight is already loaded
+    input_ready <= output_ready and weight_is_loaded;
     
     
     -- Debug
@@ -180,7 +182,7 @@ begin
                 --weight_control_shift_register <= (0 => '1', others => '0');
                 weight_ringcounter <= (0 => '1', others => '0');
                 ringcounter_output <= '0';
-                weight_write <= '0';
+                weight_write_sig <= '0';
                 weight_is_loaded <= '0';
                 weight_loading <= '0';
                 weight_token := '0';
@@ -227,7 +229,7 @@ begin
                 -- one clk extra delay
                 
                 weight_is_loaded <= '0';
-                weight_write <= '0';
+                weight_write_sig <= '0';
                 
                 
 
@@ -238,12 +240,12 @@ begin
                 
                 if weight_is_loaded = '1' then
                     weight_is_loaded <= '1';
-                    weight_write <= '0';
+                    weight_write_sig <= '0';
                     delayed_weight_en <= delayed_weight_en(delayed_weight_en'high-1 downto delayed_weight_en'low) & '0';
                     
                 else
                     weight_is_loaded <= ringcounter_output;
-                    weight_write <= ringcounter_output;
+                    weight_write_sig <= ringcounter_output;
                     delayed_weight_en <= (others => ringcounter_output);
                 end if;
                 
@@ -278,8 +280,22 @@ begin
             if rst = '1' then
                 output_control_shift_register <= (others => '0');
                 output_valid_sig <= '0';
+                
+            elsif weight_write_sig = '1' then
+                -- reset shift_register when new weight was loaded
+                
+                if input_valid = '1' then
+                    -- array starts working immediately => start with 1 on shift_register
+                    output_control_shift_register <= (0 => '1', others => '0');
+                    output_valid_sig <= '0';
+                else 
+                    output_control_shift_register <= (others => '0');
+                    output_valid_sig <= '0';
+                end if;
+            
+            
             elsif both_valid = '1' then
-                output_control_shift_register <= output_control_shift_register(output_control_shift_register'high -1 downto output_control_shift_register'low) & both_valid;
+                output_control_shift_register <= output_control_shift_register(output_control_shift_register'high -1 downto output_control_shift_register'low) & '1';
                 output_valid_sig <= output_control_shift_register(output_control_shift_register'high);
             else 
                 -- both_valid = '0' for interruptions of output_mem
