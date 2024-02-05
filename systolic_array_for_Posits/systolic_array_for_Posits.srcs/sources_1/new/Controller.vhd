@@ -89,7 +89,7 @@ architecture Behavioral of Controller is
     signal both_valid : std_logic;
     
     -- counts until result is ready / delay from input_mem + delay from array => -2 because of shorter output_mem
-    signal output_control_shift_register : std_logic_vector(2*array_width -2 downto 0);
+    signal output_control_shift_register : std_logic_vector(2*array_width -1 downto 0);
     -- load the Wieght into the PEs after array_width + 1 clks
     signal weight_control_shift_register : std_logic_vector(array_width-1 downto 0) := (0 => '1', others => '0');
     signal weight_ringcounter : std_logic_vector(array_width-1 downto 0) := (0 => '1', others => '0');
@@ -281,6 +281,9 @@ begin
             elsif both_valid = '1' then
                 output_control_shift_register <= output_control_shift_register(output_control_shift_register'high -1 downto output_control_shift_register'low) & both_valid;
                 output_valid_sig <= output_control_shift_register(output_control_shift_register'high);
+            else 
+                -- both_valid = '0' for interruptions of output_mem
+                output_valid_sig <= '0';
             end if;
             
             
