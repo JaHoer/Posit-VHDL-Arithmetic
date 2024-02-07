@@ -225,11 +225,11 @@ architecture Behavioral of posit_adder is
   signal tmp_o, tmp1_o : std_logic_vector(2*N-1 downto 0);
   signal tmp1_oN : std_logic_vector(2*N-1 downto 0);
 
-    signal r_diff_le : std_logic_vector(N-1 downto 0);
-    signal se_extended : std_logic_vector(N-1 downto 0);
+    signal r_diff_le : std_logic_vector(es+Bs downto 0);
+    signal se_extended : std_logic_vector(es+Bs downto 0);
     
     
-    signal lr_N_le : std_logic_vector(N-1 downto 0);
+    signal lr_N_le : std_logic_vector(es+Bs downto 0);
     signal left_shift_extended : std_logic_vector(es + Bs downto 0);
 
     alias DSR_right_in_up is DSR_right_in(N-1 downto es-1);
@@ -242,7 +242,7 @@ architecture Behavioral of posit_adder is
     
     signal out_zeros : std_logic_vector(N-2 downto 0);
     
-    signal mant_ovf_extended : std_logic_vector(N downto 0);
+    signal mant_ovf_extended : std_logic_vector(es+Bs+1 downto 0);
     
 
 begin
@@ -360,15 +360,17 @@ begin
     -- exponent difference
     -- LE-SE
     
-    r_diff_le <= std_logic_vector(resize(unsigned(r_diff & le), N));
-    se_extended <= std_logic_vector(resize(unsigned(se), N));
-  
-    diff <= std_logic_vector(unsigned('0' & r_diff_le) - unsigned('0' & se_extended));
+    
+    r_diff_le <= std_logic_vector(resize(unsigned(r_diff & le), es+Bs+1));
+    se_extended <= std_logic_vector(resize(unsigned(se), es+Bs+1));
+    
+    -- es+Bs+2 = 7
+    diff <= std_logic_vector(unsigned('0' & (r_diff_le)) - unsigned('0' & se_extended));
 
 
-  -- -- exp_diff <= Bs'("1") when diff(es+Bs) = '0' else diff(Bs-1 downto 0);       -- <-- alt
-  -- -- (|diff[es+Bs:Bs]) ? {Bs{1'b1}} : diff[Bs-1:0];
-  exp_diff <= (others => '1') when or_reduce(diff(es+Bs downto Bs)) = '1' else diff(Bs-1 downto 0);
+    -- exp_diff <= Bs'("1") when diff(es+Bs) = '0' else diff(Bs-1 downto 0);       -- <-- alt
+    -- (|diff[es+Bs:Bs]) ? {Bs{1'b1}} : diff[Bs-1:0];
+    exp_diff <= (others => '1') when or_reduce(diff(es+Bs downto Bs)) = '1' else diff(Bs-1 downto 0);
 
   
 

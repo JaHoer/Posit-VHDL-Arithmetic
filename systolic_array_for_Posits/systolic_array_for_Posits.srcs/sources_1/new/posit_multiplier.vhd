@@ -42,7 +42,7 @@ entity posit_multiplier is
         es : integer := 2
     );
     Port ( 
-        clk : in std_logic;
+        --clk : in std_logic;
     
         in1 : in std_logic_vector(N-1 downto 0);
         in2 : in std_logic_vector(N-1 downto 0);

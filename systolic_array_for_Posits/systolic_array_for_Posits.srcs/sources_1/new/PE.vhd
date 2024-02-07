@@ -70,8 +70,16 @@ architecture Behavioral of PE is
     signal weight : std_logic_vector(N-1 downto 0);
     signal weight_mem : std_logic_vector(N-1 downto 0);
 --    signal weight_write : std_logic;
+
+    signal sum_out : std_logic_vector(N-1 downto 0);
+        
+    signal adder_done : std_logic;
+    signal adder_inf : std_logic;
+    signal adder_zero : std_logic;
     
-    
+    signal mult_done : std_logic;
+    signal mult_inf : std_logic;
+    signal mult_zero : std_logic;    
 
 begin
     
@@ -80,7 +88,41 @@ begin
 --    weight_write <= weight_w_en_in;
     
     -- ### TODO: here Posit operations ###
-    psum_out <= std_logic_vector(resize( (signed(psum_old) + (signed(input) * signed(weight_mem))), N));
+    --psum_out <= std_logic_vector(resize( (signed(psum_old) + (signed(input) * signed(weight_mem))), N));
+    
+    posit_adder_entity : entity work.posit_adder
+    generic map (
+        N => N,
+        Bs => Bs,
+        es => es
+    )
+    port map (
+        in1 => input,
+        in2 => weight_mem,
+        start => comp_en,   -- does nothing
+        out_val => sum_out,
+        inf => adder_inf,
+        zero => adder_zero,
+        done => adder_done
+    );
+    
+    posit_multiplier_entity : entity work.posit_multiplier
+    generic map (
+        N => N,
+        Bs => Bs,
+        es => es
+    )
+    port map (
+        in1 => psum_old,
+        in2 => sum_out,
+        start => comp_en,   -- does nothing
+        out_val => psum_out,
+        inf => mult_inf,
+        zero => mult_inf,
+        done => mult_done
+    );
+    
+    
     -- ###
 
 

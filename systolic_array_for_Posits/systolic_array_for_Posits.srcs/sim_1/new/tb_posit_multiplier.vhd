@@ -100,7 +100,7 @@ begin
         es => es_tb
     )
     port map (
-        clk => clk_tb,
+        --clk => clk_tb,
     
         in1 => in1_tb,
         in2 => in2_tb,
