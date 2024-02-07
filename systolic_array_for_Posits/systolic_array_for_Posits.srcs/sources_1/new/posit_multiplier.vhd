@@ -50,43 +50,43 @@ entity posit_multiplier is
         out_val : out std_logic_vector(N-1 downto 0);
         inf : out std_logic;
         zero : out std_logic;
-        done : out std_logic;
+        done : out std_logic
     
         -- Debug Outputs
-
-        inf1_o : out std_logic;
-        inf2_o : out std_logic;
-        zero1_o : out std_logic;
-        zero2_o : out std_logic;
+--        ;
+--        inf1_o : out std_logic;
+--        inf2_o : out std_logic;
+--        zero1_o : out std_logic;
+--        zero2_o : out std_logic;
         
-        mult_s_o : out std_logic;
+--        mult_s_o : out std_logic;
     
-        rc1_o : out std_logic;
-        rc2_o : out std_logic;
-        regime1_o : out std_logic_vector(Bs-1 downto 0); 
-        regime2_o : out std_logic_vector(Bs-1 downto 0); 
-        e1_o : out std_logic_vector(es-1 downto 0);
-        e2_o : out std_logic_vector(es-1 downto 0);
-        mant1_o : out std_logic_vector(N-es-1 downto 0); 
-        mant2_o : out std_logic_vector(N-es-1 downto 0);
+--        rc1_o : out std_logic;
+--        rc2_o : out std_logic;
+--        regime1_o : out std_logic_vector(Bs-1 downto 0); 
+--        regime2_o : out std_logic_vector(Bs-1 downto 0); 
+--        e1_o : out std_logic_vector(es-1 downto 0);
+--        e2_o : out std_logic_vector(es-1 downto 0);
+--        mant1_o : out std_logic_vector(N-es-1 downto 0); 
+--        mant2_o : out std_logic_vector(N-es-1 downto 0);
         
-        m1_o : out std_logic_vector(N-es downto 0);
-        m2_o : out std_logic_vector(N-es downto 0);
-        r1_o : out std_logic_vector(Bs+1 downto 0);
-        r2_o : out std_logic_vector(Bs+1 downto 0);
+--        m1_o : out std_logic_vector(N-es downto 0);
+--        m2_o : out std_logic_vector(N-es downto 0);
+--        r1_o : out std_logic_vector(Bs+1 downto 0);
+--        r2_o : out std_logic_vector(Bs+1 downto 0);
         
-        r1e1_o : out std_logic_vector(Bs+es+1 downto 0);
-        r2e2_o : out std_logic_vector(Bs+es+1 downto 0);
+--        r1e1_o : out std_logic_vector(Bs+es+1 downto 0);
+--        r2e2_o : out std_logic_vector(Bs+es+1 downto 0);
         
-        mult_m_o : out std_logic_vector(2*(N-es)+1 downto 0);
-        mult_e_o : out std_logic_vector(Bs+es+1 downto 0);
+--        mult_m_o : out std_logic_vector(2*(N-es)+1 downto 0);
+--        mult_e_o : out std_logic_vector(Bs+es+1 downto 0);
         
-        e_o_o : out std_logic_vector(es-1 downto 0);
-        r_o_o : out std_logic_vector(Bs downto 0);
-        tmp_o_o : out std_logic_vector(2*N-1 downto 0);
-        tmp1_o_o : out std_logic_vector(2*N-1 downto 0);
-        r_o_dsr_o : out std_logic_vector(Bs downto 0);
-        tmp1_oN_o : out std_logic_vector(2*N-1 downto 0)
+--        e_o_o : out std_logic_vector(es-1 downto 0);
+--        r_o_o : out std_logic_vector(Bs downto 0);
+--        tmp_o_o : out std_logic_vector(2*N-1 downto 0);
+--        tmp1_o_o : out std_logic_vector(2*N-1 downto 0);
+--        r_o_dsr_o : out std_logic_vector(Bs downto 0);
+--        tmp1_oN_o : out std_logic_vector(2*N-1 downto 0)
 
     );
 end posit_multiplier;
@@ -299,7 +299,7 @@ begin
 --        );
         
     
-    tmp1_o <= std_logic_vector(shift_right(unsigned(tmp_o), to_integer(unsigned(r_o_dsr))));  
+    tmp1_o <= std_logic_vector(shift_right(unsigned(tmp_o), to_integer(unsigned(r_o_dsr_tmp))));  
     
     
     -- Final Output
@@ -318,38 +318,38 @@ begin
     
     -- Debug Outputs
     
-    inf1_o <= inf1;
-    inf2_o <= inf2;
-    zero1_o <= zero1;
-    zero2_o <= zero2;
+--    inf1_o <= inf1;
+--    inf2_o <= inf2;
+--    zero1_o <= zero1;
+--    zero2_o <= zero2;
     
-    mult_s_o <= mult_s;
+--    mult_s_o <= mult_s;
     
-    rc1_o <= rc1;
-    rc2_o <= rc2;
-    regime1_o <= regime1;
-    regime2_o <= regime2;
-    e1_o <= e1;
-    e2_o <= e2;
-    mant1_o <= mant1;
-    mant2_o <= mant2;
+--    rc1_o <= rc1;
+--    rc2_o <= rc2;
+--    regime1_o <= regime1;
+--    regime2_o <= regime2;
+--    e1_o <= e1;
+--    e2_o <= e2;
+--    mant1_o <= mant1;
+--    mant2_o <= mant2;
     
-    m1_o <= m1;
-    m2_o <= m2;
-    r1_o <= r1;
-    r2_o <= r2;
+--    m1_o <= m1;
+--    m2_o <= m2;
+--    r1_o <= r1;
+--    r2_o <= r2;
     
-    r1e1_o <= r1e1;
-    r2e2_o <= r2e2;
+--    r1e1_o <= r1e1;
+--    r2e2_o <= r2e2;
     
-    mult_m_o <= mult_m;
-    mult_e_o <= mult_e;
-    e_o_o <= e_o;
-    r_o_o <= r_o;
-    tmp_o_o <= tmp_o;
-    tmp1_o_o <= tmp1_o;
-    r_o_dsr_o <= r_o_dsr;
-    tmp1_oN_o <= tmp1_oN;
+--    mult_m_o <= mult_m;
+--    mult_e_o <= mult_e;
+--    e_o_o <= e_o;
+--    r_o_o <= r_o;
+--    tmp_o_o <= tmp_o;
+--    tmp1_o_o <= tmp1_o;
+--    r_o_dsr_o <= r_o_dsr;
+--    tmp1_oN_o <= tmp1_oN;
     
     
     

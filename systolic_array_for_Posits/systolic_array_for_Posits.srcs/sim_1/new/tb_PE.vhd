@@ -62,7 +62,10 @@ architecture Behavioral of tb_PE is
     signal weight_out_tb : STD_LOGIC_VECTOR (N_tb-1 downto 0);
     signal input_out_tb : STD_LOGIC_VECTOR (N_tb-1 downto 0);
     signal psum_out_tb : STD_LOGIC_VECTOR (N_tb-1 downto 0);
+    signal psum_reference : STD_LOGIC_VECTOR (N_tb-1 downto 0);
     signal weight_w_en_out_tb : std_logic;
+    
+    signal external_product_out : STD_LOGIC_VECTOR (N_tb-1 downto 0);
 
 begin
 
@@ -92,6 +95,8 @@ begin
     );
 
 
+    external_product_out <= <<signal uut.product_out : std_logic_vector(N_tb-1 downto 0)>>;
+
 
     generate_sim_clock: process
     begin
@@ -106,13 +111,33 @@ begin
     
     begin
     
+    
         wait for CLOCK_PERIOD;
-        w_en_tb <= '1';
+        weight_en_tb <= '1';
+        comp_en_tb <= '0';
+        weight_w_en_in_tb <= '1';
+        weight_in_tb <= "01011000"; -- = 8
+        psum_in_tb <= "00000000";
+        
+        wait for CLOCK_PERIOD;
+        weight_en_tb <= '0';
+        comp_en_tb <= '1';
+        weight_w_en_in_tb <= '0';
+        input_in_tb <= "00110000";  -- = 0.25
+        psum_in_tb <= "01010000";   -- = 4
+        psum_reference <= "01010100";   -- = 6
+        
+        
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        
+        wait for CLOCK_PERIOD;
+        weight_en_tb <= '1';
         weight_in_tb <= "00001111";
         psum_in_tb <= "00000000";
         
         wait for CLOCK_PERIOD;
-        w_en_tb <= '1';
+        weight_en_tb <= '1';
         weight_in_tb <= "00110011";
         
         wait for CLOCK_PERIOD;

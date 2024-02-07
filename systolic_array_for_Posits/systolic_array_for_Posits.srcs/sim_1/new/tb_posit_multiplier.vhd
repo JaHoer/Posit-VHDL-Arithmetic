@@ -35,7 +35,7 @@ entity tb_posit_multiplier is
     generic (
         N_tb : integer := 8;
         Bs_tb : integer := 3;   -- log2(N)
-        es_tb : integer := 4    -- fuer Wertetabelle = 4
+        es_tb : integer := 2    -- fuer Wertetabelle = 4
         
     );
 
@@ -44,7 +44,7 @@ end tb_posit_multiplier;
 
 architecture Behavioral of tb_posit_multiplier is
 
-    constant CLOCK_PERIOD : time := 150 ns;
+    constant CLOCK_PERIOD : time := 500 ns;
 
     signal clk_tb  : std_logic;
 
@@ -93,7 +93,7 @@ architecture Behavioral of tb_posit_multiplier is
 
 begin
 
-    UUT : entity work.posit_multiplier
+    uut : entity work.posit_multiplier
     generic map (
         N => N_tb,
         Bs => Bs_tb,
@@ -108,45 +108,81 @@ begin
         out_val => out_val_tb,
         inf => inf_tb,
         zero => zero_tb,
-        done => done_tb,
+        done => done_tb
         
-        inf1_o => inf1_tb,
-        inf2_o => inf2_tb,
-        zero1_o => zero1_tb,
-        zero2_o => zero2_tb,
+--        ,
+--        inf1_o => inf1_tb,
+--        inf2_o => inf2_tb,
+--        zero1_o => zero1_tb,
+--        zero2_o => zero2_tb,
         
-        mult_s_o => mult_s_tb,
+--        mult_s_o => mult_s_tb,
     
-        rc1_o => rc1_tb,
-        rc2_o => rc2_tb,
-        regime1_o => regime1_tb,
-        regime2_o => regime2_tb,
-        e1_o => e1_tb,
-        e2_o => e2_tb,
-        mant1_o => mant1_tb,
-        mant2_o => mant2_tb,
+--        rc1_o => rc1_tb,
+--        rc2_o => rc2_tb,
+--        regime1_o => regime1_tb,
+--        regime2_o => regime2_tb,
+--        e1_o => e1_tb,
+--        e2_o => e2_tb,
+--        mant1_o => mant1_tb,
+--        mant2_o => mant2_tb,
         
-        m1_o => m1_tb,
-        m2_o => m2_tb,
-        r1_o => r1_tb,
-        r2_o => r2_tb,
+--        m1_o => m1_tb,
+--        m2_o => m2_tb,
+--        r1_o => r1_tb,
+--        r2_o => r2_tb,
         
-        r1e1_o => r1e1_tb,
-        r2e2_o => r2e2_tb,
+--        r1e1_o => r1e1_tb,
+--        r2e2_o => r2e2_tb,
         
-        mult_m_o => mult_m_tb,
-        mult_e_o => mult_e_tb,
+--        mult_m_o => mult_m_tb,
+--        mult_e_o => mult_e_tb,
         
-        e_o_o => e_o_tb,
-        r_o_o => r_o_tb,
-        tmp_o_o => tmp_o_tb,
-        tmp1_o_o => tmp1_o_tb,
-        r_o_dsr_o => r_o_dsr_tb,
-        tmp1_oN_o => tmp1_oN_tb
+--        e_o_o => e_o_tb,
+--        r_o_o => r_o_tb,
+--        tmp_o_o => tmp_o_tb,
+--        tmp1_o_o => tmp1_o_tb,
+--        r_o_dsr_o => r_o_dsr_tb,
+--        tmp1_oN_o => tmp1_oN_tb
         
         
        
     );
+    
+    
+    inf1_tb <= <<signal uut.inf1 : std_logic>>;
+    inf2_tb <= <<signal uut.inf2 : std_logic>>;
+    zero1_tb <= <<signal uut.zero1 : std_logic>>;
+    zero2_tb <= <<signal uut.zero2 : std_logic>>;
+        
+    mult_s_tb <= <<signal uut.mult_s : std_logic>>;
+    
+    rc1_tb <= <<signal uut.rc1 : std_logic>>;
+    rc2_tb <= <<signal uut.rc2 : std_logic>>;
+    regime1_tb <= <<signal uut.regime1 : std_logic_vector(Bs_tb-1 downto 0)>>; 
+    regime2_tb <= <<signal uut.regime2 : std_logic_vector(Bs_tb-1 downto 0)>>; 
+    e1_tb <= <<signal uut.e1 : std_logic_vector(es_tb-1 downto 0)>>;
+    e2_tb <= <<signal uut.e2 : std_logic_vector(es_tb-1 downto 0)>>;
+    mant1_tb <= <<signal uut.mant1 : std_logic_vector(N_tb-es_tb-1 downto 0)>>; 
+    mant2_tb <= <<signal uut.mant2 : std_logic_vector(N_tb-es_tb-1 downto 0)>>;
+        
+    m1_tb <= <<signal uut.m1 : std_logic_vector(N_tb-es_tb downto 0)>>;
+    m2_tb <= <<signal uut.m2 : std_logic_vector(N_tb-es_tb downto 0)>>;
+    r1_tb <= <<signal uut.r1 : std_logic_vector(Bs_tb+1 downto 0)>>;
+    r2_tb <= <<signal uut.r2 : std_logic_vector(Bs_tb+1 downto 0)>>;
+        
+    r1e1_tb <= <<signal uut.r1e1 : std_logic_vector(Bs_tb+es_tb+1 downto 0)>>;
+    r2e2_tb <= <<signal uut.r2e2 : std_logic_vector(Bs_tb+es_tb+1 downto 0)>>;
+        
+    mult_m_tb <= <<signal uut.mult_m : std_logic_vector(2*(N_tb-es_tb)+1 downto 0)>>;
+    mult_e_tb <= <<signal uut.mult_e : std_logic_vector(Bs_tb+es_tb+1 downto 0)>>;
+        
+    e_o_tb <= <<signal uut.e_o : std_logic_vector(es_tb-1 downto 0)>>;
+    r_o_tb <= <<signal uut.r_o : std_logic_vector(Bs_tb downto 0)>>;
+    tmp_o_tb <= <<signal uut.tmp_o : std_logic_vector(2*N_tb-1 downto 0)>>;
+    tmp1_o_tb <= <<signal uut.tmp1_o : std_logic_vector(2*N_tb-1 downto 0)>>;
+    r_o_dsr_tb <= <<signal uut.r_o_dsr : std_logic_vector(Bs_tb downto 0)>>;
+    tmp1_oN_tb <= <<signal uut.tmp1_oN : std_logic_vector(2*N_tb-1 downto 0)>>;
     
     
     generate_sim_clock: process
@@ -162,6 +198,18 @@ begin
     
     begin
     
+        
+        wait for CLOCK_PERIOD;
+        -- 0.25 * 8
+        in1_tb <= "00110000";
+        in2_tb <= "01011000";
+        out_referenz <= "01001000";
+        start_tb <= '1';
+        wait for CLOCK_PERIOD;
+        --assert done_tb = '1' report "Done Should be 1";
+        assert out_val_tb = "01001000" report "Should be 01001000";
+        start_tb <= '0';
+        wait for CLOCK_PERIOD;
         
         
         wait for CLOCK_PERIOD;

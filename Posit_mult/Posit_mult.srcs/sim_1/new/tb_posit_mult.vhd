@@ -35,7 +35,7 @@ entity tb_posit_mult is
     generic (
         N_tb : integer := 8;
         Bs_tb : integer := 3;   -- log2(N)
-        es_tb : integer := 4    -- fuer Wertetabelle = 4
+        es_tb : integer := 2    -- fuer Wertetabelle = 4
         
     );
 
@@ -162,6 +162,17 @@ begin
     
     begin
     
+        wait for CLOCK_PERIOD;
+        -- 0.25 * 8
+        in1_tb <= "00110000";
+        in2_tb <= "01011000";
+        out_referenz <= "01001000";
+        start_tb <= '1';
+        wait for CLOCK_PERIOD;
+        assert done_tb = '1' report "Done Should be 1";
+        assert out_val_tb = "01001000" report "Should be 01001000";
+        start_tb <= '0';
+        wait for CLOCK_PERIOD;
         
         
         wait for CLOCK_PERIOD;
