@@ -44,7 +44,7 @@ end tb_posit_multiplier;
 
 architecture Behavioral of tb_posit_multiplier is
 
-    constant CLOCK_PERIOD : time := 500 ns;
+    constant CLOCK_PERIOD : time := 1000 ns;
 
     signal clk_tb  : std_logic;
 
