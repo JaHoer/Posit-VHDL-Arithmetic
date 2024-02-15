@@ -57,7 +57,7 @@ end LOD_N;
 architecture Behavioral of LOD_N is
 
     signal results : std_logic_vector(log2N-1 downto 0);
-    signal valids : std_logic_vector(N/4-1 downto 0);
+    signal valid : std_logic;
     signal zero_count : std_logic_vector(log2N-1 downto 0);
 
 begin
@@ -69,7 +69,7 @@ begin
         port map (
             input_vector => input_vector , 
             output_vector => results,
-            valid => valids(0)
+            valid => valid
         );
     
     
@@ -78,7 +78,7 @@ begin
     -- calculate the number of Zeros before the first '1'
     zero_count <= std_logic_vector(to_unsigned(N-1, log2N) - unsigned(results));
 
-    output_vector <= (others => '1') when or_reduce(valids) = '0' else zero_count;
+    output_vector <= (others => '1') when valid = '0' else zero_count;
 
 --    process(input_vector)
   

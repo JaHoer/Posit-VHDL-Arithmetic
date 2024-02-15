@@ -56,37 +56,25 @@ end LOD_N;
 
 architecture Behavioral of LOD_N is
 
-
+    signal results : std_logic_vector(log2N-1 downto 0);
+    signal valid : std_logic;
+    signal zero_count : std_logic_vector(log2N-1 downto 0);
+    
 begin
 
-    process(input_vector)
-  
-    variable found : std_logic := '0';
-    variable out_var : std_logic_vector(log2N-1 downto 0);
-    
-  begin
 
-        found := '0';
-        -- itariere durch Vector und breche bei erster 1 ab
-        fl: for i in N-1 downto 0 loop
-        
-        if(input_vector(i) = '1' and found = '0') then
-            out_var := std_logic_vector(to_unsigned(N-1 - i,log2N));
-            --                                          ^-- berechne die Anzahl der 0 vor der ersten 1
-            found := '1';
-            
-        end if;
+    prio_enc_entity : entity work.priority_encode_N
+        port map (
+            input_vector => input_vector , 
+            output_vector => results,
+            valid => valid
+        );
     
-        end loop fl;
-        
-        
-        -- Falls keine Null gefunden wurde -> laenge des Regimes = ganze Laenge
-        if found = '0' then
-            out_var := std_logic_vector(to_unsigned(N-1,log2N));
-        end if;
-        
-        output_vector <= out_var; 
-  
-  end process;
+    
+    -- calculate the number of Zeros before the first '1'
+    zero_count <= std_logic_vector(to_unsigned(N-1, log2N) - unsigned(results));
+
+    output_vector <= (others => '1') when valid = '0' else zero_count;
+
 
 end Behavioral;

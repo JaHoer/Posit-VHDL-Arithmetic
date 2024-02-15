@@ -2,7 +2,7 @@
 -- Company: FAU
 -- Engineer: Jan Hoertig
 -- 
--- Create Date: 02/15/2024 11:43:06 AM
+-- Create Date: 15.02.2024 14:59:09
 -- Design Name: 
 -- Module Name: priority_encode_N - Behavioral
 -- Project Name: 
@@ -24,9 +24,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
-
-use IEEE.NUMERIC_STD.ALL;
-use IEEE.std_logic_misc.all;
+--use IEEE.NUMERIC_STD.ALL;
 
 -- Uncomment the following library declaration if instantiating
 -- any Xilinx leaf cells in this code.
@@ -44,7 +42,6 @@ entity priority_encode_N is
 
         output_vector : out std_logic_vector(log2N-1 downto 0);
         valid : out std_logic
-
     );
 end priority_encode_N;
 
@@ -57,11 +54,10 @@ architecture Behavioral of priority_encode_N is
     signal valid_A : std_logic;
     signal valid_B : std_logic;
 
-
 begin
 
     gen_tables : if N = 4 generate
-        prio_enc_entity : entity work.priority_encode_4_2
+        prio_enc_entity : entity work.priority_encode_table
         generic map(
             N => 4,
             log2N => 2
@@ -77,7 +73,7 @@ begin
     
     gen_table_8 : if N = 8 generate
         
-        prio_enc_entity_A : entity work.priority_encode_4_2
+        prio_enc_entity_A : entity work.priority_encode_table
         generic map(
             N => 4,
             log2N => 2
@@ -89,7 +85,7 @@ begin
         );
         
 
-        prio_enc_entity_B : entity work.priority_encode_4_2
+        prio_enc_entity_B : entity work.priority_encode_table
         generic map(
             N => 4,
             log2N => 2
@@ -114,7 +110,7 @@ begin
     
     gen_table_16 : if N = 16 generate
         
-        prio_enc_entity_A : entity work.priority_encode_4_2
+        prio_enc_entity_A : entity work.priority_encode_table
         generic map(
             N => 8,
             log2N => 3
@@ -126,7 +122,7 @@ begin
         );
         
 
-        prio_enc_entity_B : entity work.priority_encode_4_2
+        prio_enc_entity_B : entity work.priority_encode_table
         generic map(
             N => 8,
             log2N => 3
@@ -152,7 +148,7 @@ begin
     
     gen_table_32 : if N = 32 generate
     
-        prio_enc_entity_A : entity work.priority_encode_4_2
+        prio_enc_entity_A : entity work.priority_encode_table
         generic map(
             N => 16,
             log2N => 4
@@ -164,7 +160,7 @@ begin
         );
         
 
-        prio_enc_entity_B : entity work.priority_encode_4_2
+        prio_enc_entity_B : entity work.priority_encode_table
         generic map(
             N => 16,
             log2N => 4
@@ -190,7 +186,7 @@ begin
     
     gen_table_64 : if N = 64 generate
    
-        prio_enc_entity_A : entity work.priority_encode_4_2
+        prio_enc_entity_A : entity work.priority_encode_table
         generic map(
             N => 32,
             log2N => 5
@@ -202,7 +198,7 @@ begin
         );
         
 
-        prio_enc_entity_B : entity work.priority_encode_4_2
+        prio_enc_entity_B : entity work.priority_encode_table
         generic map(
             N => 32,
             log2N => 5

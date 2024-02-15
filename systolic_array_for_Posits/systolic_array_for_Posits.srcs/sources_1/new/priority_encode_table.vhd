@@ -2,9 +2,9 @@
 -- Company: FAU
 -- Engineer: Jan Hoertig
 -- 
--- Create Date: 15.02.2024 09:33:41
+-- Create Date: 15.02.2024 14:59:09
 -- Design Name: 
--- Module Name: priority_encode_4_2 - Behavioral
+-- Module Name: priority_encode_table - Behavioral
 -- Project Name: 
 -- Target Devices: 
 -- Tool Versions: 
@@ -31,26 +31,25 @@ use IEEE.NUMERIC_STD.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity priority_encode_4_2 is
+entity priority_encode_table is
     generic(
         N : integer := 4;
         log2N : integer := 2
     );
 
     port (
-    input_vector : in std_logic_vector(N-1 downto 0);
+        input_vector : in std_logic_vector(N-1 downto 0);
 
-    output_vector : out std_logic_vector(log2N-1 downto 0);
-    valid : out std_logic
-
+        output_vector : out std_logic_vector(log2N-1 downto 0);
+        valid : out std_logic
     );
-end priority_encode_4_2;
+end priority_encode_table;
 
-architecture Behavioral of priority_encode_4_2 is
+architecture Behavioral of priority_encode_table is
 
 begin
-    
-    gen_tables : if N = 4 generate
+
+    gen_table_4 : if N = 4 generate
     
         process(input_vector)
         begin
@@ -73,6 +72,9 @@ begin
         end process;
     
     end generate;
+    
+    
+    
     
     gen_table_8 : if N = 8 generate
     
@@ -281,8 +283,6 @@ begin
         
     
     end generate;
-    
-    
-    
+
 
 end Behavioral;
