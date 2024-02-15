@@ -56,23 +56,29 @@ end LOD_N;
 
 architecture Behavioral of LOD_N is
 
-    signal results : std_logic_vector(N/2-1 downto 0);
+    signal results : std_logic_vector(log2N-1 downto 0);
     signal valids : std_logic_vector(N/4-1 downto 0);
+    signal zero_count : std_logic_vector(log2N-1 downto 0);
 
 begin
 
     
-    gen_prio : for k in (N/4)-1 downto 0 generate
     
-        prio_enc_entity : entity work.priority_encode_4_2
+    
+    prio_enc_entity : entity work.priority_encode_N
         port map (
-            input_vector => input_vector((k+1)*4-1 downto k*4) , 
-            output_vector => results
+            input_vector => input_vector , 
+            output_vector => results,
+            valid => valids(0)
         );
     
-    end generate;
+    
+    
+    
+    -- calculate the number of Zeros before the first '1'
+    zero_count <= std_logic_vector(to_unsigned(N-1, log2N) - unsigned(results));
 
-
+    output_vector <= (others => '1') when or_reduce(valids) = '0' else zero_count;
 
 --    process(input_vector)
   
@@ -95,7 +101,7 @@ begin
 --        end loop fl;
         
         
-        -- Falls keine Null gefunden wurde -> laenge des Regimes = ganze Laenge
+        -- Falls keine Eins gefunden wurde -> laenge des Regimes = ganze Laenge
 --        if found = '0' then
 --            out_var := std_logic_vector(to_unsigned(N-1,log2N));
             
