@@ -122,7 +122,7 @@ begin
     --regime <= k0 when rc = '0' else k1;
     -- from PACoGen 
     regime <= std_logic_vector(unsigned(k) - 1) when rc_tmp = '1' else k;
-                                        --  ^-- I don't understand why -1 here ???                                  ???
+
     
     -- Regime Left Shift Amount: Lshift ? RC1 ? K1+1 : K0
     --Lshift <= k0 when rc = '0' else std_logic_vector(unsigned(k1) + 1);

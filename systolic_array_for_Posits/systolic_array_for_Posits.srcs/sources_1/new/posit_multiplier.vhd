@@ -26,7 +26,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 -- arithmetic functions with Signed or Unsigned values
 use IEEE.NUMERIC_STD.ALL;
 
-use ieee.math_real.all;
+--use ieee.math_real.all;
 
 use ieee.std_logic_misc.all;
 

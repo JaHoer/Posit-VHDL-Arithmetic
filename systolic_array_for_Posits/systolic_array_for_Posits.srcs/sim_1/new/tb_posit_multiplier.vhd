@@ -210,6 +210,8 @@ begin
         assert out_val_tb = "01001000" report "Should be 01001000";
         start_tb <= '0';
         wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
         
         
         wait for CLOCK_PERIOD;

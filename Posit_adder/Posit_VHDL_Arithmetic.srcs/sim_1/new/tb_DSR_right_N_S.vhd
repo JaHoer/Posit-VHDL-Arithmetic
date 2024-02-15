@@ -68,6 +68,10 @@ begin
     begin
 
         wait for CLOCK_PERIOD;
+        a_tb <= "1111111100100000";
+        b_tb <= "0001";
+        
+        wait for CLOCK_PERIOD;
         a_tb <= "0000000100000000";
         b_tb <= "0011";
         wait for CLOCK_PERIOD;
