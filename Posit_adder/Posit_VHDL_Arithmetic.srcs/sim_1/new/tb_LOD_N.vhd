@@ -34,8 +34,8 @@ use ieee.math_real.all;
 
 entity tb_LOD_N is
   generic(
-    Nt : integer := 8;
-    log2N_tb : integer := 3
+    Nt : integer := 16;
+    log2N_tb : integer := 4
   );
 --  Port ( );
 end tb_LOD_N;
@@ -45,7 +45,7 @@ architecture Behavioral of tb_LOD_N is
 
     signal clk   : std_logic;
     signal in_v  : std_logic_vector(Nt-1 downto 0);
-    signal out_v : std_logic_vector(3-1 downto 0);
+    signal out_v : std_logic_vector(log2N_tb-1 downto 0);
 
 
 begin
@@ -73,29 +73,29 @@ begin
     begin
         
         wait for CLOCK_PERIOD;
-        in_v <= "00000000";
+        in_v <= "0000000000000000";
         wait for CLOCK_PERIOD;
-        in_v <= "00000001";
+        in_v <= "0000000000000001";
         wait for CLOCK_PERIOD;
-        in_v <= "00000011";
+        in_v <= "0000000000000011";
         wait for CLOCK_PERIOD;
-        in_v <= "00000111";
+        in_v <= "0000011100000000";
         wait for CLOCK_PERIOD;
-        in_v <= "00110111";
+        in_v <= "0011011100000000";
         wait for CLOCK_PERIOD;
-        in_v <= "01110111";
+        in_v <= "0000000001110111";
         wait for CLOCK_PERIOD;
-        in_v <= "10111111";
+        in_v <= "1011111100000000";
         wait for CLOCK_PERIOD;
-        in_v <= "11110000";
+        in_v <= "0000000011110000";
         wait for CLOCK_PERIOD;
-        in_v <= "11100101";
+        in_v <= "0000000011100101";
         wait for CLOCK_PERIOD;
-        in_v <= "11001000";
+        in_v <= "0000000011001000";
         wait for CLOCK_PERIOD;
-        in_v <= "00000000";
+        in_v <= "0000000000000000";
         wait for CLOCK_PERIOD;
-        in_v <= "11111111";
+        in_v <= "1111111111111111";
         
         
         

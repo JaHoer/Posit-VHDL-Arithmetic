@@ -64,6 +64,10 @@ begin
 
 
     prio_enc_entity : entity work.priority_encode_N
+        generic map(
+            N => N,
+            log2N => log2N
+        )
         port map (
             input_vector => input_vector , 
             output_vector => results,

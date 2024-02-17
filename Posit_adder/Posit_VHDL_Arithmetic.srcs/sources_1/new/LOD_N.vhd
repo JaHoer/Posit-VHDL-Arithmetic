@@ -37,8 +37,8 @@ entity LOD_N is
 
 
   generic (
-    N : integer := 8;
-    log2N : integer := 3
+    N : integer := 16;
+    log2N : integer := 4
   );
   port (
     --clk : std_logic;
@@ -66,6 +66,10 @@ begin
     
     
     prio_enc_entity : entity work.priority_encode_N
+        generic map(
+            N => N,
+            log2N => log2N
+        )
         port map (
             input_vector => input_vector , 
             output_vector => results,

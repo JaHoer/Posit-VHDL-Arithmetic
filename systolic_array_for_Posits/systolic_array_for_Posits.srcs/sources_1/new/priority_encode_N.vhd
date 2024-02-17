@@ -47,7 +47,6 @@ end priority_encode_N;
 
 architecture Behavioral of priority_encode_N is
 
-    -- each length of log2(32) = 5 for output of prio_enc_32
     signal out_A : std_logic_vector(log2N-2 downto 0);
     signal out_B : std_logic_vector(log2N-2 downto 0);
     
@@ -56,27 +55,36 @@ architecture Behavioral of priority_encode_N is
 
 begin
 
-    gen_tables : if N = 4 generate
-        prio_enc_entity : entity work.priority_encode_table
-        generic map(
-            N => 4,
-            log2N => 2
-        )
-        port map (
-            input_vector => input_vector , 
-            output_vector => output_vector,
-            valid => valid
-        );
+    gen_tables : if N <= 4 generate
+        process(input_vector)
+        begin
+            if (input_vector(3) = '1') then
+                output_vector <= "11";
+                valid  <= '1';
+            elsif (input_vector(2) = '1') then
+                output_vector <= "10";
+                valid  <= '1';
+            elsif (input_vector(1) = '1') then
+                output_vector <= "01";
+                valid  <= '1';
+            elsif (input_vector(0) = '1') then
+                output_vector <= "00";
+                valid  <= '1';
+            else
+                output_vector <= "00";
+                valid  <= '0';
+            end if;
+        end process;
     end generate;
     
     
     
-    gen_table_8 : if N = 8 generate
+    gen_table_8 : if N > 4 generate
         
-        prio_enc_entity_A : entity work.priority_encode_table
+        prio_enc_entity_A : entity work.priority_encode_N
         generic map(
-            N => 4,
-            log2N => 2
+            N => N/2,
+            log2N => log2N-1
         )
         port map (
             input_vector => input_vector(N-1 downto N/2), 
@@ -85,47 +93,10 @@ begin
         );
         
 
-        prio_enc_entity_B : entity work.priority_encode_table
+        prio_enc_entity_B : entity work.priority_encode_N
         generic map(
-            N => 4,
-            log2N => 2
-        )
-        port map (
-            input_vector => input_vector(N/2-1 downto 0), 
-            output_vector => out_B,
-            valid => valid_B
-        );
-        
-        valid <= valid_A or valid_B;
-        
-        output_vector(log2N-1) <= valid_A;
-        
-        fusion : for i in log2N-2 downto 0 generate
-        output_vector(i) <= (valid_A and out_A(i)) or (not valid_A and out_B(i));
-        end generate;
-        
-    end generate;
-    
-    
-    
-    gen_table_16 : if N = 16 generate
-        
-        prio_enc_entity_A : entity work.priority_encode_table
-        generic map(
-            N => 8,
-            log2N => 3
-        )
-        port map (
-            input_vector => input_vector(N-1 downto N/2), 
-            output_vector => out_A,
-            valid => valid_A
-        );
-        
-
-        prio_enc_entity_B : entity work.priority_encode_table
-        generic map(
-            N => 8,
-            log2N => 3
+            N => N/2,
+            log2N => log2N-1
         )
         port map (
             input_vector => input_vector(N/2-1 downto 0), 
@@ -141,82 +112,6 @@ begin
             output_vector(i) <= (valid_A and out_A(i)) or (not valid_A and out_B(i));
         end generate;
         
-    end generate;
-    
-    
-    
-    
-    gen_table_32 : if N = 32 generate
-    
-        prio_enc_entity_A : entity work.priority_encode_table
-        generic map(
-            N => 16,
-            log2N => 4
-        )
-        port map (
-            input_vector => input_vector(N-1 downto N/2), 
-            output_vector => out_A,
-            valid => valid_A
-        );
-        
-
-        prio_enc_entity_B : entity work.priority_encode_table
-        generic map(
-            N => 16,
-            log2N => 4
-        )
-        port map (
-            input_vector => input_vector(N/2-1 downto 0), 
-            output_vector => out_B,
-            valid => valid_B
-        );
-        
-        valid <= valid_A or valid_B;
-        
-        output_vector(log2N-1) <= valid_A;
-        
-        fusion : for i in log2N-2 downto 0 generate 
-            output_vector(i) <= (valid_A and out_A(i)) or (not valid_A and out_B(i)); 
-        end generate;
-        
-    end generate;
-    
-    
-    
-    
-    gen_table_64 : if N = 64 generate
-   
-        prio_enc_entity_A : entity work.priority_encode_table
-        generic map(
-            N => 32,
-            log2N => 5
-        )
-        port map (
-            input_vector => input_vector(N-1 downto N/2), 
-            output_vector => out_A,
-            valid => valid_A
-        );
-        
-
-        prio_enc_entity_B : entity work.priority_encode_table
-        generic map(
-            N => 32,
-            log2N => 5
-        )
-        port map (
-            input_vector => input_vector(N/2-1 downto 0), 
-            output_vector => out_B,
-            valid => valid_B
-        );
-        
-        valid <= valid_A or valid_B;
-        
-        output_vector(log2N-1) <= valid_A;
-        
-        fusion : for i in log2N-2 downto 0 generate
-            output_vector(i) <= (valid_A and out_A(i)) or (not valid_A and out_B(i));
-        end generate;
-    
     end generate;
 
 end Behavioral;
