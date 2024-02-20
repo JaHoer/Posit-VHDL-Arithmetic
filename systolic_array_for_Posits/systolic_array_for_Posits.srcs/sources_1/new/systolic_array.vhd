@@ -76,18 +76,18 @@ entity systolic_array is
         input_ready : out std_logic;
         Data_out_output : out std_logic_vector(array_width*N -1 downto 0);
         output_valid : out std_logic;
-        output_ready : in std_logic
+        output_ready : in std_logic;
         
         
         -- Debug
         
-        --out_vector_input_o : out std_logic_vector(N * array_width-1 downto 0);
-        --out_vector_weight_o : out std_logic_vector(N * array_width-1 downto 0);
-        --weight_write_en_o : out std_logic;
-        --weight_en_o : out std_logic;
-        --comp_en_PEs_o : out std_logic;
+        out_vector_input_o : out std_logic_vector(N * array_width-1 downto 0);
+        out_vector_weight_o : out std_logic_vector(N * array_width-1 downto 0);
+        weight_write_en_o : out std_logic_vector(array_width downto 0);
+        weight_en_o : out std_logic;
+        comp_en_PEs_o : out std_logic;
         
-        --in_vector_output_o : out std_logic_vector(N * array_width-1 downto 0);
+        in_vector_output_o : out std_logic_vector(N * array_width-1 downto 0)
         --PE_intermediate_psum_o : out std_logic_vector(N * array_width-1 downto 0);
         --PE_intermediate_input_o : out std_logic_vector(N * array_width-1 downto 0);
         --PE_intermediate_weight_o : out std_logic_vector(N * array_width-1 downto 0)
@@ -407,12 +407,12 @@ begin
     
     
     -- Debug
-    --out_vector_input_o <= out_vector_input;
-    --out_vector_weight_o <= out_vector_weight;
-    --weight_write_en_o <= weight_write_en(array_width);
-    --weight_en_o <= weight_en;
-    --comp_en_PEs_o <= comp_en_PEs;
-    --in_vector_output_o <= in_vector_output;
+    out_vector_input_o <= out_vector_input;
+    out_vector_weight_o <= out_vector_weight;
+    weight_write_en_o <= weight_write_en;
+    weight_en_o <= weight_en;
+    comp_en_PEs_o <= comp_en_PEs;
+    in_vector_output_o <= in_vector_output;
     
     
 

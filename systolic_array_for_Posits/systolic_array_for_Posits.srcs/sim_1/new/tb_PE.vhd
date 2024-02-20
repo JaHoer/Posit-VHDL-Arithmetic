@@ -70,12 +70,12 @@ architecture Behavioral of tb_PE is
 begin
 
     uut : entity work.PE
-    generic map(
-        N => N_tb,
-        Bs => Bs_tb,
-        es => es_tb
-        --inst_length => inst_length_tb
-    )
+--    generic map(
+--        N => N_tb,
+--        Bs => Bs_tb,
+--        es => es_tb
+--        --inst_length => inst_length_tb
+--    )
     port map(
         clk => clk_tb,
         comp_en => comp_en_tb,
@@ -95,7 +95,7 @@ begin
     );
 
 
-    external_product_out <= <<signal uut.product_out : std_logic_vector(N_tb-1 downto 0)>>;
+--    external_product_out <= <<signal uut.product_out : std_logic_vector(N_tb-1 downto 0)>>;
 
 
     generate_sim_clock: process
@@ -110,14 +110,38 @@ begin
     stimuli: process
     
     begin
-    
-    
+        
+        wait for CLOCK_PERIOD;
+        weight_en_tb <= '0';
+        comp_en_tb <= '0';
+        weight_w_en_in_tb <= '0';
+        weight_in_tb <= "01011000"; -- = 8
+        psum_in_tb <= "00000000";
+        
         wait for CLOCK_PERIOD;
         weight_en_tb <= '1';
+        comp_en_tb <= '0';
+        weight_w_en_in_tb <= '0';
+        weight_in_tb <= "01011000"; -- = 8
+        psum_in_tb <= "00000000";
+        
+        wait for CLOCK_PERIOD;
+        weight_en_tb <= '0';
         comp_en_tb <= '0';
         weight_w_en_in_tb <= '1';
         weight_in_tb <= "01011000"; -- = 8
         psum_in_tb <= "00000000";
+        
+        wait for CLOCK_PERIOD;
+        weight_w_en_in_tb <= '0';
+        
+        wait for CLOCK_PERIOD;
+        weight_en_tb <= '0';
+        comp_en_tb <= '1';
+        weight_w_en_in_tb <= '0';
+        input_in_tb <= "00110000";  -- = 0.25
+        psum_in_tb <= "00000000";   -- = 4
+        psum_reference <= "01001000";   -- = 2
         
         wait for CLOCK_PERIOD;
         weight_en_tb <= '0';
@@ -129,6 +153,7 @@ begin
         
         
         wait for CLOCK_PERIOD;
+        weight_w_en_in_tb <= '0';
         wait for CLOCK_PERIOD;
         
         wait for CLOCK_PERIOD;
