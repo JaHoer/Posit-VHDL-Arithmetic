@@ -45,7 +45,7 @@ entity input_mem is
         -- depth of shift register
         --mem_depth : integer := 8;
         -- number of parallel shift register
-        mem_width : integer := 8
+        mem_width : integer := 4
     );
     Port ( 
         clk : in std_logic;

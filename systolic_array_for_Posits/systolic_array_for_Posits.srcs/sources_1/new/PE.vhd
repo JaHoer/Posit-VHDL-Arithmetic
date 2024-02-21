@@ -58,6 +58,15 @@ entity PE is
         psum_out : out STD_LOGIC_VECTOR (N-1 downto 0)
         --weight_w_en_out : out std_logic
         --instr_out : out STD_LOGIC_VECTOR (N-1 downto 0)
+        
+        
+        --bebug
+        ;
+        weight_mem_o : out std_logic_vector(N-1 downto 0);
+        input_reg_o : out STD_LOGIC_VECTOR (N-1 downto 0);
+        psum_reg_o : out STD_LOGIC_VECTOR (N-1 downto 0)
+        
+        
     );
 end PE;
 
@@ -65,6 +74,7 @@ architecture Behavioral of PE is
 
 
     signal psum_old : std_logic_vector(N-1 downto 0);
+    signal psum_new : std_logic_vector(N-1 downto 0);
 --    signal psum_new : std_logic_vector(N-1 downto 0);
     signal input : std_logic_vector(N-1 downto 0);
     signal weight : std_logic_vector(N-1 downto 0);
@@ -79,16 +89,16 @@ architecture Behavioral of PE is
     
     signal mult_done : std_logic;
     signal mult_inf : std_logic;
-    signal mult_zero : std_logic;    
+    signal mult_zero : std_logic;  
 
 begin
     
-    input_out <= input;
-    weight_out <= weight;
---    weight_write <= weight_w_en_in;
+--    input_out <= input;
+--    weight_out <= weight;
+    --weight_write <= weight_w_en_in;
     
     -- ### TODO: here Posit operations ###
-    psum_out <= std_logic_vector(resize( (signed(psum_old) + (signed(input) * signed(weight_mem))), N));
+    psum_new <= std_logic_vector(resize( (signed(psum_old) + (signed(input) * signed(weight_mem))), N));
     
     
 --    posit_multiplier_entity : entity work.posit_multiplier
@@ -134,7 +144,7 @@ begin
     calc : process (clk)
         
     begin
-        if rising_edge(clk) then
+        if falling_edge(clk) then
             --if inst_in(inst_in'high) = '1' then
             if comp_en = '1' then
                 
@@ -151,11 +161,35 @@ begin
             end if;
             
             
+--            if weight_w_en_in = '1' then
+--                weight_mem <= weight_in;
+--            end if;
+            
+        end if;
+    end process;
+    
+    w_write : process (clk)
+        
+    begin
+        if rising_edge(clk) then
+
             if weight_w_en_in = '1' then
                 weight_mem <= weight_in;
             end if;
             
+            input_out <= input;
+            weight_out <= weight;
+            psum_out <= psum_new;
+            
         end if;
     end process;
+    
+    
+    
+    
+    -- Debug    
+    weight_mem_o <= weight_mem;
+    input_reg_o <= input;
+    psum_reg_o <= psum_old;
 
 end Behavioral;

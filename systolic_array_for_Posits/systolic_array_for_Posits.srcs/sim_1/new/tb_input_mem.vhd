@@ -63,15 +63,15 @@ architecture Behavioral of tb_input_mem is
 begin
 
     uut : entity work.input_mem
-    generic map (
-        input_width => input_width_tb,
-        output_width => output_width_tb,
-        N => N_tb,
-        Bs => Bs_tb,
-        es => es_tb,
-        mem_depth => mem_depth_tb,
-        mem_width => mem_width_tb
-    )
+--    generic map (
+        --input_width => input_width_tb,
+        --output_width => output_width_tb,
+--        N => N_tb,
+--        Bs => Bs_tb,
+--        es => es_tb,
+        --mem_depth => mem_depth_tb,
+--        mem_width => mem_width_tb
+--    )
     port map (
         clk => clk_tb,
         rst => rst_tb,

@@ -43,7 +43,7 @@ end tb_PE_block;
 
 architecture Behavioral of tb_PE_block is
 
-    constant CLOCK_PERIOD : time := 50 ns;
+    constant CLOCK_PERIOD : time := 100 ns;
 
     signal clk_tb : std_logic;
     --signal rst_tb : std_logic;
@@ -66,6 +66,14 @@ architecture Behavioral of tb_PE_block is
     signal weight_w_en_out_tb : std_logic;
     
     
+    signal intermediate_weight : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
+    signal intermediate_psum : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
+    signal internal_weight_mem : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
+    signal internal_input_mem : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
+    signal internal_psum_mem : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
+    
+    
+    
     
 --    signal external_intermediate_w_write : std_logic_vector(array_width_tb downto 0);
     signal external_intermediate_weight : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
@@ -85,12 +93,12 @@ architecture Behavioral of tb_PE_block is
 begin
 
     uut : entity work.PE_block
-        generic map(
-            N => N_tb,
-            Bs => Bs_tb,
-            es => es_tb,
-            array_width => array_width_tb
-        )
+--        generic map(
+--            N => N_tb,
+--            Bs => Bs_tb,
+--            es => es_tb,
+--            array_width => array_width_tb
+--        )
         port map(
             clk => clk_tb,
             comp_en => comp_en_tb,
@@ -104,23 +112,32 @@ begin
         
             input_out => input_out_tb,
             psum_out => psum_out_tb
+            
+            
+            -- Debug
+            ,
+            intermediate_weight_o => intermediate_weight,
+            intermediate_psum_o => intermediate_psum,
+            internal_weight_mem => internal_weight_mem,
+            internal_input_mem => internal_input_mem,
+            internal_psum_mem => internal_psum_mem
 
         );
     
     
     --external_intermediate_w_write <= << signal uut.intermediate_w_write : std_logic_vector(array_width_tb downto 0)>>;
-    external_intermediate_weight <= << signal uut.intermediate_weight : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0)>>;
-    external_intermediate_psum <= << signal uut.intermediate_psum : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0)>>;
+--    external_intermediate_weight <= << signal uut.intermediate_weight : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0)>>;
+--    external_intermediate_psum <= << signal uut.intermediate_psum : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0)>>;
     
-    external_saved_weight_3 <= << signal uut.gen_pe(3).PE_entity.weight_mem : std_logic_vector(N_tb-1 downto 0)>>;
-    external_saved_weight_2 <= << signal uut.gen_pe(2).PE_entity.weight_mem : std_logic_vector(N_tb-1 downto 0)>>;
-    external_saved_weight_1 <= << signal uut.gen_pe(1).PE_entity.weight_mem : std_logic_vector(N_tb-1 downto 0)>>;
-    external_saved_weight_0 <= << signal uut.gen_pe(0).PE_entity.weight_mem : std_logic_vector(N_tb-1 downto 0)>>;
+--    external_saved_weight_3 <= << signal uut.gen_pe(3).PE_entity.weight_mem : std_logic_vector(N_tb-1 downto 0)>>;
+--    external_saved_weight_2 <= << signal uut.gen_pe(2).PE_entity.weight_mem : std_logic_vector(N_tb-1 downto 0)>>;
+--    external_saved_weight_1 <= << signal uut.gen_pe(1).PE_entity.weight_mem : std_logic_vector(N_tb-1 downto 0)>>;
+--    external_saved_weight_0 <= << signal uut.gen_pe(0).PE_entity.weight_mem : std_logic_vector(N_tb-1 downto 0)>>;
     
-    external_temp_weight_3 <= << signal uut.gen_pe(3).PE_entity.weight : std_logic_vector(N_tb-1 downto 0)>>;
-    external_temp_weight_2 <= << signal uut.gen_pe(2).PE_entity.weight : std_logic_vector(N_tb-1 downto 0)>>;
-    external_temp_weight_1 <= << signal uut.gen_pe(1).PE_entity.weight : std_logic_vector(N_tb-1 downto 0)>>;
-    external_temp_weight_0 <= << signal uut.gen_pe(0).PE_entity.weight : std_logic_vector(N_tb-1 downto 0)>>;
+--    external_temp_weight_3 <= << signal uut.gen_pe(3).PE_entity.weight : std_logic_vector(N_tb-1 downto 0)>>;
+--    external_temp_weight_2 <= << signal uut.gen_pe(2).PE_entity.weight : std_logic_vector(N_tb-1 downto 0)>>;
+--    external_temp_weight_1 <= << signal uut.gen_pe(1).PE_entity.weight : std_logic_vector(N_tb-1 downto 0)>>;
+--    external_temp_weight_0 <= << signal uut.gen_pe(0).PE_entity.weight : std_logic_vector(N_tb-1 downto 0)>>;
     
     --external_weight <= << signal uut.weight : std_logic_vector(array_width_tb*N_tb-1 downto 0)>>;
     

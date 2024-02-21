@@ -54,7 +54,17 @@ entity PE_block is
         input_out : out STD_LOGIC_VECTOR (array_width*N-1 downto 0);
         psum_out : out STD_LOGIC_VECTOR (N-1 downto 0);
         weight_w_en_out : out std_logic
-
+        
+        
+        -- Debug
+        ;
+        intermediate_weight_o : out std_logic_vector((array_width+1)*N-1 downto 0);
+        intermediate_psum_o : out std_logic_vector((array_width+1)*N-1 downto 0);
+        internal_weight_mem : out std_logic_vector((array_width+1)*N-1 downto 0);
+        internal_input_mem : out std_logic_vector((array_width+1)*N-1 downto 0);
+        internal_psum_mem : out std_logic_vector((array_width+1)*N-1 downto 0)
+        
+        
     );
 end PE_block;
 
@@ -68,6 +78,9 @@ architecture Behavioral of PE_block is
     signal weight : std_logic_vector(array_width*N-1 downto 0);
     
     signal weight_en_tmp : std_logic;
+    
+    
+    
 
 begin
 
@@ -91,7 +104,8 @@ begin
         port map( 
             clk => clk,
             comp_en => comp_en,
-            weight_en => weight_en_tmp,
+            --weight_en => weight_en_tmp,
+            weight_en => weight_en,
             
             --weight_in => weight_in((i+1)*N-1 downto i*N),
             weight_in => intermediate_weight((i+2)*N-1 downto (i+1)*N),
@@ -104,6 +118,14 @@ begin
             input_out => input_out((i+1)*N-1 downto i*N),
             psum_out => intermediate_psum((i+1)*N-1 downto (i)*N)
             --weight_w_en_out => intermediate_w_write(i)
+            
+            
+            -- Debug
+            ,
+            weight_mem_o => internal_weight_mem((i+2)*N-1 downto (i+1)*N),
+            input_reg_o => internal_input_mem((i+2)*N-1 downto (i+1)*N),
+            psum_reg_o => internal_psum_mem((i+2)*N-1 downto (i+1)*N)
+      
         );
 
 
@@ -123,5 +145,13 @@ begin
 --            end if;
         end if;
     end process;
+    
+    
+    
+    -- Debug
+    
+    intermediate_weight_o <= intermediate_weight;
+    intermediate_psum_o <= intermediate_psum;
+    
 
 end Behavioral;

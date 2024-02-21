@@ -48,7 +48,7 @@ end tb_systolic_array_post_synth;
 
 architecture Behavioral of tb_systolic_array_post_synth is
 
-    constant CLOCK_PERIOD : time := 50 ns;
+    constant CLOCK_PERIOD : time := 200 ns;
     constant INTERNAL_DATA_WIDTH : integer := N_tb * array_width_tb;
     
     
