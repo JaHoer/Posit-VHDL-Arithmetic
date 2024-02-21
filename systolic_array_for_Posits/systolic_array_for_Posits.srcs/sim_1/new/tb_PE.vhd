@@ -43,7 +43,7 @@ end tb_PE;
 
 architecture Behavioral of tb_PE is
 
-    constant CLOCK_PERIOD : time := 50 ns;
+    constant CLOCK_PERIOD : time := 200 ns;
 
     signal clk_tb : std_logic;
     signal rst_tb : std_logic;
@@ -66,6 +66,7 @@ architecture Behavioral of tb_PE is
     signal weight_w_en_out_tb : std_logic;
     
     signal external_product_out : STD_LOGIC_VECTOR (N_tb-1 downto 0);
+    signal product_out : std_logic_vector(N_tb-1 downto 0);
     
     signal weight_mem_tb : std_logic_vector(N_tb-1 downto 0);
     signal input_reg_tb : STD_LOGIC_VECTOR (N_tb-1 downto 0);
@@ -100,7 +101,8 @@ begin
         ,
         weight_mem_o => weight_mem_tb,
         input_reg_o => input_reg_tb,
-        psum_reg_o => psum_reg_tb
+        psum_reg_o => psum_reg_tb,
+        product_out_o => product_out
 
     );
 
@@ -125,24 +127,24 @@ begin
         weight_en_tb <= '0';
         comp_en_tb <= '0';
         weight_w_en_in_tb <= '0';
---        weight_in_tb <= "01011000"; -- = 8 in posit
-        weight_in_tb <= "00000000"; -- = 0
+        weight_in_tb <= "01011000"; -- = 8 in posit
+--        weight_in_tb <= "00000000"; -- = 0
         psum_in_tb <= "00000000";
         
         wait for CLOCK_PERIOD;
         weight_en_tb <= '1';
         comp_en_tb <= '0';
         weight_w_en_in_tb <= '0';
---        weight_in_tb <= "01011000"; -- = 8 in posit
-        weight_in_tb <= "00110011"; -- = ...
+        weight_in_tb <= "01011000"; -- = 8 in posit
+--        weight_in_tb <= "00110011"; -- = ...
         psum_in_tb <= "00000000";
         
         wait for CLOCK_PERIOD;
         weight_en_tb <= '1';
         comp_en_tb <= '0';
         weight_w_en_in_tb <= '0';
---        weight_in_tb <= "01011000"; -- = 8 in posit
-        weight_in_tb <= "11001100"; -- = ...
+        weight_in_tb <= "01011000"; -- = 8 in posit
+--        weight_in_tb <= "11001100"; -- = ...
         psum_in_tb <= "00000000";
         
         
@@ -150,16 +152,16 @@ begin
         weight_en_tb <= '0';
         comp_en_tb <= '0';
         weight_w_en_in_tb <= '0';
---        weight_in_tb <= "01011000"; -- = 8 in posit
-        weight_in_tb <= "10101010"; -- = ...
+        weight_in_tb <= "01011000"; -- = 8 in posit
+--        weight_in_tb <= "10101010"; -- = ...
         psum_in_tb <= "00000000";
         
         wait for CLOCK_PERIOD;
         weight_en_tb <= '1';
         comp_en_tb <= '0';
         weight_w_en_in_tb <= '0';
---        weight_in_tb <= "01011000"; -- = 8 in posit
-        weight_in_tb <= "00001111"; -- = ...
+        weight_in_tb <= "01011000"; -- = 8 in posit
+--        weight_in_tb <= "00001111"; -- = ...
         psum_in_tb <= "00000000";
         
         
@@ -167,81 +169,81 @@ begin
         weight_en_tb <= '1';
         comp_en_tb <= '1';
         weight_w_en_in_tb <= '1';
---        weight_in_tb <= "01011000"; -- = 8 in posit
-        weight_in_tb <= "00001000"; -- = 8
+        weight_in_tb <= "01011000"; -- = 8 in posit
+--        weight_in_tb <= "00001000"; -- = 8
         
---        input_in_tb <= "00110000";  -- = 0.25 in posit
-        input_in_tb <= "00000100";  -- = 4
---        psum_in_tb <= "01010000";   -- = 4 in posit
-        psum_in_tb <= "00000010";   -- = 2
---        psum_reference <= "01001000";   -- = 2 in posit
-        psum_reference <= "00100010";   -- = 34
+        input_in_tb <= "00110000";  -- = 0.25 in posit
+--        input_in_tb <= "00000100";  -- = 4
+        psum_in_tb <= "01010000";   -- = 4 in posit
+--        psum_in_tb <= "00000010";   -- = 2
+        psum_reference <= "01001000";   -- = 2 in posit
+--        psum_reference <= "00100010";   -- = 34
         
         wait for CLOCK_PERIOD;
         comp_en_tb <= '0';
---        input_in_tb <= "00110000";  -- = 0.25 in posit
-        input_in_tb <= "00XX00XX";  -- = 6
---        psum_in_tb <= "01010000";   -- = 4 in posit
-        psum_in_tb <= "00XX00XX";   -- = 34
---        psum_reference <= "01001000";   -- = 2 in posit
-        psum_reference <= "00XX00XX";   -- = 82
+        input_in_tb <= "00110000";  -- = 0.25 in posit
+--        input_in_tb <= "00XX00XX";  -- = 6
+        psum_in_tb <= "01010000";   -- = 4 in posit
+--        psum_in_tb <= "00XX00XX";   -- = 34
+        psum_reference <= "01001000";   -- = 2 in posit
+--        psum_reference <= "00XX00XX";   -- = 82
         
         
         wait for CLOCK_PERIOD;
         weight_en_tb <= '0';
         comp_en_tb <= '1';
         weight_w_en_in_tb <= '0';
---        weight_in_tb <= "01011000"; -- = 8 in posit
-        weight_in_tb <= "11001100"; -- = ...
+        weight_in_tb <= "01011000"; -- = 8 in posit
+--        weight_in_tb <= "11001100"; -- = ...
         
---        input_in_tb <= "00110000";  -- = 0.25 in posit
-        input_in_tb <= "00000110";  -- = 6
---        psum_in_tb <= "01010000";   -- = 4 in posit
-        psum_in_tb <= "00100010";   -- = 34
---        psum_reference <= "01001000";   -- = 2 in posit
-        psum_reference <= "01010010";   -- = 82
+        input_in_tb <= "00110000";  -- = 0.25 in posit
+--        input_in_tb <= "00000110";  -- = 6
+        psum_in_tb <= "01010000";   -- = 4 in posit
+--        psum_in_tb <= "00100010";   -- = 34
+        psum_reference <= "01001000";   -- = 2 in posit
+--        psum_reference <= "01010010";   -- = 82
         
 
         wait for CLOCK_PERIOD;
         comp_en_tb <= '0';
---        input_in_tb <= "00110000";  -- = 0.25 in posit
-        input_in_tb <= "00XX00XX";  -- = 6
---        psum_in_tb <= "01010000";   -- = 4 in posit
-        psum_in_tb <= "00XX00XX";   -- = 34
---        psum_reference <= "01001000";   -- = 2 in posit
-        psum_reference <= "00XX00XX";   -- = 82
+        input_in_tb <= "00110000";  -- = 0.25 in posit
+--        input_in_tb <= "00XX00XX";  -- = 6
+        psum_in_tb <= "01010000";   -- = 4 in posit
+--        psum_in_tb <= "00XX00XX";   -- = 34
+        psum_reference <= "01001000";   -- = 2 in posit
+--        psum_reference <= "00XX00XX";   -- = 82
         
         wait for CLOCK_PERIOD;
         comp_en_tb <= '0';
---        input_in_tb <= "00110000";  -- = 0.25 in posit
-        input_in_tb <= "00XX00XX";  -- = 6
---        psum_in_tb <= "01010000";   -- = 4 in posit
-        psum_in_tb <= "00XX00XX";   -- = 34
---        psum_reference <= "01001000";   -- = 2 in posit
-        psum_reference <= "00XX00XX";   -- = 82
+        input_in_tb <= "00110000";  -- = 0.25 in posit
+--        input_in_tb <= "00XX00XX";  -- = 6
+        psum_in_tb <= "01010000";   -- = 4 in posit
+--        psum_in_tb <= "00XX00XX";   -- = 34
+        psum_reference <= "01001000";   -- = 2 in posit
+--        psum_reference <= "00XX00XX";   -- = 82
 
         
         wait for CLOCK_PERIOD;
         weight_en_tb <= '0';
         comp_en_tb <= '1';
         weight_w_en_in_tb <= '0';
---        input_in_tb <= "00110000";  -- = 0.25 in posit
-        input_in_tb <= "00001000";  -- = 8
---        psum_in_tb <= "01010000";   -- = 4 in posit
-        psum_in_tb <= "01010010";   -- = 82
---        psum_reference <= "01001000";   -- = 2 in posit
-        psum_reference <= "10010010";   -- = 146
+        input_in_tb <= "00110000";  -- = 0.25 in posit
+--        input_in_tb <= "00001000";  -- = 8
+        psum_in_tb <= "01010000";   -- = 4 in posit
+--        psum_in_tb <= "01010010";   -- = 82
+        psum_reference <= "01001000";   -- = 2 in posit
+--        psum_reference <= "10010010";   -- = 146
         
         wait for CLOCK_PERIOD;
         weight_en_tb <= '0';
         comp_en_tb <= '1';
         weight_w_en_in_tb <= '0';
---        input_in_tb <= "00110000";  -- = 0.25 in posit
-        input_in_tb <= "00000001";  -- = 1
---        psum_in_tb <= "01010000";   -- = 4 in posit
-        psum_in_tb <= "10010010";   -- = 146
---        psum_reference <= "01010100";   -- = 6 in posit
-        psum_reference <= "10011010";   -- = 154
+        input_in_tb <= "00110000";  -- = 0.25 in posit
+--        input_in_tb <= "00000001";  -- = 1
+        psum_in_tb <= "01010000";   -- = 4 in posit
+--        psum_in_tb <= "10010010";   -- = 146
+        psum_reference <= "01010100";   -- = 6 in posit
+--        psum_reference <= "10011010";   -- = 154
         
         
         wait for CLOCK_PERIOD;

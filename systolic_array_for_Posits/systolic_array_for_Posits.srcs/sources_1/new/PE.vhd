@@ -64,7 +64,8 @@ entity PE is
         ;
         weight_mem_o : out std_logic_vector(N-1 downto 0);
         input_reg_o : out STD_LOGIC_VECTOR (N-1 downto 0);
-        psum_reg_o : out STD_LOGIC_VECTOR (N-1 downto 0)
+        psum_reg_o : out STD_LOGIC_VECTOR (N-1 downto 0);
+        product_out_o : out std_logic_vector(N-1 downto 0)
         
         
     );
@@ -98,41 +99,41 @@ begin
     --weight_write <= weight_w_en_in;
     
     -- ### TODO: here Posit operations ###
-    psum_new <= std_logic_vector(resize( (signed(psum_old) + (signed(input) * signed(weight_mem))), N));
+--    psum_new <= std_logic_vector(resize( (signed(psum_old) + (signed(input) * signed(weight_mem))), N));
     
     
---    posit_multiplier_entity : entity work.posit_multiplier
---    generic map (
---        N => N,
---        Bs => Bs,
---        es => es
---    )
---    port map (
---        in1 => input,
---        in2 => weight_mem,
---        start => comp_en,   -- does nothing
---        out_val => product_out,
---        inf => mult_inf,
---        zero => mult_inf,
---        done => mult_done
---    );
+    posit_multiplier_entity : entity work.posit_multiplier
+    generic map (
+        N => N,
+        Bs => Bs,
+        es => es
+    )
+    port map (
+        in1 => input,
+        in2 => weight_mem,
+        start => comp_en,   -- does nothing
+        out_val => product_out,
+        inf => mult_inf,
+        zero => mult_inf,
+        done => mult_done
+    );
     
     
---    posit_adder_entity : entity work.posit_adder
---    generic map (
---        N => N,
---        Bs => Bs,
---        es => es
---    )
---    port map (
---        in1 => product_out,
---        in2 => psum_old,
---        start => comp_en,   -- does nothing
---        out_val => psum_out,
---        inf => adder_inf,
---        zero => adder_zero,
---        done => adder_done
---    );
+    posit_adder_entity : entity work.posit_adder
+    generic map (
+        N => N,
+        Bs => Bs,
+        es => es
+    )
+    port map (
+        in1 => product_out,
+        in2 => psum_old,
+        start => comp_en,   -- does nothing
+        out_val => psum_new,
+        inf => adder_inf,
+        zero => adder_zero,
+        done => adder_done
+    );
     
     
     
@@ -191,5 +192,6 @@ begin
     weight_mem_o <= weight_mem;
     input_reg_o <= input;
     psum_reg_o <= psum_old;
+    product_out_o <= product_out;
 
 end Behavioral;

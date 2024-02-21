@@ -40,8 +40,8 @@ entity posit_adder is
 
 -- Chat GPT
   generic (
-    N : integer := 16;
-    Bs : integer := 4;
+    N : integer := 8;
+    Bs : integer := 3;
     es : integer := 2
   );
   port (
@@ -54,58 +54,58 @@ entity posit_adder is
     done : out std_logic
     
     -- Debug Outputs
---    ;
---    inf1_o : out std_logic;
---    inf2_o : out std_logic;
---    zero1_o : out std_logic;
---    zero2_o : out std_logic;
+    ;
+    inf1_o : out std_logic;
+    inf2_o : out std_logic;
+    zero1_o : out std_logic;
+    zero2_o : out std_logic;
     
---    rc1_o : out std_logic;
---    rc2_o : out std_logic;
---    regime1_o : out std_logic_vector(Bs-1 downto 0); 
---    regime2_o : out std_logic_vector(Bs-1 downto 0); 
---    Lshift1_o : out std_logic_vector(Bs-1 downto 0); 
---    Lshift2_o : out std_logic_vector(Bs-1 downto 0);
---    e1_o : out std_logic_vector(es-1 downto 0);
---    e2_o : out std_logic_vector(es-1 downto 0);
---    mant1_o : out std_logic_vector(N-es-1 downto 0); 
---    mant2_o : out std_logic_vector(N-es-1 downto 0);
+    rc1_o : out std_logic;
+    rc2_o : out std_logic;
+    regime1_o : out std_logic_vector(Bs-1 downto 0); 
+    regime2_o : out std_logic_vector(Bs-1 downto 0); 
+    Lshift1_o : out std_logic_vector(Bs-1 downto 0); 
+    Lshift2_o : out std_logic_vector(Bs-1 downto 0);
+    e1_o : out std_logic_vector(es-1 downto 0);
+    e2_o : out std_logic_vector(es-1 downto 0);
+    mant1_o : out std_logic_vector(N-es-1 downto 0); 
+    mant2_o : out std_logic_vector(N-es-1 downto 0);
     
---    in1_gt_in2_o : out std_logic;
---    r_diff11_o : out std_logic_vector(Bs downto 0); 
---    r_diff12_o : out std_logic_vector(Bs downto 0); 
---    r_diff2_o : out std_logic_vector(Bs downto 0);
---    r_diff_o : out std_logic_vector(Bs downto 0);
---    r_diff_shift_o : out std_logic_vector(Bs downto 0);
---    diff_o : out std_logic_vector(es+Bs+1 downto 0);
---    diff_eig_o : out std_logic_vector(es downto 0);
---    exp_diff_o : out std_logic_vector(Bs-1 downto 0); 
+    in1_gt_in2_o : out std_logic;
+    r_diff11_o : out std_logic_vector(Bs downto 0); 
+    r_diff12_o : out std_logic_vector(Bs downto 0); 
+    r_diff2_o : out std_logic_vector(Bs downto 0);
+    r_diff_o : out std_logic_vector(Bs downto 0);
+    r_diff_shift_o : out std_logic_vector(Bs downto 0);
+    diff_o : out std_logic_vector(es+Bs+1 downto 0);
+    diff_eig_o : out std_logic_vector(es downto 0);
+    exp_diff_o : out std_logic_vector(Bs-1 downto 0); 
     
---    DSR_right_in_o : out std_logic_vector(N-1 downto 0);
---    DSR_right_out_o : out std_logic_vector(N-1 downto 0);
+    DSR_right_in_o : out std_logic_vector(N-1 downto 0);
+    DSR_right_out_o : out std_logic_vector(N-1 downto 0);
+  
+    add_m_in1_o : out std_logic_vector(N-1 downto 0);
+    add_m1_o : out std_logic_vector(N downto 0);
+    add_m2_o : out std_logic_vector(N downto 0);
     
---    add_m_in1_o : out std_logic_vector(N-1 downto 0);
---    add_m1_o : out std_logic_vector(N downto 0);
---    add_m2_o : out std_logic_vector(N downto 0);
+    add_m_o : out std_logic_vector(N downto 0);
+    mant_ovf_o : out std_logic_vector(1 downto 0);
+   
+    left_shift_val_o : out std_logic_vector(Bs-1 downto 0);
+    left_shift_extended_o : out std_logic_vector(es + Bs downto 0);
+   
+    DSR_left_out_t_o : out std_logic_vector(N-1 downto 0);
+    DSR_left_out_o : out std_logic_vector(N-1 downto 0);
+   
+    lr_N_o : out std_logic_vector(Bs downto 0);
+    le_o_tmp_o : out std_logic_vector(es+Bs+1 downto 0);
+    le_o_o : out std_logic_vector(es+Bs+1 downto 0);
+    le_oN_o : out std_logic_vector(es+Bs downto 0); 
     
---    add_m_o : out std_logic_vector(N downto 0);
---    mant_ovf_o : out std_logic_vector(1 downto 0);
-    
---    left_shift_val_o : out std_logic_vector(Bs-1 downto 0);
---    left_shift_extended_o : out std_logic_vector(es + Bs downto 0);
-    
---    DSR_left_out_t_o : out std_logic_vector(N-1 downto 0);
---    DSR_left_out_o : out std_logic_vector(N-1 downto 0);
-    
---    lr_N_o : out std_logic_vector(Bs downto 0);
---    le_o_tmp_o : out std_logic_vector(es+Bs+1 downto 0);
---    le_o_o : out std_logic_vector(es+Bs+1 downto 0);
---    le_oN_o : out std_logic_vector(es+Bs downto 0); 
-    
---    e_o_o : out std_logic_vector(es-1 downto 0);
---    r_o_o : out std_logic_vector(Bs-1 downto 0);
---    tmp_o_o : out std_logic_vector(2*N-1 downto 0);
---    tmp1_oN_o : out std_logic_vector(2*N-1 downto 0)
+    e_o_o : out std_logic_vector(es-1 downto 0);
+    r_o_o : out std_logic_vector(Bs-1 downto 0);
+    tmp_o_o : out std_logic_vector(2*N-1 downto 0);
+    tmp1_oN_o : out std_logic_vector(2*N-1 downto 0)
   );
 
 
@@ -537,56 +537,56 @@ begin
   
     -- Debug Outputs
     
---    inf1_o <= inf1;
---    inf2_o <= inf2;
---    zero1_o <= zero1;
---    zero2_o <= zero2;
+    inf1_o <= inf1;
+    inf2_o <= inf2;
+    zero1_o <= zero1;
+    zero2_o <= zero2;
     
---    rc1_o <= rc1;
---    rc2_o <= rc2;
---    regime1_o <= regime1;
---    regime2_o <= regime2;
---    Lshift1_o <= Lshift1;
---    Lshift2_o <= Lshift2;
---    e1_o <= e1;
---    e2_o <= e2;
---    mant1_o <= mant1;
---    mant2_o <= mant2;
+    rc1_o <= rc1;
+    rc2_o <= rc2;
+    regime1_o <= regime1;
+    regime2_o <= regime2;
+    Lshift1_o <= Lshift1;
+    Lshift2_o <= Lshift2;
+    e1_o <= e1;
+    e2_o <= e2;
+    mant1_o <= mant1;
+    mant2_o <= mant2;
     
---    in1_gt_in2_o <= in1_gt_in2;
---    r_diff11_o <= r_diff11;
---    r_diff12_o <= r_diff12;
---    r_diff2_o <= r_diff2;
---    r_diff_o <= r_diff;
---    r_diff_shift_o <= r_diff_shift;
---    diff_o <= diff;
---    diff_eig_o <= diff_eig;
---    exp_diff_o <= exp_diff;
+    in1_gt_in2_o <= in1_gt_in2;
+    r_diff11_o <= r_diff11;
+    r_diff12_o <= r_diff12;
+    r_diff2_o <= r_diff2;
+    r_diff_o <= r_diff;
+    r_diff_shift_o <= r_diff_shift;
+    diff_o <= diff;
+    diff_eig_o <= diff_eig;
+    exp_diff_o <= exp_diff;
     
---    DSR_right_in_o <= DSR_right_in;
---    DSR_right_out_o <= DSR_right_out;
+    DSR_right_in_o <= DSR_right_in;
+    DSR_right_out_o <= DSR_right_out;
     
---    add_m_in1_o <= add_m_in1;
---    add_m1_o <= add_m1;
---    add_m2_o <= add_m2;
---    add_m_o <= add_m;
---    mant_ovf_o <= mant_ovf;
+    add_m_in1_o <= add_m_in1;
+    add_m1_o <= add_m1;
+    add_m2_o <= add_m2;
+    add_m_o <= add_m;
+    mant_ovf_o <= mant_ovf;
     
---    left_shift_val_o <= left_shift_val;
---    left_shift_extended_o <= left_shift_extended;
+    left_shift_val_o <= left_shift_val;
+    left_shift_extended_o <= left_shift_extended;
     
---    DSR_left_out_t_o <= DSR_left_out_t;
---    DSR_left_out_o <= DSR_left_out;
---    lr_N_o <= lr_N;
---    le_o_tmp_o <= le_o_tmp;
---    le_o_o <= le_o;
---    le_oN_o <= le_oN;
+    DSR_left_out_t_o <= DSR_left_out_t;
+    DSR_left_out_o <= DSR_left_out;
+    lr_N_o <= lr_N;
+    le_o_tmp_o <= le_o_tmp;
+    le_o_o <= le_o;
+    le_oN_o <= le_oN;
     
---    e_o_o <= e_o;
---    r_o_o <= r_o;
+    e_o_o <= e_o;
+    r_o_o <= r_o;
     
---    tmp_o_o <= tmp_o;
---    tmp1_oN_o <= tmp1_oN;
+    tmp_o_o <= tmp_o;
+    tmp1_oN_o <= tmp1_oN;
   
   
   
