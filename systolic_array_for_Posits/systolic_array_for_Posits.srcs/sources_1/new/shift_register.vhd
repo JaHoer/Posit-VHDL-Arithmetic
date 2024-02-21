@@ -58,16 +58,31 @@ begin
     process (clk)
     
     begin
-        if rising_edge(clk) then
+        -- without falling Edge the shift_register ignores the first input when enable becomes '1'
+        -- probably because of delay on the enable signal 
+        if falling_edge(clk) then
             if enable = '1'then
 
                 shift_register <= shift_register(shift_register'high-1 downto shift_register'low) & data_in;
+--                data_out <= shift_register(shift_register'high);
 
+            end if;
+        end if;
+    end process;
+    
+    process (clk)
+    
+    begin
+        if rising_edge(clk) then
+            if enable = '1'then
+
+
+                data_out <= shift_register(shift_register'high);
 
             end if;
         end if;
     end process;
 
-    data_out <= shift_register(shift_register'high);
+    
     
 end Behavioral;

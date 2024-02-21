@@ -207,17 +207,17 @@ begin
         Data_in_weight_tb <= X"04040404";
         wait for CLOCK_PERIOD;
         
-        weight_valid_tb <= '0';
-        wait for CLOCK_PERIOD;
+--        weight_valid_tb <= '0';
+--        wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '1';
 --        Data_in_weight_tb <= X"40404040";
         Data_in_weight_tb <= X"03030303";
         wait for CLOCK_PERIOD;
         
-        weight_valid_tb <= '0';
-        wait for CLOCK_PERIOD;
-        weight_valid_tb <= '1';
+--        weight_valid_tb <= '0';
+--        wait for CLOCK_PERIOD;
+--        weight_valid_tb <= '1';
         
         weight_valid_tb <= '1';
 --        Data_in_weight_tb <= X"40404040";
