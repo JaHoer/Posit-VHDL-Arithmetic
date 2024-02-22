@@ -2,9 +2,9 @@
 -- Company: FAU
 -- Engineer: Jan Hoertig
 -- 
--- Create Date: 20.02.2024 14:49:54
+-- Create Date: 22.02.2024 09:40:58
 -- Design Name: 
--- Module Name: tb_systolic_array_post_synth - Behavioral
+-- Module Name: tb_systolic_array_post_synth_16bit - Behavioral
 -- Project Name: 
 -- Target Devices: 
 -- Tool Versions: 
@@ -31,22 +31,21 @@ use IEEE.STD_LOGIC_1164.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity tb_systolic_array_post_synth is
+entity tb_systolic_array_post_synth_16bit is
     generic (
         -- Posit Values
-        N_tb : integer := 8;
-        Bs_tb : integer := 3; -- log2(N)
+        N_tb : integer := 16;
+        Bs_tb : integer := 4; -- log2(N)
         es_tb : integer := 2;
 
         -- number of parallel shift register
         -- doubles as systolic array dimentions
         array_width_tb : integer := 4
     );
-
 --  Port ( );
-end tb_systolic_array_post_synth;
+end tb_systolic_array_post_synth_16bit;
 
-architecture Behavioral of tb_systolic_array_post_synth is
+architecture Behavioral of tb_systolic_array_post_synth_16bit is
 
     constant CLOCK_PERIOD : time := 200 ns;
     constant INTERNAL_DATA_WIDTH : integer := N_tb * array_width_tb;
@@ -79,17 +78,6 @@ architecture Behavioral of tb_systolic_array_post_synth is
     signal out_vector_input_tb : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
     signal enable_output_mem_tb : std_logic;
     signal in_vector_output_tb : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
-    --signal PE_intermediate_psum_tb : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
-    --signal PE_intermediate_input_tb : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
-    --signal PE_intermediate_weight_tb : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
-    --signal PE_intermediate_weight_tb_2 : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
-    --signal external_weight_signal_array : vector_array;
-    
-    --signal input_signal_array : vector_array;
-    --signal input_signal_array_3 : std_logic_vector((N_tb*array_width_tb)-1 downto 0);
-    --signal input_signal_array_2 : std_logic_vector((N_tb*array_width_tb)-1 downto 0);
-    --signal input_signal_array_1 : std_logic_vector((N_tb*array_width_tb)-1 downto 0);
-    --signal input_signal_array_0 : std_logic_vector((N_tb*array_width_tb)-1 downto 0);
     
     signal intermediate_weight_PE_3 : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
     signal intermediate_weight_PE_2 : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
@@ -135,40 +123,7 @@ begin
         --PE_intermediate_weight_o => PE_intermediate_weight_tb
     );
 
-    
-    
-    
-    -- Hierarchical references to signal in Logic Simulation (needs VHDL 2008)
-    
-    --weight_en_tb <= << signal uut.weight_en : std_logic_vector(array_width_tb downto 0)>>;
---    weight_en_tb <= << signal uut.weight_en : std_logic>>;
---    comp_en_PEs_tb <= << signal uut.comp_en_PEs : std_logic>>;
-    
---    out_vector_weight_tb <= << signal uut.out_vector_weight : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0)>>;
---    weight_write_en_tb <= << signal uut.weight_write_en : std_logic_vector(array_width_tb downto 0)>>;
---    out_vector_input_tb <= << signal uut.out_vector_input : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0)>>;
---    enable_output_mem_tb <= << signal uut.enable_output_mem : std_logic>>;
---    in_vector_output_tb <= << signal uut.in_vector_output : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0)>>;
-    --input_signal_array_3 <= << signal uut.input_sigal_array(3) : std_logic_vector((N_tb*array_width_tb)-1 downto 0)>>;
-    
---    intermediate_weight_PE_3 <= << signal uut.gen_PE_blocks(3).PE_block_entity.intermediate_weight : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0)>>;
---    intermediate_weight_PE_2 <= << signal uut.gen_PE_blocks(2).PE_block_entity.intermediate_weight : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0)>>;
---    intermediate_weight_PE_1 <= << signal uut.gen_PE_blocks(1).PE_block_entity.intermediate_weight : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0)>>;
---    intermediate_weight_PE_0 <= << signal uut.gen_PE_blocks(0).PE_block_entity.intermediate_weight : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0)>>;
 
---    intermediate_psum_PE_3 <= << signal uut.gen_PE_blocks(3).PE_block_entity.intermediate_psum : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0)>>;
---    intermediate_psum_PE_2 <= << signal uut.gen_PE_blocks(2).PE_block_entity.intermediate_psum : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0)>>;
---    intermediate_psum_PE_1 <= << signal uut.gen_PE_blocks(1).PE_block_entity.intermediate_psum : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0)>>;
---    intermediate_psum_PE_0 <= << signal uut.gen_PE_blocks(0).PE_block_entity.intermediate_psum : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0)>>;
-
-    
-    --PE_intermediate_weight_tb_2 <= << signal uut.PE_intermediate_weight_o : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0) >>;
-    --external_weight_signal_array <= << signal uut.weight_signal_array : vector_array >>;
-    
-    
-    
-    
-    
     
 
     generate_sim_clock: process
@@ -202,9 +157,7 @@ begin
         wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '1';
-        -- Data_in_weight_tb <= "01000000010000000100000001000000";
-        Data_in_weight_tb <= X"40404040";
---        Data_in_weight_tb <= X"04040404";
+        Data_in_weight_tb <= X"4000400040004000";
         wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '0';
@@ -212,8 +165,7 @@ begin
     
         
         weight_valid_tb <= '1';
-        Data_in_weight_tb <= X"40404040";
---        Data_in_weight_tb <= X"03030303";
+        Data_in_weight_tb <= X"4000400040004000";
         wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '0';
@@ -221,33 +173,28 @@ begin
 
         
         weight_valid_tb <= '1';
-        Data_in_weight_tb <= X"40404040";
---        Data_in_weight_tb <= X"02020202";
+        Data_in_weight_tb <= X"4000400040004000";
         wait for CLOCK_PERIOD;
         
         --weight_valid_tb <= '1';
         --wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '1';
-        Data_in_weight_tb <= X"40404040";
---        Data_in_weight_tb <= X"01010101";
+        Data_in_weight_tb <= X"4000400040004000";
         wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '0';
         input_valid_tb <= '0';
-        Data_in_input_tb <= X"40404040";
---        Data_in_input_tb <= X"01010101";
+        Data_in_input_tb <= X"4000400040004000";
         wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '0';
         input_valid_tb <= '1';
-        Data_in_input_tb <= X"40404040";
---        Data_in_input_tb <= X"01010101";
+        Data_in_input_tb <= X"4000400040004000";
         wait for CLOCK_PERIOD;
         
         input_valid_tb <= '1';
-        Data_in_input_tb <= X"48484848";
---        Data_in_input_tb <= X"02020202";
+        Data_in_input_tb <= X"4800480048004800";
         wait for CLOCK_PERIOD;
         
         
@@ -255,13 +202,11 @@ begin
 --        wait for CLOCK_PERIOD;
         
         input_valid_tb <= '1';
-        Data_in_input_tb <= X"38383838";
---        Data_in_input_tb <= X"03030303";
+        Data_in_input_tb <= X"3800380038003800";
         wait for CLOCK_PERIOD;
         
         input_valid_tb <= '1';
-        Data_in_input_tb <= X"50505050";
---        Data_in_input_tb <= X"04040404";
+        Data_in_input_tb <= X"5000500050005000";
         wait for CLOCK_PERIOD;
         
 
@@ -287,9 +232,7 @@ begin
         wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '1';
-        -- Data_in_weight_tb <= "01000000010000000100000001000000";
-        Data_in_weight_tb <= X"50505050";
---        Data_in_weight_tb <= X"04040404";
+        Data_in_weight_tb <= X"5000500050005000";
         wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '0';
@@ -297,8 +240,7 @@ begin
     
         
         weight_valid_tb <= '1';
-        Data_in_weight_tb <= X"4c4c4c4c";
---        Data_in_weight_tb <= X"03030303";
+        Data_in_weight_tb <= X"4c004c004c004c00";
         wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '0';
@@ -306,33 +248,28 @@ begin
 
         
         weight_valid_tb <= '1';
-        Data_in_weight_tb <= X"48484848";
---        Data_in_weight_tb <= X"02020202";
+        Data_in_weight_tb <= X"4800480048004800";
         wait for CLOCK_PERIOD;
         
         --weight_valid_tb <= '1';
         --wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '1';
-        Data_in_weight_tb <= X"40404040";
---        Data_in_weight_tb <= X"01010101";
+        Data_in_weight_tb <= X"4000400040004000";
         wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '0';
         input_valid_tb <= '0';
-        Data_in_input_tb <= X"40404040";
---        Data_in_input_tb <= X"01010101";
+        Data_in_input_tb <= X"4000400040004000";
         wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '0';
         input_valid_tb <= '1';
-        Data_in_input_tb <= X"38383838";
---        Data_in_input_tb <= X"01010101";
+        Data_in_input_tb <= X"3800380038003800";
         wait for CLOCK_PERIOD;
         
         input_valid_tb <= '1';
-        Data_in_input_tb <= X"48484848";
---        Data_in_input_tb <= X"02020202";
+        Data_in_input_tb <= X"4800480048004800";
         wait for CLOCK_PERIOD;
         
         
@@ -340,13 +277,11 @@ begin
 --        wait for CLOCK_PERIOD;
         
         input_valid_tb <= '1';
-        Data_in_input_tb <= X"38383838";
---        Data_in_input_tb <= X"03030303";
+        Data_in_input_tb <= X"3800380038003800";
         wait for CLOCK_PERIOD;
         
         input_valid_tb <= '1';
-        Data_in_input_tb <= X"48484848";
---        Data_in_input_tb <= X"04040404";
+        Data_in_input_tb <= X"4800480048004800";
         wait for CLOCK_PERIOD;
         
 
@@ -373,9 +308,8 @@ begin
         wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '1';
-        -- Data_in_weight_tb <= "01000000010000000100000001000000";
-        Data_in_weight_tb <= X"50505050";
---        Data_in_weight_tb <= X"04040404";
+        Data_in_weight_tb <= X"5000500050005000";
+
         wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '0';
@@ -383,8 +317,7 @@ begin
     
         
         weight_valid_tb <= '1';
-        Data_in_weight_tb <= X"c0c0b8b8";
---        Data_in_weight_tb <= X"03030303";
+        Data_in_weight_tb <= X"c000c000b800b800";
         wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '0';
@@ -392,33 +325,28 @@ begin
 
         
         weight_valid_tb <= '1';
-        Data_in_weight_tb <= X"48484040";
---        Data_in_weight_tb <= X"02020202";
+        Data_in_weight_tb <= X"4800480040004000";
         wait for CLOCK_PERIOD;
         
         --weight_valid_tb <= '1';
         --wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '1';
-        Data_in_weight_tb <= X"40404848";
---        Data_in_weight_tb <= X"01010101";
+        Data_in_weight_tb <= X"4000400048004800";
         wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '0';
         input_valid_tb <= '0';
-        Data_in_input_tb <= X"3840c048";
---        Data_in_input_tb <= X"01010101";
+        Data_in_input_tb <= X"38004000c0004800";
         wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '0';
         input_valid_tb <= '1';
-        Data_in_input_tb <= X"3840c048";
---        Data_in_input_tb <= X"01010101";
+        Data_in_input_tb <= X"38004000c0004800";
         wait for CLOCK_PERIOD;
         
         input_valid_tb <= '1';
-        Data_in_input_tb <= X"483840c0";
---        Data_in_input_tb <= X"02020202";
+        Data_in_input_tb <= X"480038004000c000";
         wait for CLOCK_PERIOD;
         
         
@@ -426,13 +354,11 @@ begin
 --        wait for CLOCK_PERIOD;
         
         input_valid_tb <= '1';
-        Data_in_input_tb <= X"c0483840";
---        Data_in_input_tb <= X"03030303";
+        Data_in_input_tb <= X"c000480038004000";
         wait for CLOCK_PERIOD;
         
         input_valid_tb <= '1';
-        Data_in_input_tb <= X"40c04838";
---        Data_in_input_tb <= X"04040404";
+        Data_in_input_tb <= X"4000c00048003800";
         wait for CLOCK_PERIOD;
         
 
@@ -462,10 +388,10 @@ begin
         
         
         weight_valid_tb <= '1';
-        Data_in_weight_tb <= X"01010101";
+        Data_in_weight_tb <= X"0101010100000000";
         wait for CLOCK_PERIOD;
         weight_valid_tb <= '1';
-        Data_in_weight_tb <= X"02020202";
+        Data_in_weight_tb <= X"0202020200000000";
         wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '0';
@@ -473,24 +399,24 @@ begin
         weight_valid_tb <= '1';
         
         weight_valid_tb <= '1';
-        Data_in_weight_tb <= X"03030303";
+        Data_in_weight_tb <= X"0303030300000000";
         wait for CLOCK_PERIOD;
         weight_valid_tb <= '1';
-        Data_in_weight_tb <= X"04040404";
+        Data_in_weight_tb <= X"0404040400000000";
         wait for CLOCK_PERIOD;
         weight_valid_tb <= '0';
         
         input_valid_tb <= '1';
-        Data_in_input_tb <= X"04030201";
+        Data_in_input_tb <= X"0403020100000000";
         wait for CLOCK_PERIOD;
         input_valid_tb <= '1';
-        Data_in_input_tb <= X"05040302";
+        Data_in_input_tb <= X"0504030200000000";
         wait for CLOCK_PERIOD;
         input_valid_tb <= '1';
-        Data_in_input_tb <= X"06050403";
+        Data_in_input_tb <= X"0605040300000000";
         wait for CLOCK_PERIOD;
         input_valid_tb <= '1';
-        Data_in_input_tb <= X"07060504";
+        Data_in_input_tb <= X"0706050400000000";
         wait for CLOCK_PERIOD;
         
         wait for CLOCK_PERIOD;
@@ -520,7 +446,6 @@ begin
         
     
     end process;
-
 
 
 end Behavioral;

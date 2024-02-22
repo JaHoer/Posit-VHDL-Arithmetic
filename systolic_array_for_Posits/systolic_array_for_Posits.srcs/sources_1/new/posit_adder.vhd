@@ -433,7 +433,8 @@ begin
 
    l2 : entity work.LOD_N
         generic map (
-        N => N
+        N => N,
+        log2N => Bs
         )
     port map (
         input_vector => LOD_in,

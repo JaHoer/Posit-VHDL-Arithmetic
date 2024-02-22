@@ -33,8 +33,8 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity priority_encode_N is
     generic(
-        N : integer := 8;
-        log2N : integer := 3
+        N : integer := 16;
+        log2N : integer := 4
     );
 
     port (

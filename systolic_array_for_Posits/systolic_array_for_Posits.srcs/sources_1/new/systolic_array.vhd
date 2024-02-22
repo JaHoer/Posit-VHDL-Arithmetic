@@ -34,8 +34,8 @@ use IEEE.STD_LOGIC_1164.ALL;
 entity systolic_array is
     generic (
         -- Posit Values
-        N : integer := 8;
-        Bs : integer := 3; -- log2(N)
+        N : integer := 16;
+        Bs : integer := 4; -- log2(N)
         es : integer := 2;
         
         --inst_length : integer := 6;
