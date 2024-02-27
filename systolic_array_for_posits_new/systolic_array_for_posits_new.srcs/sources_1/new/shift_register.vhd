@@ -47,16 +47,39 @@ entity shift_register is
 end shift_register;
 
 architecture Behavioral of shift_register is
+
     
     type register_array is array (length-1 downto 0)
         of std_logic_vector(data_width-1 downto 0);
         
     signal shift_register : register_array;
+
+    
     
 begin
 
-    process (clk)
+    short : if length = 0 generate
     
+    process (clk)
+    begin
+        -- without falling Edge the shift_register ignores the first input when enable becomes '1'
+        -- probably because of delay on the enable signal 
+        if falling_edge(clk) then
+            if enable = '1'then
+
+                data_out <= data_in;
+
+            end if;
+        end if;
+    end process;
+    
+    end generate;
+    
+    
+
+    long : if length > 0 generate
+    
+    process (clk)
     begin
         -- without falling Edge the shift_register ignores the first input when enable becomes '1'
         -- probably because of delay on the enable signal 
@@ -64,7 +87,7 @@ begin
             if enable = '1'then
 
                 shift_register <= shift_register(shift_register'high-1 downto shift_register'low) & data_in;
---                data_out <= shift_register(shift_register'high);
+                data_out <= shift_register(shift_register'high);
 
             end if;
         end if;
@@ -75,14 +98,14 @@ begin
     begin
         if rising_edge(clk) then
             if enable = '1'then
-
-
-                data_out <= shift_register(shift_register'high);
+            
+--                shift_register <= shift_register(shift_register'high-1 downto shift_register'low) & data_in;
+--                data_out <= shift_register(shift_register'high);
 
             end if;
         end if;
     end process;
 
-    
+    end generate;
     
 end Behavioral;

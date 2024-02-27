@@ -94,8 +94,9 @@ architecture Behavioral of PE is
 
 begin
     
---    input_out <= input;
---    weight_out <= weight;
+    input_out <= input;
+    weight_out <= weight;
+    psum_out <= psum_new;
     --weight_write <= weight_w_en_in;
     
     -- ### TODO: here Posit operations ###
@@ -145,8 +146,8 @@ begin
     calc : process (clk)
         
     begin
-        if falling_edge(clk) then
-            --if inst_in(inst_in'high) = '1' then
+        if rising_edge(clk) then
+
             if comp_en = '1' then
                 
                 input <= input_in;
@@ -162,28 +163,24 @@ begin
             end if;
             
             
---            if weight_w_en_in = '1' then
---                weight_mem <= weight_in;
---            end if;
-            
-        end if;
-    end process;
-    
-    w_write : process (clk)
-        
-    begin
-        if rising_edge(clk) then
-
             if weight_w_en_in = '1' then
                 weight_mem <= weight_in;
             end if;
             
-            input_out <= input;
-            weight_out <= weight;
-            psum_out <= psum_new;
-            
         end if;
     end process;
+    
+--    w_write : process (clk)
+--    begin
+--        if rising_edge(clk) then
+--            if weight_w_en_in = '1' then
+--                weight_mem <= weight_in;
+--            end if;
+--            input_out <= input;
+--            weight_out <= weight;
+--            psum_out <= psum_new;
+--        end if;
+--    end process;
     
     
     

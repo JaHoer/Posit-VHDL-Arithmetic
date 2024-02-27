@@ -71,10 +71,16 @@ entity systolic_array is
         weight_en_o : out std_logic;
         comp_en_PEs_o : out std_logic;
         
-        in_vector_output_o : out std_logic_vector(N * array_width-1 downto 0)
+        in_vector_output_o : out std_logic_vector(N * array_width-1 downto 0);
         --PE_intermediate_psum_o : out std_logic_vector(N * array_width-1 downto 0);
         --PE_intermediate_input_o : out std_logic_vector(N * array_width-1 downto 0);
         --PE_intermediate_weight_o : out std_logic_vector(N * array_width-1 downto 0)
+        
+        -- from PE_Block
+        intermediate_weight_o : out std_logic_vector((array_width+1)* N * array_width -1 downto 0);
+        internal_weight_mem : out std_logic_vector((array_width+1)* N * array_width -1 downto 0);
+        internal_input_mem : out std_logic_vector((array_width+1)* N * array_width -1 downto 0);
+        internal_psum_mem : out std_logic_vector((array_width+1)* N * array_width -1 downto 0)
         
     );
 end systolic_array;
@@ -189,6 +195,10 @@ begin
         
         --inst => inst_in,
         weight_write => weight_write_en(array_width)
+        
+        
+        
+        
     );
     
     input_mem : entity work.input_mem
@@ -280,6 +290,16 @@ begin
             input_out => input_signal_array(i),
             psum_out => in_vector_output ((i+1)*N-1 downto (i)*N),
             weight_w_en_out => weight_write_en(i)
+            
+            
+            -- Debug
+            ,
+            -- from PE_blocks
+            --((array_width+1)*N-1 * array_width downto 0);
+            intermediate_weight_o => intermediate_weight_o((array_width+1)*N * (i+1) -1 downto (array_width+1)*N * (i)),
+            internal_weight_mem => internal_weight_mem((array_width+1)*N * (i+1) -1 downto (array_width+1)*N * (i)),
+            internal_input_mem => internal_input_mem((array_width+1)*N * (i+1) -1 downto (array_width+1)*N * (i)),
+            internal_psum_mem => internal_psum_mem((array_width+1)*N * (i+1) -1 downto (array_width+1)*N * (i))
         );
     
     end generate;

@@ -95,7 +95,7 @@ begin
         
         register_entity : entity work.shift_register
             generic map(
-                length => k,
+                length => k-1,
                 data_width => N
             )
             port map(

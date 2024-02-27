@@ -62,7 +62,8 @@ entity PE_block is
         intermediate_psum_o : out std_logic_vector((array_width+1)*N-1 downto 0);
         internal_weight_mem : out std_logic_vector((array_width+1)*N-1 downto 0);
         internal_input_mem : out std_logic_vector((array_width+1)*N-1 downto 0);
-        internal_psum_mem : out std_logic_vector((array_width+1)*N-1 downto 0)
+        internal_psum_mem : out std_logic_vector((array_width+1)*N-1 downto 0);
+        product_out : out std_logic_vector(array_width*N-1 downto 0)
         
         
     );
@@ -124,8 +125,8 @@ begin
             ,
             weight_mem_o => internal_weight_mem((i+2)*N-1 downto (i+1)*N),
             input_reg_o => internal_input_mem((i+2)*N-1 downto (i+1)*N),
-            psum_reg_o => internal_psum_mem((i+2)*N-1 downto (i+1)*N)
-      
+            psum_reg_o => internal_psum_mem((i+2)*N-1 downto (i+1)*N),
+            product_out_o => product_out((i+1)*N-1 downto i*N)
         );
 
 
@@ -136,7 +137,7 @@ begin
         if rising_edge(clk) then
             --weigth_write_mem <= weight_w_en_in;
             weight_w_en_out <= weight_w_en_in;
-            weight_en_tmp <= weight_en;
+            --weight_en_tmp <= weight_en;
             
             --weight_en_out <= weight_en;
             

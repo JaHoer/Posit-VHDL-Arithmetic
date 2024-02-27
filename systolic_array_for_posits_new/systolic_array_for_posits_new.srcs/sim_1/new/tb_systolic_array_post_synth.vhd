@@ -80,15 +80,21 @@ architecture Behavioral of tb_systolic_array_post_synth is
     signal in_vector_output_tb : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
 
     
-    signal intermediate_weight_PE_3 : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
-    signal intermediate_weight_PE_2 : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
-    signal intermediate_weight_PE_1 : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
-    signal intermediate_weight_PE_0 : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
+    --signal intermediate_weight_PE_3 : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
+    --signal intermediate_weight_PE_2 : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
+    --signal intermediate_weight_PE_1 : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
+    --signal intermediate_weight_PE_0 : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
     
-    signal intermediate_psum_PE_3 : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
-    signal intermediate_psum_PE_2 : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
-    signal intermediate_psum_PE_1 : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
-    signal intermediate_psum_PE_0 : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
+    --signal intermediate_psum_PE_3 : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
+    --signal intermediate_psum_PE_2 : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
+    --signal intermediate_psum_PE_1 : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
+    --signal intermediate_psum_PE_0 : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
+    
+    -- from PE_blocks
+    signal intermediate_weight_o : std_logic_vector((array_width_tb+1)* N_tb * array_width_tb -1 downto 0);
+    signal internal_weight_mem : std_logic_vector((array_width_tb+1)* N_tb * array_width_tb -1 downto 0);
+    signal internal_input_mem : std_logic_vector((array_width_tb+1)* N_tb * array_width_tb -1 downto 0);
+    signal internal_psum_mem : std_logic_vector((array_width_tb+1)* N_tb * array_width_tb -1 downto 0);
 
         
 begin
@@ -113,8 +119,12 @@ begin
         weight_write_en_o => weight_write_en_tb,
         weight_en_o => weight_en_tb,
         comp_en_PEs_o => comp_en_PEs_tb,
-        in_vector_output_o => in_vector_output_tb
-
+        in_vector_output_o => in_vector_output_tb,
+        
+        intermediate_weight_o => intermediate_weight_o,
+        internal_weight_mem => internal_weight_mem,
+        internal_input_mem => internal_input_mem,
+        internal_psum_mem => internal_psum_mem
     );
 
     
