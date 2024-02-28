@@ -88,7 +88,7 @@ architecture Behavioral of weight_mem is
 
 begin
 
-    enable <=  '1' when w_en = '1'  or load_cooldown = '1' or delayed_load_shift_register(delayed_load_shift_register'high) = '1' else '0' ;--
+    enable <= w_en; -- '1' when w_en = '1'  or load_cooldown = '1' or delayed_load_shift_register(delayed_load_shift_register'high) = '1' else '0' ;--
     enable_out <= enable;
 
     create_register : for k in 1 to mem_width generate

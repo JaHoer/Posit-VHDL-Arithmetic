@@ -58,6 +58,9 @@ architecture Behavioral of tb_weight_mem is
     signal output_vector_tb : std_logic_vector(output_width_tb-1 downto 0);
     signal load_cooldown_tb : std_logic;
     signal enable_out_tb : std_logic;
+    
+    signal gen_valid : std_logic;
+    
 
 begin
 
@@ -112,6 +115,9 @@ begin
         w_en_tb <= '1';
         
         wait for CLOCK_PERIOD;
+        w_en_tb <= '0';
+        
+        wait for CLOCK_PERIOD;
         input_vektor_tb <= "00010001001100110111011111111111";
         w_en_tb <= '1';
         
@@ -119,12 +125,15 @@ begin
         input_vektor_tb <= "00000000111111110000111100110011";
         w_en_tb <= '1';
         
-        
         wait for CLOCK_PERIOD;
+        w_en_tb <= '0';
+        
+        
+        wait for CLOCK_PERIOD/20;
         input_vektor_tb <= "00110011001100110011001100110011";
         w_en_tb <= '1';
         
-        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD-CLOCK_PERIOD/20;
         input_vektor_tb <= "10101010101010101010101010101010";
         w_en_tb <= '1';
         
@@ -182,8 +191,16 @@ begin
         
         wait for CLOCK_PERIOD;
         
-        
+
+    end process;
     
+    
+    
+    
+    gen_valid_proc : process (clk_tb)
+    begin
+    
+        gen_valid <= w_en_tb;
     
     end process;
 

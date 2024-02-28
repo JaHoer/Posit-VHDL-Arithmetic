@@ -81,6 +81,7 @@ architecture Behavioral of tb_controller is
     
     signal weight_is_loaded_out_tb : std_logic;
     signal weight_loading_out_tb : std_logic;
+    signal ringcounter_output : std_logic;
     signal weight_control_shift_register_tb : std_logic_vector(array_width_tb-1 downto 0);
     signal weight_ringcounter_low_tb : std_logic_vector(array_width_tb-2 downto 0);
     signal weight_enougth_valids_tb : std_logic;
@@ -125,6 +126,7 @@ begin
         
         weight_is_loaded_out => weight_is_loaded_out_tb,
         weight_loading_out => weight_loading_out_tb,
+        ringcounter_output_out => ringcounter_output,
         weight_control_shift_register_out => weight_control_shift_register_tb,
         weight_ringcounter_low_out => weight_ringcounter_low_tb,
         weight_enougth_valids_out => weight_enougth_valids_tb,

@@ -74,6 +74,7 @@ entity Controller is
         ;
         weight_is_loaded_out : out std_logic;
         weight_loading_out : out std_logic;
+        ringcounter_output_out : out std_logic;
         weight_control_shift_register_out : out std_logic_vector(array_width-1 downto 0);
         weight_ringcounter_low_out : out std_logic_vector(array_width-2 downto 0);
         weight_enougth_valids_out : out std_logic;
@@ -92,30 +93,42 @@ architecture Behavioral of Controller is
     signal weight_control_shift_register : std_logic_vector(array_width-1 downto 0) := (0 => '1', others => '0');
     
     signal weight_ringcounter : std_logic_vector(array_width-1 downto 0) := (0 => '1', others => '0');
-    signal weight_ringcounter_low : std_logic_vector(array_width-2 downto 0);
-    --signal weight_ringcounter_high : std_logic_vector(0 downto 0);
+
     
     --signal PE_control_shift_register : std_logic_vector(1 downto 0);
     signal output_valid_sig : std_logic;
     
-    --signal weight_token : std_logic;
+
     signal weight_is_loaded : std_logic := '0';
     signal weight_write_sig : std_logic;
-    signal weight_loading : std_logic;
+
     
     signal ringcounter_output : std_logic := '0';
-    signal weight_load_new : std_logic;
-    signal weight_enougth_valids : std_logic;
-    signal ready_for_new_weight : std_logic;
     
-    --signal weight_mem_extended_valid : std_logic;
+    -- Debug
+    signal weight_enougth_valids : std_logic;
+    
     
     signal enable_w_mem : std_logic;
     
     -- continue loading weight after load of first column of PEs is finished for remaining columns
-    signal delayed_weight_en : std_logic_vector(array_width downto 0);
+    signal delayed_weight_en : std_logic_vector(array_width downto 0) := (others => '0');
     
     signal load_cooldown_active : std_logic;
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    signal ringcounter_flag : std_logic;
+    
+    
+    
+    
 
 begin
 
@@ -134,14 +147,15 @@ begin
     
     -- has Delay to wright out values from mem to PEs
 --    enable_w_mem <= delayed_load_shift_register(delayed_load_shift_register'high);
-    enable_weight_mem <= weight_valid;
+    enable_weight_mem <= weight_valid or delayed_weight_en(delayed_weight_en'high); --weight_valid;
     
     enable_input_mem <= both_valid;
     
     enable_output_mem <= both_valid;
     
     -- longer enable to allow weight to travel through the array
-    weight_en_PE <= weight_valid or delayed_weight_en(delayed_weight_en'high);
+    -- This condition works correctly when delayed_weight is working
+    weight_en_PE <= weight_valid or (((ringcounter_output and weight_valid ) or weight_is_loaded) and delayed_weight_en(delayed_weight_en'high));
     
     -- only allow new input and weight if there is space for the output
     -- TODO: maybe connect both_valid to output_ready, so it only works of there is space for the output
@@ -153,8 +167,8 @@ begin
     -- Debug
     weight_is_loaded_out <= weight_is_loaded;
     weight_loading_out <= '1' when ringcounter_output = '1'and weight_valid = '1' else '0';
+    ringcounter_output_out <= ringcounter_output;
     weight_control_shift_register_out <= weight_ringcounter;
-    weight_ringcounter_low_out <= weight_ringcounter_low;
     weight_enougth_valids_out <= weight_enougth_valids;
     delayed_weight_en_out <= delayed_weight_en;
     
@@ -178,84 +192,95 @@ begin
                 ringcounter_output <= '0';
                 weight_write_sig <= '0';
                 weight_is_loaded <= '0';
-                weight_loading <= '0';
-                --weight_token := '0';
                 weight_enougth_valids <= '0';
-                ready_for_new_weight <= '1';
+                --delayed_weight_en <= (delayed_weight_en'high => '0', others => '0');
+
                 
             elsif weight_valid = '1' then
                 
                 -- puts out 1 when enought weight_valids came
                 weight_ringcounter <= weight_ringcounter(weight_ringcounter'high -1 downto weight_ringcounter'low) & weight_ringcounter(weight_ringcounter'high);
---                weight_ringcounter_low <=  weight_ringcounter(weight_ringcounter'high -1 downto weight_ringcounter'low);
+                
+                -- marks second to last valid as preparation for delayed-enable
+                -- holds '1' until last valid comes and resets after that
                 ringcounter_output <= weight_ringcounter(weight_ringcounter'high-1);
+
+                
+                
                 
                 -- debug
                 weight_enougth_valids <= weight_ringcounter(weight_ringcounter'high);
                 
-                -- one clk extra delay
-                
-                --weight_is_loaded <= '0';
-                --weight_write_sig <= '0';
-                
-                
-                --if weight_is_loaded = '1' then
-                --    weight_is_loaded <= '1';
-                --    weight_write_sig <= '0';
-                --    delayed_weight_en <= delayed_weight_en(delayed_weight_en'high-1 downto delayed_weight_en'low) & '0';
+
+                if ringcounter_output = '1' then    -- and weight_valid = '1'
+                    weight_is_loaded <= '1';
+                    weight_write_sig <= '1';
+                else
+                    weight_is_loaded <= '0';
+                    weight_write_sig <= '0';
+                end if;
                     
-                --else
-                    --weight_is_loaded <= ringcounter_output ;
-                    --weight_write_sig <= ringcounter_output;
-                    if ringcounter_output = '1' then    -- and weight_valid = '1'
-                        weight_is_loaded <= '1';
-                        weight_write_sig <= '1';
-                    else
-                        weight_is_loaded <= '0';
-                        weight_write_sig <= '0';
-                    end if;
-                    
---                    delayed_weight_en <= (others => ringcounter_output);
-                --end if;
-                
-                
-                
-                if weight_ringcounter(weight_ringcounter'high-1) = '1' then
+
+
+                if weight_ringcounter(weight_ringcounter'high) = '1' then
                     -- for an extended weight_en_PE the delayed counter gets set when weight_ringcounter indicates the second to last valid-bit
                     -- the 0 in the msb position is for the case that the next valid doesn't come imideately after
-                    delayed_weight_en <= (delayed_weight_en'high => '0', others => '1');
-                elsif ringcounter_output = '1' then
+                    --delayed_weight_en <= (delayed_weight_en'high => '0', others => '1');
+                end if;
+                    
+                if ringcounter_output = '1' then
                     -- start countdown when the second to last ringcounter bit was indicated and the last valid is here
-                    delayed_weight_en <= delayed_weight_en(delayed_weight_en'high-1 downto delayed_weight_en'low) & '0';
+                    --delayed_weight_en <= delayed_weight_en(delayed_weight_en'high-1 downto delayed_weight_en'low) & '0';
+                    --delayed_weight_en <= ( others => '1');
                 end if;
                 
                 
                 
                 
-            else
+            else -- weight_valid = '0'
+                
+                
+                
+            
                 
                 if weight_is_loaded = '1' then
                     weight_is_loaded <= '1';
                     weight_write_sig <= '0';
-                    delayed_weight_en <= delayed_weight_en(delayed_weight_en'high-1 downto delayed_weight_en'low) & '0';
+                    --delayed_weight_en <= delayed_weight_en(delayed_weight_en'high-1 downto delayed_weight_en'low) & '0';
                     
                 else
-                    --weight_is_loaded <= ringcounter_output ;
-                    --weight_write_sig <= ringcounter_output;
-                    --if ringcounter_output = '1'and weight_valid = '1' then
-                    --    weight_is_loaded <= '1';
-                    --    weight_write_sig <= '1';
-                    --else
-                        weight_is_loaded <= '0';
-                        weight_write_sig <= '0';
-                    --end if;
+
+                    weight_is_loaded <= '0';
+                    weight_write_sig <= '0';
                     
-                    --delayed_weight_en <= (others => ringcounter_output);
+                    --if ringcounter_output = '0' then
+                    --    delayed_weight_en <= (delayed_weight_en'high => '0', others => '0');
+                    --end if;
                 end if;
                 
             
                 
             end if;
+            
+            
+            
+            
+            -- This is for delaying the weight_en_PE and weight_mem_en
+            -- The following If destroyes the output of weight_write, but i don't know why
+            if rst = '1' then
+                delayed_weight_en <= (delayed_weight_en'high => '0', others => '0');
+                
+            elsif ringcounter_output = '1'then
+                -- set delayed_weight when last valid is coming up
+                delayed_weight_en <= (delayed_weight_en'high => '1', others => '1');
+                
+                
+            elsif ringcounter_output = '0' then
+                -- reduce delayed_weight for counting down
+                delayed_weight_en <= delayed_weight_en(delayed_weight_en'high-1 downto delayed_weight_en'low) & '0';
+                
+            end if;
+            
             
             
 
@@ -294,59 +319,5 @@ begin
     end process on_clk_proc;
     
     
-    
-    
-    
-    off_clk_proc : process (clk)
-    
-    begin
-        
-        if falling_edge(clk) then
-
-            if rst = '1' then
-
-                --weight_control_shift_register <= (0 => '1', others => '0');
---                weight_ringcounter <= (0 => '1', others => '0');
-                --ringcounter_output <= '0';
-                --weight_write_sig <= '0';
-                --weight_is_loaded <= '0';
-                --weight_loading <= '0';
-                --weight_token := '0';
-                --weight_enougth_valids <= '0';
-                --ready_for_new_weight <= '1';
-                
-            elsif weight_valid = '1' then
-                
---                weight_ringcounter <= weight_ringcounter(weight_ringcounter'high -1 downto weight_ringcounter'low) & weight_ringcounter(weight_ringcounter'high);
-                --weight_ringcounter_low <=  weight_ringcounter(weight_ringcounter'high -1 downto weight_ringcounter'low);
---                ringcounter_output <= weight_ringcounter(weight_ringcounter'high);
-                
-                -- debug
---                weight_enougth_valids <= weight_ringcounter(weight_ringcounter'high);
-                
-     
-                
-            else
-                
---                if weight_is_loaded = '1' then
-                    --weight_is_loaded <= '1';
-                    --weight_write_sig <= '0';
---                    delayed_weight_en <= delayed_weight_en(delayed_weight_en'high-1 downto delayed_weight_en'low) & '0';
-                    
---                else
-                    --weight_is_loaded <= ringcounter_output;
-                    --weight_write_sig <= ringcounter_output;
---                    delayed_weight_en <= (others => ringcounter_output);
---                end if;
-                
-            
-                
-            end if;
-        end if;
-    end process off_clk_proc;
-    
-
-
-
 
 end Behavioral;

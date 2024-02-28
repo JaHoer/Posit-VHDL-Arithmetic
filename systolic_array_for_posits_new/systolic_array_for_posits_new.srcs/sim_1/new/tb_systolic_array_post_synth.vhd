@@ -184,8 +184,8 @@ begin
 --        Data_in_weight_tb <= X"02020202";
         wait for CLOCK_PERIOD;
         
-        --weight_valid_tb <= '1';
-        --wait for CLOCK_PERIOD;
+        weight_valid_tb <= '0';
+        wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '1';
         Data_in_weight_tb <= X"40404040";
@@ -234,8 +234,8 @@ begin
 --        Data_in_input_tb <= X"02020202";
         wait for CLOCK_PERIOD;
 
---        input_valid_tb <= '0';
---        wait for CLOCK_PERIOD;
+        input_valid_tb <= '0';
+        wait for CLOCK_PERIOD;
         
         input_valid_tb <= '1';
         Data_in_input_tb <= X"38383838";
@@ -251,8 +251,8 @@ begin
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         
---        input_valid_tb <= '0';
---        wait for CLOCK_PERIOD;
+        input_valid_tb <= '0';
+        wait for CLOCK_PERIOD;
         input_valid_tb <= '1';
         
         wait for CLOCK_PERIOD;
@@ -260,6 +260,12 @@ begin
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
+        
+        input_valid_tb <= '0';
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        input_valid_tb <= '1';
+        
         wait for CLOCK_PERIOD;
         
         input_valid_tb <= '0';
