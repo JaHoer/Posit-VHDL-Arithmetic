@@ -84,10 +84,10 @@ architecture Behavioral of tb_controller is
     signal weight_control_shift_register_tb : std_logic_vector(array_width_tb-1 downto 0);
     signal weight_ringcounter_low_tb : std_logic_vector(array_width_tb-2 downto 0);
     signal weight_enougth_valids_tb : std_logic;
-    signal delayed_weight_en_tb : std_logic_vector(array_width_tb-2 downto 0);
+    signal delayed_weight_en_tb : std_logic_vector(array_width_tb downto 0);
     
     
-    signal delayed_weight_en : std_logic_vector(array_width_tb-2 downto 0);
+    --signal delayed_weight_en : std_logic_vector(array_width_tb-2 downto 0);
 
 begin
     uut : entity work.controller
@@ -170,15 +170,17 @@ begin
         data_weight_in_tb <= X"01010101";
         wait for CLOCK_PERIOD;
         
---        weight_valid_tb <= '0';
---        wait for CLOCK_PERIOD;
+        weight_valid_tb <= '0';
+        wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '1';
         data_weight_in_tb <= X"01010101";
         wait for CLOCK_PERIOD;
         
---        weight_valid_tb <= '0';
---        wait for CLOCK_PERIOD;
+        weight_valid_tb <= '0';
+        wait for CLOCK_PERIOD;
+        weight_valid_tb <= '0';
+        wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '1';
         data_weight_in_tb <= X"01010101";
@@ -187,6 +189,8 @@ begin
         
         weight_valid_tb <= '0';
         data_weight_in_tb <= X"05050505";
+        input_valid_tb <= '1';
+        data_input_in_tb <= X"01010101";
         wait for CLOCK_PERIOD;
         
         
