@@ -127,57 +127,57 @@ begin
         zero => zero_tb,
         done => done_tb
         
-        ,        
-        inf1_o => inf1_tb,
-        inf2_o => inf2_tb,
-        zero1_o => zero1_tb,
-        zero2_o => zero2_tb,
-   
-        rc1_o => rc1_tb,
-        rc2_o => rc2_tb,
-        regime1_o => regime1_tb,
-        regime2_o => regime2_tb,
-        Lshift1_o => Lshift1_tb,
-        Lshift2_o => Lshift2_tb,
-        e1_o => e1_tb,
-        e2_o => e2_tb,
-        mant1_o => mant1_tb,
-        mant2_o => mant2_tb,
-        
-        in1_gt_in2_o => in1_gt_in2_tb,
-        r_diff11_o => r_diff11_tb,
-        r_diff12_o => r_diff12_tb,
-        r_diff2_o => r_diff2_tb,
-        r_diff_o => r_diff_tb,
-        r_diff_shift_o => r_diff_shift_tb,
-        diff_o => diff_tb,
-        diff_eig_o => diff_eig_tb,
-        exp_diff_o => exp_diff_tb,
-        
-        DSR_right_in_o => DSR_right_in_tb,
-        DSR_right_out_o => DSR_right_out_tb,
-       
-        add_m_in1_o => add_m_in1_tb,
-        add_m1_o => add_m1_tb,
-        add_m2_o => add_m2_tb,
-        add_m_o => add_m_tb,
-        mant_ovf_o => mant_ovf_tb,
-        
-        left_shift_val_o => left_shift_val_tb,
-        left_shift_extended_o => left_shift_extended_tb,
-        
-        DSR_left_out_t_o => DSR_left_out_t_tb,
-        DSR_left_out_o => DSR_left_out_tb,
-        lr_N_o => lr_N_tb,
-        le_o_tmp_o => le_o_tmp_tb,
-        le_o_o => le_o_tb,
-        le_oN_o => le_oN_tb,
-        
-        
-        e_o_o => e_o_tb,
-        r_o_o => r_o_tb,
-        tmp_o_o => tmp_o_tb,
-        tmp1_oN_o => tmp1_oN_tb
+    --    ,        
+    --    inf1_o => inf1_tb,
+    --    inf2_o => inf2_tb,
+    --    zero1_o => zero1_tb,
+    --    zero2_o => zero2_tb,
+    --
+    --    rc1_o => rc1_tb,
+    --    rc2_o => rc2_tb,
+    --    regime1_o => regime1_tb,
+    --    regime2_o => regime2_tb,
+    --    Lshift1_o => Lshift1_tb,
+    --    Lshift2_o => Lshift2_tb,
+    --    e1_o => e1_tb,
+    --    e2_o => e2_tb,
+    --    mant1_o => mant1_tb,
+    --    mant2_o => mant2_tb,
+    --    
+    --    in1_gt_in2_o => in1_gt_in2_tb,
+    --    r_diff11_o => r_diff11_tb,
+    --    r_diff12_o => r_diff12_tb,
+    --    r_diff2_o => r_diff2_tb,
+    --    r_diff_o => r_diff_tb,
+    --    r_diff_shift_o => r_diff_shift_tb,
+    --    diff_o => diff_tb,
+    --    diff_eig_o => diff_eig_tb,
+    --    exp_diff_o => exp_diff_tb,
+    --    
+    --    DSR_right_in_o => DSR_right_in_tb,
+    --    DSR_right_out_o => DSR_right_out_tb,
+    --   
+    --    add_m_in1_o => add_m_in1_tb,
+    --    add_m1_o => add_m1_tb,
+    --    add_m2_o => add_m2_tb,
+    --    add_m_o => add_m_tb,
+    --    mant_ovf_o => mant_ovf_tb,
+    --    
+    --    left_shift_val_o => left_shift_val_tb,
+    --    left_shift_extended_o => left_shift_extended_tb,
+    --    
+    --    DSR_left_out_t_o => DSR_left_out_t_tb,
+    --    DSR_left_out_o => DSR_left_out_tb,
+    --    lr_N_o => lr_N_tb,
+    --    le_o_tmp_o => le_o_tmp_tb,
+    --    le_o_o => le_o_tb,
+    --    le_oN_o => le_oN_tb,
+    --    
+    --    
+    --    e_o_o => e_o_tb,
+    --    r_o_o => r_o_tb,
+    --    tmp_o_o => tmp_o_tb,
+    --    tmp1_oN_o => tmp1_oN_tb
        
     );
     

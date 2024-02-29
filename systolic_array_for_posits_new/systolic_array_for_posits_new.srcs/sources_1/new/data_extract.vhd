@@ -68,6 +68,7 @@ architecture Behavioral of data_extract is
   
   -- from PACoGen
   signal xin_r : std_logic_vector(N-1 downto 0);
+  signal lod_input : std_logic_vector(N-1 downto 0);
   signal k : std_logic_vector(Bs-1 downto 0);
   
   signal xin_tmp : std_logic_vector(N-1 downto 0);
@@ -94,13 +95,15 @@ begin
     -- K1 as R[RS-1:0] (absolute regime value) and regime left shift amount (Lshift) of respective operands.
         
     -- from PACoGen    
-    xinst_k : entity work.LOD_N
+    lod_input <= xin_r(N-2 downto 0) & (rc_tmp xor '0');
+
+    LOD_N : entity work.LOD_N
         generic map (
             N => N, 
             log2N => Bs
         )
         port map (
-            input_vector => xin_r(N-2 downto 0) & (rc_tmp xor '0') , 
+            input_vector => lod_input, 
             output_vector => k
         );
 

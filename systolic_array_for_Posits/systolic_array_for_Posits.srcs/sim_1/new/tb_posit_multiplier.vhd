@@ -154,39 +154,39 @@ begin
     );
     
     
-    inf1_tb <= <<signal uut.inf1 : std_logic>>;
-    inf2_tb <= <<signal uut.inf2 : std_logic>>;
-    zero1_tb <= <<signal uut.zero1 : std_logic>>;
-    zero2_tb <= <<signal uut.zero2 : std_logic>>;
-        
-    mult_s_tb <= <<signal uut.mult_s : std_logic>>;
-    
-    rc1_tb <= <<signal uut.rc1 : std_logic>>;
-    rc2_tb <= <<signal uut.rc2 : std_logic>>;
-    regime1_tb <= <<signal uut.regime1 : std_logic_vector(Bs_tb-1 downto 0)>>; 
-    regime2_tb <= <<signal uut.regime2 : std_logic_vector(Bs_tb-1 downto 0)>>; 
-    e1_tb <= <<signal uut.e1 : std_logic_vector(es_tb-1 downto 0)>>;
-    e2_tb <= <<signal uut.e2 : std_logic_vector(es_tb-1 downto 0)>>;
-    mant1_tb <= <<signal uut.mant1 : std_logic_vector(N_tb-es_tb-1 downto 0)>>; 
-    mant2_tb <= <<signal uut.mant2 : std_logic_vector(N_tb-es_tb-1 downto 0)>>;
-        
-    m1_tb <= <<signal uut.m1 : std_logic_vector(N_tb-es_tb downto 0)>>;
-    m2_tb <= <<signal uut.m2 : std_logic_vector(N_tb-es_tb downto 0)>>;
-    r1_tb <= <<signal uut.r1 : std_logic_vector(Bs_tb+1 downto 0)>>;
-    r2_tb <= <<signal uut.r2 : std_logic_vector(Bs_tb+1 downto 0)>>;
-        
-    r1e1_tb <= <<signal uut.r1e1 : std_logic_vector(Bs_tb+es_tb+1 downto 0)>>;
-    r2e2_tb <= <<signal uut.r2e2 : std_logic_vector(Bs_tb+es_tb+1 downto 0)>>;
-        
-    mult_m_tb <= <<signal uut.mult_m : std_logic_vector(2*(N_tb-es_tb)+1 downto 0)>>;
-    mult_e_tb <= <<signal uut.mult_e : std_logic_vector(Bs_tb+es_tb+1 downto 0)>>;
-        
-    e_o_tb <= <<signal uut.e_o : std_logic_vector(es_tb-1 downto 0)>>;
-    r_o_tb <= <<signal uut.r_o : std_logic_vector(Bs_tb downto 0)>>;
-    tmp_o_tb <= <<signal uut.tmp_o : std_logic_vector(2*N_tb-1 downto 0)>>;
-    tmp1_o_tb <= <<signal uut.tmp1_o : std_logic_vector(2*N_tb-1 downto 0)>>;
-    r_o_dsr_tb <= <<signal uut.r_o_dsr : std_logic_vector(Bs_tb downto 0)>>;
-    tmp1_oN_tb <= <<signal uut.tmp1_oN : std_logic_vector(2*N_tb-1 downto 0)>>;
+--    inf1_tb <= <<signal uut.inf1 : std_logic>>;
+--    inf2_tb <= <<signal uut.inf2 : std_logic>>;
+--    zero1_tb <= <<signal uut.zero1 : std_logic>>;
+--    zero2_tb <= <<signal uut.zero2 : std_logic>>;
+--        
+--    mult_s_tb <= <<signal uut.mult_s : std_logic>>;
+--    
+--    rc1_tb <= <<signal uut.rc1 : std_logic>>;
+--    rc2_tb <= <<signal uut.rc2 : std_logic>>;
+--    regime1_tb <= <<signal uut.regime1 : std_logic_vector(Bs_tb-1 downto 0)>>; 
+--    regime2_tb <= <<signal uut.regime2 : std_logic_vector(Bs_tb-1 downto 0)>>; 
+--    e1_tb <= <<signal uut.e1 : std_logic_vector(es_tb-1 downto 0)>>;
+--    e2_tb <= <<signal uut.e2 : std_logic_vector(es_tb-1 downto 0)>>;
+--    mant1_tb <= <<signal uut.mant1 : std_logic_vector(N_tb-es_tb-1 downto 0)>>; 
+--    mant2_tb <= <<signal uut.mant2 : std_logic_vector(N_tb-es_tb-1 downto 0)>>;
+--        
+--    m1_tb <= <<signal uut.m1 : std_logic_vector(N_tb-es_tb downto 0)>>;
+--    m2_tb <= <<signal uut.m2 : std_logic_vector(N_tb-es_tb downto 0)>>;
+--    r1_tb <= <<signal uut.r1 : std_logic_vector(Bs_tb+1 downto 0)>>;
+--    r2_tb <= <<signal uut.r2 : std_logic_vector(Bs_tb+1 downto 0)>>;
+--        
+--    r1e1_tb <= <<signal uut.r1e1 : std_logic_vector(Bs_tb+es_tb+1 downto 0)>>;
+--    r2e2_tb <= <<signal uut.r2e2 : std_logic_vector(Bs_tb+es_tb+1 downto 0)>>;
+--        
+--    mult_m_tb <= <<signal uut.mult_m : std_logic_vector(2*(N_tb-es_tb)+1 downto 0)>>;
+--    mult_e_tb <= <<signal uut.mult_e : std_logic_vector(Bs_tb+es_tb+1 downto 0)>>;
+--        
+--    e_o_tb <= <<signal uut.e_o : std_logic_vector(es_tb-1 downto 0)>>;
+--    r_o_tb <= <<signal uut.r_o : std_logic_vector(Bs_tb downto 0)>>;
+--    tmp_o_tb <= <<signal uut.tmp_o : std_logic_vector(2*N_tb-1 downto 0)>>;
+--    tmp1_o_tb <= <<signal uut.tmp1_o : std_logic_vector(2*N_tb-1 downto 0)>>;
+--    r_o_dsr_tb <= <<signal uut.r_o_dsr : std_logic_vector(Bs_tb downto 0)>>;
+--    tmp1_oN_tb <= <<signal uut.tmp1_oN : std_logic_vector(2*N_tb-1 downto 0)>>;
     
     
     generate_sim_clock: process

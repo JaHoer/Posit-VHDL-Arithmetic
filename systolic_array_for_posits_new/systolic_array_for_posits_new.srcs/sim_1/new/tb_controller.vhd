@@ -41,9 +41,6 @@ entity tb_controller is
         -- number of parallel shift register
         -- doubles as systolic array dimentions
         array_width_tb : integer := 4
-
-        
-        
     );
 
 --  Port ( );
@@ -91,13 +88,13 @@ architecture Behavioral of tb_controller is
     --signal delayed_weight_en : std_logic_vector(array_width_tb-2 downto 0);
 
 begin
-    uut : entity work.controller
---    generic map(
---        N => N_tb,
---        Bs => Bs_tb,
---        es => es_tb,
---        array_width => array_width_tb
---    )
+    uut : entity work.controller_state
+    generic map(
+        N => N_tb,
+        Bs => Bs_tb,
+        es => es_tb,
+        array_width => array_width_tb
+    )
     port map(
         clk => clk_tb,
         rst => rst_tb,
@@ -122,15 +119,16 @@ begin
         enable_output_mem => enable_output_mem_tb,
         
         --inst => inst_tb,
-        weight_write => weight_write_tb,  
+        weight_write => weight_write_tb
         
-        weight_is_loaded_out => weight_is_loaded_out_tb,
-        weight_loading_out => weight_loading_out_tb,
-        ringcounter_output_out => ringcounter_output,
-        weight_control_shift_register_out => weight_control_shift_register_tb,
-        weight_ringcounter_low_out => weight_ringcounter_low_tb,
-        weight_enougth_valids_out => weight_enougth_valids_tb,
-        delayed_weight_en_out => delayed_weight_en_tb
+--        ,
+--        weight_is_loaded_out => weight_is_loaded_out_tb,
+--        weight_loading_out => weight_loading_out_tb,
+--        ringcounter_output_out => ringcounter_output,
+--        weight_control_shift_register_out => weight_control_shift_register_tb,
+--        weight_ringcounter_low_out => weight_ringcounter_low_tb,
+--        weight_enougth_valids_out => weight_enougth_valids_tb,
+--        delayed_weight_en_out => delayed_weight_en_tb
     );
     
     
