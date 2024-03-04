@@ -24,7 +24,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
+use IEEE.NUMERIC_STD.ALL;
 
 -- Uncomment the following library declaration if instantiating
 -- any Xilinx leaf cells in this code.
@@ -52,20 +52,23 @@ architecture Behavioral of shift_register is
     type register_array is array (length-1 downto 0)
         of std_logic_vector(data_width-1 downto 0);
         
-    signal shift_register : register_array;
+    signal sr : register_array;
 
-    
+
     
 begin
 
     short : if length = 0 generate
     
+--    data_out <= data_in when enable = '1';
+
+
     process (clk)
     begin
         -- without falling Edge the shift_register ignores the first input when enable becomes '1'
         -- probably because of delay on the enable signal 
         if falling_edge(clk) then
-            if enable = '1'then
+            if enable = '1' then
 
                 data_out <= data_in;
 
@@ -86,25 +89,27 @@ begin
         if falling_edge(clk) then
             if enable = '1'then
 
-                shift_register <= shift_register(shift_register'high-1 downto shift_register'low) & data_in;
-                data_out <= shift_register(shift_register'high);
+                sr <= sr(sr'high-1 downto sr'low) & data_in;
 
             end if;
         end if;
     end process;
     
-    process (clk)
-    
-    begin
-        if rising_edge(clk) then
-            if enable = '1'then
-            
---                shift_register <= shift_register(shift_register'high-1 downto shift_register'low) & data_in;
---                data_out <= shift_register(shift_register'high);
+    data_out <= sr(sr'high);
 
-            end if;
-        end if;
-    end process;
+--    process (clk)
+--    begin
+--        if rising_edge(clk) then
+--            if enable = '1'then
+--                
+--                sr <= sr(sr'high-1 downto sr'low) & data_in;
+--                --data_out <= sr(sr'high);
+--
+--            end if;
+--        end if;
+--    end process;
+--
+--    data_out <= sr(sr'high);
 
     end generate;
     

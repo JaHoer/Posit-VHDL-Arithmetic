@@ -65,15 +65,12 @@ architecture Behavioral of tb_weight_mem is
 begin
 
     uut : entity work.weight_mem
---    generic map (
-        --input_width => input_width_tb,
-        --output_width => output_width_tb,
---        N => N_tb,
---        Bs => Bs_tb,
---        es => es_tb,
-        --mem_depth => mem_depth_tb,
---        mem_width => mem_width_tb
---    )
+    generic map (
+        N => N_tb,
+        Bs => Bs_tb,
+        es => es_tb,
+        mem_width => mem_width_tb
+    )
     port map (
         clk => clk_tb,
         rst => rst_tb,
@@ -81,8 +78,8 @@ begin
         input_vektor => input_vektor_tb,
         diagonal_output_vector => output_vector_tb,
         load_cooldown => load_cooldown_tb
-        ,
-        enable_out => enable_out_tb
+--        ,
+--        enable_out => enable_out_tb
     );
     
     

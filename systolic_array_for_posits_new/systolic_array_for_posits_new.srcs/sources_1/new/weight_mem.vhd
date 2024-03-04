@@ -61,8 +61,8 @@ entity weight_mem is
         
         
         -- Debug
-        ;
-        enable_out : out std_logic
+--        ;
+--        enable_out : out std_logic
         
     );
 end weight_mem;
@@ -89,13 +89,13 @@ architecture Behavioral of weight_mem is
 begin
 
     enable <= w_en; -- '1' when w_en = '1'  or load_cooldown = '1' or delayed_load_shift_register(delayed_load_shift_register'high) = '1' else '0' ;--
-    enable_out <= enable;
+--    enable_out <= enable;
 
     create_register : for k in 1 to mem_width generate
         
         register_entity : entity work.shift_register
             generic map(
-                length => k-1,
+                length => k,
                 data_width => N
             )
             port map(

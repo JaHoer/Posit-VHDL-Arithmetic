@@ -2,9 +2,9 @@
 -- Company: FAU
 -- Engineer: Jan Hoertig
 -- 
--- Create Date: 26.02.2024 09:48:03
+-- Create Date: 04.03.2024 10:45:57
 -- Design Name: 
--- Module Name: tb_systolic_array_post_synth - Behavioral
+-- Module Name: tb_systolic_array - Behavioral
 -- Project Name: 
 -- Target Devices: 
 -- Tool Versions: 
@@ -31,7 +31,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity tb_systolic_array_post_synth is
+entity tb_systolic_array is
     generic (
         -- Posit Values
         N_tb : integer := 8;
@@ -44,9 +44,9 @@ entity tb_systolic_array_post_synth is
     );
 
 --  Port ( );
-end tb_systolic_array_post_synth;
+end tb_systolic_array;
 
-architecture Behavioral of tb_systolic_array_post_synth is
+architecture Behavioral of tb_systolic_array is
 
     constant CLOCK_PERIOD : time := 200 ns;
     constant INTERNAL_DATA_WIDTH : integer := N_tb * array_width_tb;
@@ -100,6 +100,12 @@ architecture Behavioral of tb_systolic_array_post_synth is
 begin
 
     uut : entity work.systolic_array
+    generic map(
+        N => N_tb,
+        Bs => Bs_tb,
+        es => es_tb,
+        array_width => array_width_tb
+    )
 
     port map(
         clk => clk_tb,
@@ -192,6 +198,8 @@ begin
 --        Data_in_weight_tb <= X"01010101";
         wait for CLOCK_PERIOD;
         
+
+        
         weight_valid_tb <= '0';
         input_valid_tb <= '0';
         Data_in_input_tb <= X"40404040";
@@ -212,6 +220,7 @@ begin
         
         input_valid_tb <= '0';
         wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
         
         input_valid_tb <= '1';
         Data_in_input_tb <= X"38383838";
@@ -221,6 +230,11 @@ begin
         input_valid_tb <= '1';
         Data_in_input_tb <= X"50505050";
 --        Data_in_input_tb <= X"04040404";
+        wait for CLOCK_PERIOD;
+
+
+        input_valid_tb <= '0';
+        wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         
         
@@ -236,6 +250,7 @@ begin
 
         input_valid_tb <= '0';
         wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
         
         input_valid_tb <= '1';
         Data_in_input_tb <= X"38383838";
@@ -246,29 +261,29 @@ begin
 --        Data_in_input_tb <= X"04040404";
         wait for CLOCK_PERIOD;
         
+        input_valid_tb <= '0';
 
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         
-        input_valid_tb <= '0';
-        wait for CLOCK_PERIOD;
-        input_valid_tb <= '1';
+
         
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
-        
-        input_valid_tb <= '0';
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
-        input_valid_tb <= '1';
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        
+
         
         wait for CLOCK_PERIOD;
         
-        input_valid_tb <= '0';
+        
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         ----------------------------------------------

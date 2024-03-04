@@ -76,13 +76,13 @@ architecture Behavioral of tb_controller is
         
     signal weight_write_tb : std_logic;       -- controls if weight should be written into mem of PEs
     
-    signal weight_is_loaded_out_tb : std_logic;
-    signal weight_loading_out_tb : std_logic;
-    signal ringcounter_output : std_logic;
-    signal weight_control_shift_register_tb : std_logic_vector(array_width_tb-1 downto 0);
-    signal weight_ringcounter_low_tb : std_logic_vector(array_width_tb-2 downto 0);
-    signal weight_enougth_valids_tb : std_logic;
-    signal delayed_weight_en_tb : std_logic_vector(array_width_tb downto 0);
+--    signal weight_is_loaded_out_tb : std_logic;
+--    signal weight_loading_out_tb : std_logic;
+--    signal ringcounter_output : std_logic;
+--    signal weight_control_shift_register_tb : std_logic_vector(array_width_tb-1 downto 0);
+--    signal weight_ringcounter_low_tb : std_logic_vector(array_width_tb-2 downto 0);
+--    signal weight_enougth_valids_tb : std_logic;
+--    signal delayed_weight_en_tb : std_logic_vector(array_width_tb downto 0);
     
     
     --signal delayed_weight_en : std_logic_vector(array_width_tb-2 downto 0);
@@ -193,7 +193,7 @@ begin
         data_input_in_tb <= X"02020202";
         wait for CLOCK_PERIOD;
         
-        wait for CLOCK_PERIOD;
+
 
         weight_valid_tb <= '0';
         input_valid_tb <= '1';
@@ -203,6 +203,10 @@ begin
         input_valid_tb <= '1';
         data_input_in_tb <= X"10101010";
         wait for CLOCK_PERIOD;
+
+--        input_valid_tb <= '0';
+--        wait for CLOCK_PERIOD;
+--        wait for CLOCK_PERIOD;
         
         input_valid_tb <= '1';
         data_input_in_tb <= X"01010101";
@@ -225,6 +229,7 @@ begin
         wait for CLOCK_PERIOD;
         
         input_valid_tb <= '0';
+        wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
 
         input_valid_tb <= '1';
