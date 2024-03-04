@@ -193,7 +193,7 @@ begin
         data_input_in_tb <= X"02020202";
         wait for CLOCK_PERIOD;
         
-
+        --------------------------------------------- INPUT 1
 
         weight_valid_tb <= '0';
         input_valid_tb <= '1';
@@ -204,9 +204,9 @@ begin
         data_input_in_tb <= X"10101010";
         wait for CLOCK_PERIOD;
 
---        input_valid_tb <= '0';
---        wait for CLOCK_PERIOD;
---        wait for CLOCK_PERIOD;
+        input_valid_tb <= '0';
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
         
         input_valid_tb <= '1';
         data_input_in_tb <= X"01010101";
@@ -216,9 +216,15 @@ begin
         data_input_in_tb <= X"10101010";
         wait for CLOCK_PERIOD;
         
+
+
+
+
         input_valid_tb <= '0';
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
+
+        --------------------------------------------- INPUT 2
 
         input_valid_tb <= '1';
         data_input_in_tb <= X"01010101";
@@ -235,6 +241,40 @@ begin
         input_valid_tb <= '1';
         data_input_in_tb <= X"01010101";
         wait for CLOCK_PERIOD;
+
+        --input_valid_tb <= '0';
+        --wait for CLOCK_PERIOD;
+        --wait for CLOCK_PERIOD;
+        
+        input_valid_tb <= '1';
+        data_input_in_tb <= X"10101010";
+        wait for CLOCK_PERIOD;
+
+
+        input_valid_tb <= '0';
+        wait for CLOCK_PERIOD;
+        
+        --------------------------------------------- INPUT 3
+
+        input_valid_tb <= '1';
+        data_input_in_tb <= X"01010101";
+        wait for CLOCK_PERIOD;        
+        
+        input_valid_tb <= '1';
+        data_input_in_tb <= X"10101010";
+        wait for CLOCK_PERIOD;
+        
+        input_valid_tb <= '0';
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+
+        input_valid_tb <= '1';
+        data_input_in_tb <= X"01010101";
+        wait for CLOCK_PERIOD;
+
+        --input_valid_tb <= '0';
+        --wait for CLOCK_PERIOD;
+        --wait for CLOCK_PERIOD;
         
         input_valid_tb <= '1';
         data_input_in_tb <= X"10101010";

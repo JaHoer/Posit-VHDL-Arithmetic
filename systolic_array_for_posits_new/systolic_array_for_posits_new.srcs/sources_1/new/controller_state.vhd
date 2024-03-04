@@ -78,7 +78,7 @@ architecture Behavioral of controller_state is
 
     type WEIGHT_STATE IS (W_IDLE, WEIGHT_COUNT, WEIGHT_FINISHED, WEIGHT_DELAY);
     type INPUT_STATE IS (I_IDLE, INPUT_COUNT, INPUT_DELAY, INPUT_COUNT_DELAY, I_IDLE_COUNT);
-    type OUTPUT_STATE IS (O_IDLE, OUTPUT_COUNT, OUTPUT_HOLD_VALID, OUTPUT_COUNT_VALID, O_IDLE_ACTIVE);
+    type OUTPUT_STATE IS (O_IDLE, OUTPUT_COUNT, OUTPUT_HOLD_VALID, OUTPUT_COUNT_VALID, O_IDLE_ACTIVE, OUTPUT_COUNT_SAVE, O_IDLE_S, OUTPUT_COUNT_SAVE_DELAY, O_IDLE_SD, OUTPUT_COUNT_SAVE_DOWN);
     signal w_curr_state, w_next_state : WEIGHT_STATE;
     signal i_curr_state, i_next_state : INPUT_STATE;
     signal o_curr_state, o_next_state : OUTPUT_STATE;
@@ -97,6 +97,7 @@ architecture Behavioral of controller_state is
 
     signal weight_is_loaded : std_logic := '0';
     signal input_is_loaded : std_logic := '0';
+    signal start_new_input : std_logic := '0';
 
     -- Ringcounter for counting weight_valid signals during loading of weight-matrix
     signal weight_ringcounter : std_logic_vector(array_width-1 downto 0) := (0 => '1', others => '0');
@@ -113,6 +114,9 @@ architecture Behavioral of controller_state is
     signal  enough_output_wait : std_logic := '0';
     signal output_delay_counter : std_logic_vector(array_width-1 downto 0) := (0 => '1', others => '0');
     signal enough_o_delay : std_logic := '0';
+
+    signal save_output_rc : std_logic_vector(array_width-1 downto 0) := (0 => '1', others => '0');
+    signal enough_save_o_rc : std_logic := '0';
 
 
 begin
@@ -290,6 +294,7 @@ begin
     input_machine : process(clk)
 
         variable input_is_loaded_v : std_logic := '0';
+        variable start_new_input_v : std_logic := '0';
 
     begin
         if (rising_edge(clk)) then
@@ -303,6 +308,7 @@ begin
             else
                 i_curr_state <= i_next_state;
                 input_is_loaded <= input_is_loaded_v;
+                start_new_input <= start_new_input_v;
 
                 case i_next_state is
                     when I_IDLE =>
@@ -371,6 +377,7 @@ begin
                             -- continue recieving input_valids after fist input-matrix
                             i_next_state <= INPUT_COUNT_DELAY;
                             input_is_loaded_v      := '1';
+                            start_new_input_v      := '1';
                             input_en_PE_sig        <= '1';
                             enable_input_mem_sig   <= '1';
                             
@@ -415,6 +422,7 @@ begin
                         elsif (input_valid = '1') then
                             -- stay in current state during counting
                             i_next_state <= INPUT_COUNT_DELAY;
+                            start_new_input_v      := '0';
                             input_is_loaded_v      := '1';
                             input_en_PE_sig        <= '1';
                             enable_input_mem_sig   <= '1';
@@ -462,6 +470,7 @@ begin
 
                         elsif input_valid = '1' then
                             i_next_state <= INPUT_COUNT_DELAY;
+                            start_new_input_v      := '0';
                             input_is_loaded_v      := '1';
                             input_en_PE_sig        <= '1';
                             enable_input_mem_sig   <= '1';
@@ -502,6 +511,7 @@ begin
                         elsif input_valid = '1' then
                             -- new input-matrix has started
                             i_next_state <= INPUT_COUNT_DELAY;
+                            start_new_input_v      := '1';
                             input_is_loaded_v      := '1';
                             input_en_PE_sig        <= '1';
                             enable_input_mem_sig   <= '1';
@@ -560,7 +570,7 @@ begin
 
 
 
-
+        -- O_IDLE, OUTPUT_COUNT, OUTPUT_HOLD_VALID, OUTPUT_COUNT_VALID, O_IDLE_ACTIVE, OUTPUT_COUNT_SAVE, O_IDLE_S, OUTPUT_COUNT_SAVE_DELAY, O_IDLE_SD, OUTPUT_COUNT_SAVE_DOWN
 
         if (rising_edge(clk)) then
             if (rst = '1') then
@@ -631,6 +641,15 @@ begin
                             output_ringcounter  <= (0 => '1', others => '0');
                             output_delay_counter <= (0 => '1', others => '0');
 
+                        elsif start_new_input_v = '1' then
+                            o_next_state <= OUTPUT_COUNT_SAVE;
+
+                            save_output_rc <= output_ringcounter;
+                            output_en_PE_sig          <= '1';
+                            enable_output_mem_sig     <= '1';
+                            output_ringcounter <= output_ringcounter(output_ringcounter'high -1 downto output_ringcounter'low) & output_ringcounter(output_ringcounter'high);
+                            enough_output_wait <= output_ringcounter(output_ringcounter'high);
+                            
                         
                         elsif input_is_loaded_v = '0' and enough_output_wait = '1' then
                             -- input is finished and output can start now
@@ -771,6 +790,144 @@ begin
 
                         
 
+                    when OUTPUT_COUNT_SAVE =>
+                        if weight_is_loaded = '0' then
+                            o_next_state <= O_IDLE;
+                            output_valid_sig        <= '0';
+                            output_en_PE_sig        <= '0';
+                            enable_output_mem_sig   <= '0';
+                            enough_output_wait      <= '0';
+                            enough_o_delay          <= '0';
+
+                            output_ringcounter  <= (0 => '1', others => '0');
+                            output_delay_counter <= (0 => '1', others => '0');
+                        
+                        elsif input_is_loaded_v = '1' and enough_output_wait = '0' then
+                            o_next_state <= OUTPUT_COUNT_SAVE;
+
+                            output_en_PE_sig          <= '1';
+                            enable_output_mem_sig     <= '1';
+                            -- count input_is_loaded -> shift ringcounter one position 
+                            output_ringcounter <= output_ringcounter(output_ringcounter'high -1 downto output_ringcounter'low) & output_ringcounter(output_ringcounter'high);
+                            -- marks second to last input_is_loaded as preparation for delayed-enable
+                            -- holds '1' until last input_is_loaded comes and resets after that
+                            enough_output_wait <= output_ringcounter(output_ringcounter'high);
+
+                        elsif enough_output_wait = '1' and input_is_loaded_v = '1' then
+                            o_next_state <= OUTPUT_COUNT_SAVE_DELAY;
+                            output_valid_sig        <= '1';
+                            output_en_PE_sig        <= '1';
+                            enable_output_mem_sig   <= '1';
+                            -- continue countdown of delayed enable
+                            output_delay_counter    <= output_delay_counter(output_delay_counter'high -1 downto output_delay_counter'low) & '1';
+                            enough_o_delay          <= output_delay_counter(output_delay_counter'high);
+                            enough_output_wait      <= '0';
+                            output_ringcounter      <= (0 => '1', others => '0');
+
+                        elsif input_is_loaded_v = '0' and enough_output_wait = '1' then
+                            o_next_state <= O_IDLE_SD;
+                            output_valid_sig        <= '0';
+                            output_en_PE_sig        <= '0';
+                            enable_output_mem_sig   <= '0';
+
+                        elsif input_is_loaded_v = '0' and enough_output_wait = '0' then
+                            o_next_state <= O_IDLE_S;
+                            output_valid_sig        <= '0';
+                            output_en_PE_sig        <= '0';
+                            enable_output_mem_sig   <= '0';
+
+                        end if;
+
+
+                    when OUTPUT_COUNT_SAVE_DELAY =>
+                        if weight_is_loaded = '0' then
+                            o_next_state <= O_IDLE;
+                            output_valid_sig        <= '0';
+                            output_en_PE_sig        <= '0';
+                            enable_output_mem_sig   <= '0';
+                            enough_output_wait      <= '0';
+                            enough_o_delay          <= '0';
+                            output_ringcounter  <= (0 => '1', others => '0');
+                            output_delay_counter <= (0 => '1', others => '0');
+                        
+                        elsif enough_o_delay = '0' and input_is_loaded_v = '1' then
+                            o_next_state <= OUTPUT_COUNT_SAVE_DELAY;
+
+                            output_valid_sig        <= '1';
+                            output_en_PE_sig        <= '1';
+                            enable_output_mem_sig   <= '1';
+                            -- continue countdown of delayed enable
+                            output_delay_counter <= output_delay_counter(output_delay_counter'high -1 downto output_delay_counter'low) & '1';
+                            enough_o_delay <= output_delay_counter(output_delay_counter'high);
+
+                        elsif enough_o_delay = '1' then
+                            o_next_state <= OUTPUT_COUNT_SAVE_DOWN;
+
+                            output_valid_sig        <= '0';
+                            output_en_PE_sig        <= '1';
+                            enable_output_mem_sig   <= '1';
+                            -- reverse count input_is_loaded -> output the number of input_valid = 0 
+                            save_output_rc <= save_output_rc(save_output_rc'low) & save_output_rc(save_output_rc'high downto save_output_rc'low +1);
+                            enough_save_o_rc <= save_output_rc(save_output_rc'low +1);
+                            
+                            output_delay_counter <= (0 => '1', others => '0');
+                            enough_o_delay          <= '0';
+
+                        else
+                            o_next_state <= O_IDLE_SD;
+                            output_valid_sig        <= '0';
+                            output_en_PE_sig        <= '0';
+                            enable_output_mem_sig   <= '0';
+                        end if;
+
+
+                    when OUTPUT_COUNT_SAVE_DOWN => 
+                        if weight_is_loaded = '0' then
+                            o_next_state <= O_IDLE;
+                            output_valid_sig        <= '0';
+                            output_en_PE_sig        <= '0';
+                            enable_output_mem_sig   <= '0';
+                            enough_output_wait      <= '0';
+                            enough_o_delay          <= '0';
+                            output_ringcounter  <= (0 => '1', others => '0');
+                            output_delay_counter <= (0 => '1', others => '0');
+                        
+                        elsif enough_save_o_rc = '0' then
+                            o_next_state <= OUTPUT_COUNT_SAVE_DOWN;
+
+                            output_valid_sig        <= '0';
+                            output_en_PE_sig        <= '1';
+                            enable_output_mem_sig   <= '1';
+                            -- reverse count input_is_loaded -> output the number of input_valid = 0 
+                            save_output_rc <= save_output_rc(save_output_rc'low) & save_output_rc(save_output_rc'high downto save_output_rc'low +1);
+                            enough_save_o_rc <= save_output_rc(save_output_rc'low +1);
+
+                        elsif enough_save_o_rc = '1' and input_is_loaded_v = '1' then
+                            o_next_state <= OUTPUT_COUNT_VALID;
+
+                            output_valid_sig        <= '1';
+                            output_en_PE_sig        <= '1';
+                            enable_output_mem_sig   <= '1';
+                            -- count input_is_loaded -> shift ringcounter one position 
+                            output_ringcounter <= output_ringcounter(output_ringcounter'high -1 downto output_ringcounter'low) & output_ringcounter(output_ringcounter'high);
+                            -- marks second to last input_is_loaded as preparation for delayed-enable
+                            -- holds '1' until last input_is_loaded comes and resets after that
+                            enough_output_wait <= output_ringcounter(output_ringcounter'high);
+                            output_delay_counter <= (0 => '1', others => '0');
+                            enough_o_delay          <= '0';
+
+                        elsif enough_save_o_rc = '1' and input_is_loaded_v = '0' then
+                            o_next_state <= OUTPUT_HOLD_VALID;
+
+                            output_valid_sig        <= '1';
+                            output_en_PE_sig        <= '1';
+                            enable_output_mem_sig   <= '1';
+                            -- continue countdown of delayed enable
+                            output_delay_counter <= output_delay_counter(output_delay_counter'high -1 downto output_delay_counter'low) & '1';
+                            enough_o_delay <= output_delay_counter(output_delay_counter'high);
+                        end if;
+
+
 
                     when O_IDLE_ACTIVE =>
                         if weight_is_loaded = '0' then
@@ -797,12 +954,81 @@ begin
                             enough_output_wait <= output_ringcounter(output_ringcounter'high);
 
                         else
+                            o_next_state            <= O_IDLE_ACTIVE;
                             output_valid_sig        <= '0';
                             output_en_PE_sig        <= '0';
                             enable_output_mem_sig   <= '0';
 
 
                         end if;
+
+                    
+                    when O_IDLE_S =>
+                        if weight_is_loaded = '0' then
+                            o_next_state <= O_IDLE;
+                            output_valid_sig        <= '0';
+                            output_en_PE_sig        <= '0';
+                            enable_output_mem_sig   <= '0';
+                            enough_output_wait      <= '0';
+                            enough_o_delay          <= '0';
+
+                            output_ringcounter  <= (0 => '1', others => '0');
+                            output_delay_counter <= (0 => '1', others => '0');
+                        
+                        elsif input_is_loaded_v = '1' then
+                            o_next_state <= OUTPUT_COUNT_SAVE;
+
+                            output_valid_sig        <= '0';
+                            output_en_PE_sig        <= '1';
+                            enable_output_mem_sig   <= '1';
+                            -- count input_is_loaded -> shift ringcounter one position 
+                            output_ringcounter <= output_ringcounter(output_ringcounter'high -1 downto output_ringcounter'low) & output_ringcounter(output_ringcounter'high);
+                            -- marks second to last input_is_loaded as preparation for delayed-enable
+                            -- holds '1' until last input_is_loaded comes and resets after that
+                            enough_output_wait <= output_ringcounter(output_ringcounter'high);
+
+                        else
+                            o_next_state            <= O_IDLE_S;
+                            output_valid_sig        <= '0';
+                            output_en_PE_sig        <= '0';
+                            enable_output_mem_sig   <= '0';
+
+
+                        end if;
+
+                    
+                    when O_IDLE_SD =>
+                        if weight_is_loaded = '0' then
+                            o_next_state <= O_IDLE;
+                            output_valid_sig        <= '0';
+                            output_en_PE_sig        <= '0';
+                            enable_output_mem_sig   <= '0';
+                            enough_output_wait      <= '0';
+                            enough_o_delay          <= '0';
+
+                            output_ringcounter  <= (0 => '1', others => '0');
+                            output_delay_counter <= (0 => '1', others => '0');
+                        
+                        elsif input_is_loaded_v = '1' then
+                            o_next_state <= OUTPUT_COUNT_SAVE_DELAY;
+
+                            output_valid_sig        <= '1';
+                            output_en_PE_sig        <= '1';
+                            enable_output_mem_sig   <= '1';
+                            -- continue countdown of delayed enable
+                            output_delay_counter <= output_delay_counter(output_delay_counter'high -1 downto output_delay_counter'low) & '1';
+                            enough_o_delay <= output_delay_counter(output_delay_counter'high-1);
+
+
+                        else
+                            o_next_state            <= O_IDLE_SD;
+                            output_valid_sig        <= '0';
+                            output_en_PE_sig        <= '0';
+                            enable_output_mem_sig   <= '0';
+
+
+                        end if;
+
 
                         
 
@@ -821,7 +1047,7 @@ begin
 
 
 
-        -- O_IDLE, OUTPUT_COUNT, OUTPUT_HOLD_VALID, OUTPUT_COUNT_VALID, O_IDLE_ACTIVE
+    -- O_IDLE, OUTPUT_COUNT, OUTPUT_HOLD_VALID, OUTPUT_COUNT_VALID, O_IDLE_ACTIVE, OUTPUT_COUNT_SAVE, O_IDLE_S, OUTPUT_COUNT_SAVE_DELAY, O_IDLE_SD, OUTPUT_COUNT_SAVE_DOWN
 
 --        output_machine : process(clk)
 --        begin
