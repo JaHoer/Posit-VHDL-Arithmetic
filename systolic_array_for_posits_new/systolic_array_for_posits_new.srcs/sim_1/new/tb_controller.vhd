@@ -89,12 +89,12 @@ architecture Behavioral of tb_controller is
 
 begin
     uut : entity work.controller_state
-    generic map(
-        N => N_tb,
-        Bs => Bs_tb,
-        es => es_tb,
-        array_width => array_width_tb
-    )
+--    generic map(
+--        N => N_tb,
+--        Bs => Bs_tb,
+--        es => es_tb,
+--        array_width => array_width_tb
+--    )
     port map(
         clk => clk_tb,
         rst => rst_tb,
@@ -347,6 +347,85 @@ begin
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
+        
+        ----------------------------------new weight
+        wait for CLOCK_PERIOD;
+        
+        weight_valid_tb <= '1';
+        -- Data_in_weight_tb <= "00000001000000010000000100000001";
+        data_weight_in_tb <= X"01010101";        
+        wait for CLOCK_PERIOD;
+        
+        weight_valid_tb <= '1';
+        data_weight_in_tb <= X"01010101";
+        wait for CLOCK_PERIOD;
+        
+        weight_valid_tb <= '0';
+        wait for CLOCK_PERIOD;
+        
+        weight_valid_tb <= '1';
+        data_weight_in_tb <= X"01010101";
+        wait for CLOCK_PERIOD;
+        
+        weight_valid_tb <= '0';
+        wait for CLOCK_PERIOD;
+        weight_valid_tb <= '0';
+        wait for CLOCK_PERIOD;
+        
+        weight_valid_tb <= '1';
+        data_weight_in_tb <= X"01010101";
+        wait for CLOCK_PERIOD;
+        
+        
+        weight_valid_tb <= '0';
+        data_weight_in_tb <= X"05050505";
+        input_valid_tb <= '0';
+        data_input_in_tb <= X"02020202";
+        wait for CLOCK_PERIOD;
+        
+        --------------------------------------------- INPUT 4
+
+        weight_valid_tb <= '0';
+        input_valid_tb <= '1';
+        data_input_in_tb <= X"01010101";
+        wait for CLOCK_PERIOD;        
+        
+        input_valid_tb <= '1';
+        data_input_in_tb <= X"10101010";
+        wait for CLOCK_PERIOD;
+
+        input_valid_tb <= '0';
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        
+        input_valid_tb <= '1';
+        data_input_in_tb <= X"01010101";
+        wait for CLOCK_PERIOD;
+        
+        input_valid_tb <= '1';
+        data_input_in_tb <= X"10101010";
+        wait for CLOCK_PERIOD;
+        
+
+
+
+
+        input_valid_tb <= '0';
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        
+        
+        
         wait for CLOCK_PERIOD;
         
         rst_tb <= '1';
