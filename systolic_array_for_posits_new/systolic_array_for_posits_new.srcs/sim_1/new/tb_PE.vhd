@@ -98,11 +98,11 @@ begin
         psum_out => psum_out_tb
         --weight_w_en_out => weight_w_en_out_tb
         
-        ,
-        weight_mem_o => weight_mem_tb,
-        input_reg_o => input_reg_tb,
-        psum_reg_o => psum_reg_tb,
-        product_out_o => product_out
+--        ,
+--        weight_mem_o => weight_mem_tb,
+--        input_reg_o => input_reg_tb,
+--        psum_reg_o => psum_reg_tb,
+--        product_out_o => product_out
 
     );
 

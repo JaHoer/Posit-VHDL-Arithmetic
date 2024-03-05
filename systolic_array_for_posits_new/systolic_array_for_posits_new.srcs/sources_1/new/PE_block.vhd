@@ -57,13 +57,13 @@ entity PE_block is
         
         
         -- Debug
-        ;
-        intermediate_weight_o : out std_logic_vector((array_width+1)*N-1 downto 0);
-        intermediate_psum_o : out std_logic_vector((array_width+1)*N-1 downto 0);
-        internal_weight_mem : out std_logic_vector((array_width+1)*N-1 downto 0);
-        internal_input_mem : out std_logic_vector((array_width+1)*N-1 downto 0);
-        internal_psum_mem : out std_logic_vector((array_width+1)*N-1 downto 0);
-        product_out : out std_logic_vector(array_width*N-1 downto 0)
+--        ;
+--        intermediate_weight_o : out std_logic_vector((array_width+1)*N-1 downto 0);
+--        intermediate_psum_o : out std_logic_vector((array_width+1)*N-1 downto 0);
+--        internal_weight_mem : out std_logic_vector((array_width+1)*N-1 downto 0);
+--        internal_input_mem : out std_logic_vector((array_width+1)*N-1 downto 0);
+--        internal_psum_mem : out std_logic_vector((array_width+1)*N-1 downto 0);
+--        product_out : out std_logic_vector(array_width*N-1 downto 0)
         
         
     );
@@ -122,11 +122,11 @@ begin
             
             
             -- Debug
-            ,
-            weight_mem_o => internal_weight_mem((i+2)*N-1 downto (i+1)*N),
-            input_reg_o => internal_input_mem((i+2)*N-1 downto (i+1)*N),
-            psum_reg_o => internal_psum_mem((i+2)*N-1 downto (i+1)*N),
-            product_out_o => product_out((i+1)*N-1 downto i*N)
+--            ,
+--            weight_mem_o => internal_weight_mem((i+2)*N-1 downto (i+1)*N),
+--            input_reg_o => internal_input_mem((i+2)*N-1 downto (i+1)*N),
+--            psum_reg_o => internal_psum_mem((i+2)*N-1 downto (i+1)*N),
+--            product_out_o => product_out((i+1)*N-1 downto i*N)
         );
 
 
@@ -151,8 +151,8 @@ begin
     
     -- Debug
     
-    intermediate_weight_o <= intermediate_weight;
-    intermediate_psum_o <= intermediate_psum;
+--    intermediate_weight_o <= intermediate_weight;
+--    intermediate_psum_o <= intermediate_psum;
     
 
 end Behavioral;

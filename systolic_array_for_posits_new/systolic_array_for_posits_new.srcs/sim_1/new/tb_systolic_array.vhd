@@ -352,15 +352,14 @@ begin
         Data_in_input_tb <= X"48484848";
 --        Data_in_input_tb <= X"04040404";
         wait for CLOCK_PERIOD;
-        
+
+        input_valid_tb <= '0';
 
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         
---        input_valid_tb <= '0';
---        wait for CLOCK_PERIOD;
-        input_valid_tb <= '1';
+
         
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
@@ -369,7 +368,7 @@ begin
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         
-        input_valid_tb <= '0';
+        
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         
@@ -440,14 +439,12 @@ begin
 --        Data_in_input_tb <= X"04040404";
         wait for CLOCK_PERIOD;
         
+        input_valid_tb <= '0';
 
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         
---        input_valid_tb <= '0';
---        wait for CLOCK_PERIOD;
-        input_valid_tb <= '1';
         
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
@@ -456,7 +453,7 @@ begin
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         
-        input_valid_tb <= '0';
+        
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         

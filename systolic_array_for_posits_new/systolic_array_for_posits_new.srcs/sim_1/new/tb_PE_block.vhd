@@ -115,13 +115,13 @@ begin
             
             
             -- Debug
-            ,
-            intermediate_weight_o => intermediate_weight,
-            intermediate_psum_o => intermediate_psum,
-            internal_weight_mem => internal_weight_mem,
-            internal_input_mem => internal_input_mem,
-            internal_psum_mem => internal_psum_mem,
-            product_out => product_out
+--            ,
+--            intermediate_weight_o => intermediate_weight,
+--            intermediate_psum_o => intermediate_psum,
+--            internal_weight_mem => internal_weight_mem,
+--            internal_input_mem => internal_input_mem,
+--            internal_psum_mem => internal_psum_mem,
+--            product_out => product_out
         );
     
     
@@ -269,6 +269,108 @@ begin
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         
+
+
+        -------------------------------- 2
+
+        wait for CLOCK_PERIOD;
+        comp_en_tb <= '0';
+        weight_en_tb <= '0';
+        weight_w_en_in_tb <= '0';
+        psum_in_tb <= "00000000";
+        weight_in_tb <= X"11";
+        
+        wait for CLOCK_PERIOD/2;
+        weight_in_tb <= X"22";
+        
+        wait for CLOCK_PERIOD/2;
+        comp_en_tb <= '0';
+        weight_en_tb <= '0';
+        weight_w_en_in_tb <= '0';
+
+
+        wait for CLOCK_PERIOD/2;
+        weight_in_tb <= X"40";
+
+        
+        wait for CLOCK_PERIOD/2;
+        weight_en_tb <= '1';
+        weight_w_en_in_tb <= '0';
+
+        
+        wait for CLOCK_PERIOD/2;
+        weight_in_tb <= X"48";
+        
+        
+        wait for CLOCK_PERIOD/2;
+        weight_w_en_in_tb <= '0';
+        weight_en_tb <= '1';
+
+
+        wait for CLOCK_PERIOD/2;
+        weight_in_tb <= X"66";
+        
+        
+        wait for CLOCK_PERIOD/2;
+        weight_en_tb <= '0';
+        weight_w_en_in_tb <= '0';
+
+        
+        wait for CLOCK_PERIOD/2;
+        weight_in_tb <= X"4c";
+        
+        
+        wait for CLOCK_PERIOD/2;
+        weight_w_en_in_tb <= '0';
+        weight_en_tb <= '1';
+
+        
+        wait for CLOCK_PERIOD/2;
+        weight_in_tb <= X"50";
+        
+        
+        wait for CLOCK_PERIOD/2;
+        weight_w_en_in_tb <= '1';
+        weight_en_tb <= '1';
+
+
+        wait for CLOCK_PERIOD/2;
+        weight_in_tb <= X"56";
+        
+        
+        wait for CLOCK_PERIOD/2;
+        weight_w_en_in_tb <= '0'; 
+        weight_en_tb <= '0';
+        
+        input_in_tb <= X"38383838";
+        
+        
+        wait for CLOCK_PERIOD;
+        comp_en_tb <= '1';
+        input_in_tb <= X"38383838";
+
+        
+        wait for CLOCK_PERIOD;        
+        input_in_tb <= X"38383838";
+
+
+        wait for CLOCK_PERIOD;
+        input_in_tb <= X"38383838";
+
+        
+        
+        wait for CLOCK_PERIOD;
+        
+        
+        
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
         
         
         
