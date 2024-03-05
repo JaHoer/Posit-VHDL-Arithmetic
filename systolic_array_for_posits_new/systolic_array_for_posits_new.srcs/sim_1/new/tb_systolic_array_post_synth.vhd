@@ -158,12 +158,12 @@ begin
         weight_valid_tb <= '0';
         output_ready_tb <= '1';
         
+----------------------------------------
+
         wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '1';
-        -- Data_in_weight_tb <= "01000000010000000100000001000000";
         Data_in_weight_tb <= X"40404040";
---        Data_in_weight_tb <= X"04040404";
         wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '0';
@@ -172,7 +172,6 @@ begin
         
         weight_valid_tb <= '1';
         Data_in_weight_tb <= X"40404040";
---        Data_in_weight_tb <= X"03030303";
         wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '0';
@@ -181,7 +180,6 @@ begin
         
         weight_valid_tb <= '1';
         Data_in_weight_tb <= X"40404040";
---        Data_in_weight_tb <= X"02020202";
         wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '0';
@@ -189,96 +187,151 @@ begin
         
         weight_valid_tb <= '1';
         Data_in_weight_tb <= X"40404040";
---        Data_in_weight_tb <= X"01010101";
         wait for CLOCK_PERIOD;
+        
+
         
         weight_valid_tb <= '0';
         input_valid_tb <= '0';
         Data_in_input_tb <= X"40404040";
---        Data_in_input_tb <= X"01010101";
         wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '0';
         input_valid_tb <= '1';
         Data_in_input_tb <= X"40404040";
---        Data_in_input_tb <= X"01010101";
         wait for CLOCK_PERIOD;
         
         input_valid_tb <= '1';
         Data_in_input_tb <= X"48484848";
---        Data_in_input_tb <= X"02020202";
         wait for CLOCK_PERIOD;
         
         
         input_valid_tb <= '0';
         wait for CLOCK_PERIOD;
-        
-        input_valid_tb <= '1';
-        Data_in_input_tb <= X"38383838";
---        Data_in_input_tb <= X"03030303";
         wait for CLOCK_PERIOD;
         
         input_valid_tb <= '1';
+        Data_in_input_tb <= X"38383838";
+        wait for CLOCK_PERIOD;
+
+------------------------------------------------------
+
+        
+        weight_valid_tb <= '1';
+        Data_in_weight_tb <= X"40404040";
+        wait for CLOCK_PERIOD;
+        
+        weight_valid_tb <= '0';
+        wait for CLOCK_PERIOD;
+    
+        
+        weight_valid_tb <= '1';
+        Data_in_weight_tb <= X"40404040";
+        wait for CLOCK_PERIOD;
+        
+        weight_valid_tb <= '0';
+        wait for CLOCK_PERIOD;
+
+        
+        weight_valid_tb <= '1';
+        Data_in_weight_tb <= X"40404040";
+        wait for CLOCK_PERIOD;
+        
+        weight_valid_tb <= '0';
+        wait for CLOCK_PERIOD;
+        
+        weight_valid_tb <= '1';
+        Data_in_weight_tb <= X"40404040";
+        wait for CLOCK_PERIOD;
+        
+
+        
+        weight_valid_tb <= '0';
+        input_valid_tb <= '0';
+        Data_in_input_tb <= X"40404040";
+        wait for CLOCK_PERIOD;
+        
+        weight_valid_tb <= '0';
+        input_valid_tb <= '1';
+        Data_in_input_tb <= X"40404040";
+        wait for CLOCK_PERIOD;
+        
+        input_valid_tb <= '1';
+        Data_in_input_tb <= X"48484848";
+        wait for CLOCK_PERIOD;
+        
+        
+        input_valid_tb <= '0';
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        
+        input_valid_tb <= '1';
+        Data_in_input_tb <= X"38383838";
+        wait for CLOCK_PERIOD;
+        
+        
+        input_valid_tb <= '1';
         Data_in_input_tb <= X"50505050";
---        Data_in_input_tb <= X"04040404";
+        wait for CLOCK_PERIOD;
+
+
+        input_valid_tb <= '0';
+        wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         
         
         weight_valid_tb <= '0';
         input_valid_tb <= '1';
         Data_in_input_tb <= X"40404040";
---        Data_in_input_tb <= X"01010101";
         wait for CLOCK_PERIOD;
+
         input_valid_tb <= '1';
         Data_in_input_tb <= X"48484848";
---        Data_in_input_tb <= X"02020202";
         wait for CLOCK_PERIOD;
 
         input_valid_tb <= '0';
+        wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         
         input_valid_tb <= '1';
         Data_in_input_tb <= X"38383838";
---        Data_in_input_tb <= X"03030303";
         wait for CLOCK_PERIOD;
+
         input_valid_tb <= '1';
         Data_in_input_tb <= X"50505050";
---        Data_in_input_tb <= X"04040404";
         wait for CLOCK_PERIOD;
         
+        input_valid_tb <= '0';
 
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         
-        input_valid_tb <= '0';
-        wait for CLOCK_PERIOD;
-        input_valid_tb <= '1';
+
         
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
-        
-        input_valid_tb <= '0';
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
-        input_valid_tb <= '1';
-        
+        wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         
-        input_valid_tb <= '0';
+
+        
+        wait for CLOCK_PERIOD;
+        
+        
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
-        ----------------------------------------------
+------------------------------------------------------
         
         wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '1';
-        -- Data_in_weight_tb <= "01000000010000000100000001000000";
         Data_in_weight_tb <= X"50505050";
---        Data_in_weight_tb <= X"04040404";
         wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '0';
@@ -287,7 +340,6 @@ begin
         
         weight_valid_tb <= '1';
         Data_in_weight_tb <= X"4c4c4c4c";
---        Data_in_weight_tb <= X"03030303";
         wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '0';
@@ -296,7 +348,6 @@ begin
         
         weight_valid_tb <= '1';
         Data_in_weight_tb <= X"48484848";
---        Data_in_weight_tb <= X"02020202";
         wait for CLOCK_PERIOD;
         
         --weight_valid_tb <= '1';
@@ -304,48 +355,41 @@ begin
         
         weight_valid_tb <= '1';
         Data_in_weight_tb <= X"40404040";
---        Data_in_weight_tb <= X"01010101";
         wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '0';
         input_valid_tb <= '0';
         Data_in_input_tb <= X"40404040";
---        Data_in_input_tb <= X"01010101";
         wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '0';
         input_valid_tb <= '1';
         Data_in_input_tb <= X"38383838";
---        Data_in_input_tb <= X"01010101";
         wait for CLOCK_PERIOD;
         
         input_valid_tb <= '1';
         Data_in_input_tb <= X"48484848";
---        Data_in_input_tb <= X"02020202";
         wait for CLOCK_PERIOD;
         
         
---        input_valid_tb <= '0';
---        wait for CLOCK_PERIOD;
+        --input_valid_tb <= '0';
+        --wait for CLOCK_PERIOD;
         
         input_valid_tb <= '1';
         Data_in_input_tb <= X"38383838";
---        Data_in_input_tb <= X"03030303";
         wait for CLOCK_PERIOD;
         
         input_valid_tb <= '1';
         Data_in_input_tb <= X"48484848";
---        Data_in_input_tb <= X"04040404";
         wait for CLOCK_PERIOD;
-        
+
+        input_valid_tb <= '0';
 
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         
---        input_valid_tb <= '0';
---        wait for CLOCK_PERIOD;
-        input_valid_tb <= '1';
+
         
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
@@ -354,18 +398,17 @@ begin
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         
-        input_valid_tb <= '0';
+        
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         
-        ----------------------------------------------
+------------------------------------------------------------
         
         wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '1';
         -- Data_in_weight_tb <= "01000000010000000100000001000000";
         Data_in_weight_tb <= X"50505050";
---        Data_in_weight_tb <= X"04040404";
         wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '0';
@@ -374,7 +417,6 @@ begin
         
         weight_valid_tb <= '1';
         Data_in_weight_tb <= X"c0c0b8b8";
---        Data_in_weight_tb <= X"03030303";
         wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '0';
@@ -383,7 +425,6 @@ begin
         
         weight_valid_tb <= '1';
         Data_in_weight_tb <= X"48484040";
---        Data_in_weight_tb <= X"02020202";
         wait for CLOCK_PERIOD;
         
         --weight_valid_tb <= '1';
@@ -391,48 +432,40 @@ begin
         
         weight_valid_tb <= '1';
         Data_in_weight_tb <= X"40404848";
---        Data_in_weight_tb <= X"01010101";
         wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '0';
         input_valid_tb <= '0';
         Data_in_input_tb <= X"3840c048";
---        Data_in_input_tb <= X"01010101";
         wait for CLOCK_PERIOD;
         
         weight_valid_tb <= '0';
         input_valid_tb <= '1';
         Data_in_input_tb <= X"3840c048";
---        Data_in_input_tb <= X"01010101";
         wait for CLOCK_PERIOD;
         
         input_valid_tb <= '1';
         Data_in_input_tb <= X"483840c0";
---        Data_in_input_tb <= X"02020202";
         wait for CLOCK_PERIOD;
         
         
---        input_valid_tb <= '0';
---        wait for CLOCK_PERIOD;
+        --input_valid_tb <= '0';
+        --wait for CLOCK_PERIOD;
         
         input_valid_tb <= '1';
         Data_in_input_tb <= X"c0483840";
---        Data_in_input_tb <= X"03030303";
         wait for CLOCK_PERIOD;
         
         input_valid_tb <= '1';
         Data_in_input_tb <= X"40c04838";
---        Data_in_input_tb <= X"04040404";
         wait for CLOCK_PERIOD;
         
+        input_valid_tb <= '0';
 
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         
---        input_valid_tb <= '0';
---        wait for CLOCK_PERIOD;
-        input_valid_tb <= '1';
         
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
@@ -441,7 +474,7 @@ begin
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         
-        input_valid_tb <= '0';
+        
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         

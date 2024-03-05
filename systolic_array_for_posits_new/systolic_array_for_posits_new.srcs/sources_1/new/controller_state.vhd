@@ -174,7 +174,7 @@ begin
                 case w_next_state is
                     when W_IDLE =>
                         -- IDLE does nothing and waits for next calculation
-                        if (weight_valid = '1' ) then
+                        if (weight_valid = '1' and enough_weight_valids = '0') then
                             -- start counting weight_valid signals
                             w_next_state <= WEIGHT_COUNT;
 
@@ -185,7 +185,22 @@ begin
                             weight_ringcounter <= weight_ringcounter(weight_ringcounter'high -1 downto weight_ringcounter'low) & '0';
                             -- marks second to last valid as preparation for delayed-enable
                             -- holds '1' until last valid comes and resets after that
-                            enough_weight_valids <= weight_ringcounter(weight_ringcounter'high);
+                            enough_weight_valids <= weight_ringcounter(weight_ringcounter'high-1);
+
+                        elsif weight_valid = '1' and enough_weight_valids = '1' then
+                            -- recieved all weight_valids and continue with next step
+                            w_next_state <= WEIGHT_FINISHED;
+                            
+                            weight_en_PE_sig        <= '1';
+                            enable_weight_mem_sig   <= '1';
+                            weight_write_sig        <= '1';
+                            weight_is_loaded        <= '1';
+                            -- reset weight_delay_counter for the following counting
+                            weight_delay_counter <= (0 => '1', others => '0');
+                            enough_w_delay <= '0';
+                            -- reset ringcounter before new weight-matrix can start
+                            weight_ringcounter  <= (0 => '1', others => '0');
+                            enough_weight_valids <= '0';
 
                         else
                             weight_en_PE_sig        <= '0';
@@ -209,12 +224,14 @@ begin
                             weight_ringcounter <= weight_ringcounter(weight_ringcounter'high -1 downto weight_ringcounter'low) & '0';
                             -- marks second to last valid as preparation for delayed-enable
                             -- holds '1' until last valid comes and resets after that
-                            enough_weight_valids <= weight_ringcounter(weight_ringcounter'high);
+                            enough_weight_valids <= weight_ringcounter(weight_ringcounter'high-1);
                         
-                        elsif (weight_valid = '0' and enough_weight_valids = '1') then
+                        elsif (weight_valid = '1' and enough_weight_valids = '1') then
                             -- recieved all weight_valids and continue with next step
                             w_next_state <= WEIGHT_FINISHED;
 
+                            weight_en_PE_sig        <= '1';
+                            enable_weight_mem_sig   <= '1';
                             weight_write_sig        <= '1';
                             weight_is_loaded        <= '1';
                             -- reset weight_delay_counter for the following counting
@@ -240,6 +257,8 @@ begin
                     when WEIGHT_FINISHED =>
                         w_next_state <= WEIGHT_DELAY;
                         
+                        weight_en_PE_sig        <= '1';
+                        enable_weight_mem_sig   <= '1';
                         weight_write_sig <= '0';
                         weight_delay_counter <= weight_delay_counter(weight_delay_counter'high -1 downto weight_delay_counter'low) & '1';
                         enough_w_delay <= weight_delay_counter(weight_delay_counter'high);
@@ -255,17 +274,21 @@ begin
 
                             weight_en_PE_sig        <= '1';
                             enable_weight_mem_sig   <= '1';
+                            weight_en_PE_sig        <= '1';
+                            enable_weight_mem_sig   <= '1';
                             weight_is_loaded        <= '0';
                             -- count weight_valid -> shift ringcounter one position 
                             weight_ringcounter <= weight_ringcounter(weight_ringcounter'high -1 downto weight_ringcounter'low) & '0';
                             -- marks second to last valid as preparation for delayed-enable
                             -- holds '1' until last valid comes and resets after that
-                            enough_weight_valids <= weight_ringcounter(weight_ringcounter'high);
+                            enough_weight_valids <= weight_ringcounter(weight_ringcounter'high-1);
                         
                         elsif enough_w_delay = '0' then
                             -- prolong the enable signals for the weight components so the last data has time to get loaded
                             w_next_state <= WEIGHT_DELAY;
 
+                            weight_en_PE_sig        <= '1';
+                            enable_weight_mem_sig   <= '1';
                             weight_write_sig <= '0';
                             weight_delay_counter <= weight_delay_counter(weight_delay_counter'high -1 downto weight_delay_counter'low) & '1';
                             enough_w_delay <= weight_delay_counter(weight_delay_counter'high);
