@@ -143,6 +143,12 @@ begin
     weight_write        <= weight_write_sig;
 
 
+    -- always allow loading of new weight, because this alone doesn't generate output.
+    weight_ready_sig    <= '1'; --output_ready;
+    input_ready_sig     <= output_ready and weight_is_loaded;
+
+
+
     --data_weight_out <= data_weight_in;
     --data_input_out  <= data_input_in;
 

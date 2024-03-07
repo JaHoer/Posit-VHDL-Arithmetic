@@ -157,7 +157,7 @@ begin
         input_valid_tb <= '0';
         weight_valid_tb <= '0';
         output_ready_tb <= '1';
-        
+
 ----------------------------------------
 
         wait for CLOCK_PERIOD;

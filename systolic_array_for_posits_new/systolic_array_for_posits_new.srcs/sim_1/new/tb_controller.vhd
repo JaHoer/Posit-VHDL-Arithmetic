@@ -158,6 +158,8 @@ begin
         
         wait for CLOCK_PERIOD;
         rst_tb <= '0';
+
+        output_ready_tb <= '1';
         
         wait for CLOCK_PERIOD;
         
