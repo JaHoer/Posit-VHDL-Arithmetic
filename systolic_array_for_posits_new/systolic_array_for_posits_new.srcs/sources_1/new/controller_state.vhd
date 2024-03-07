@@ -79,10 +79,16 @@ architecture Behavioral of controller_state is
     type WEIGHT_STATE IS (W_IDLE, WEIGHT_COUNT, WEIGHT_FINISHED, WEIGHT_DELAY);
     type INPUT_STATE IS (I_IDLE, INPUT_COUNT, INPUT_DELAY, INPUT_COUNT_DELAY, I_IDLE_COUNT, OUTPUT_DELAY);
     type OUTPUT_STATE IS (O_IDLE, OUTPUT_COUNT, OUTPUT_HOLD_VALID, OUTPUT_COUNT_VALID, O_IDLE_ACTIVE, OUTPUT_COUNT_SAVE, O_IDLE_S, OUTPUT_COUNT_SAVE_DELAY, O_IDLE_SD, OUTPUT_COUNT_SAVE_DOWN);
-    signal w_curr_state, w_next_state : WEIGHT_STATE;
-    signal i_curr_state, i_next_state : INPUT_STATE;
-    signal o_curr_state, o_next_state : OUTPUT_STATE;
+    signal w_next_state : WEIGHT_STATE;
+    signal i_next_state : INPUT_STATE;
+    signal o_next_state : OUTPUT_STATE;
 
+    signal weight_valid_sig : std_logic := '0';
+    signal input_valid_sig : std_logic := '0';
+
+    signal data_weight_sig : std_logic_vector(array_width*N -1 downto 0);
+    signal data_input_sig : std_logic_vector(array_width*N -1 downto 0);
+    --signal data_output_sig : std_logic_vector(array_width*N -1 downto 0);
 
     signal output_valid_sig : std_logic := '0';
     signal weight_ready_sig : std_logic := '0';
@@ -123,8 +129,8 @@ architecture Behavioral of controller_state is
 
 begin
 
-
-
+    --weight_valid_sig    <= weight_valid;
+    --input_valid_sig     <= input_valid;
 
     output_valid        <= output_valid_sig;
     weight_ready        <= weight_ready_sig;
@@ -137,13 +143,22 @@ begin
     weight_write        <= weight_write_sig;
 
 
-    data_weight_out <= data_weight_in;
-    data_input_out  <= data_input_in;
+    --data_weight_out <= data_weight_in;
+    --data_input_out  <= data_input_in;
 
 
     data_out : process (clk)
     begin
         if rising_edge(clk) then
+
+            weight_valid_sig    <= weight_valid;
+            input_valid_sig     <= input_valid;
+
+            --data_output_sig <= data_output_in;
+            data_weight_sig <= data_weight_in;
+            data_input_sig  <= data_input_in;
+            data_weight_out <= data_weight_sig;
+            data_input_out  <= data_input_sig;
 
             data_output_out <= data_output_in;
         end if;
@@ -160,7 +175,7 @@ begin
     begin
         if (rising_edge(clk)) then
             if (rst = '1') then
-                w_curr_state <= W_IDLE;
+                --w_curr_state <= W_IDLE;
 
                 weight_ringcounter  <= (0 => '1', others => '0');
                 enough_weight_valids<= '0';
@@ -168,13 +183,13 @@ begin
                 enough_w_delay <= '0';
 
             else
-                w_curr_state <= w_next_state;
+                --w_curr_state <= w_next_state;
 
 
                 case w_next_state is
                     when W_IDLE =>
                         -- IDLE does nothing and waits for next calculation
-                        if (weight_valid = '1' and enough_weight_valids = '0') then
+                        if (weight_valid_sig = '1' and enough_weight_valids = '0') then
                             -- start counting weight_valid signals
                             w_next_state <= WEIGHT_COUNT;
 
@@ -187,7 +202,7 @@ begin
                             -- holds '1' until last valid comes and resets after that
                             enough_weight_valids <= weight_ringcounter(weight_ringcounter'high-1);
 
-                        elsif weight_valid = '1' and enough_weight_valids = '1' then
+                        elsif weight_valid_sig = '1' and enough_weight_valids = '1' then
                             -- recieved all weight_valids and continue with next step
                             w_next_state <= WEIGHT_FINISHED;
                             
@@ -213,7 +228,7 @@ begin
 
                     when WEIGHT_COUNT =>
                         -- start loading process for weight-matrix 
-                        if (weight_valid = '1' and enough_weight_valids = '0') then
+                        if (weight_valid_sig = '1' and enough_weight_valids = '0') then
                             -- stay in current state during counting
                             w_next_state <= WEIGHT_COUNT;
 
@@ -226,7 +241,7 @@ begin
                             -- holds '1' until last valid comes and resets after that
                             enough_weight_valids <= weight_ringcounter(weight_ringcounter'high-1);
                         
-                        elsif (weight_valid = '1' and enough_weight_valids = '1') then
+                        elsif (weight_valid_sig = '1' and enough_weight_valids = '1') then
                             -- recieved all weight_valids and continue with next step
                             w_next_state <= WEIGHT_FINISHED;
 
@@ -268,7 +283,7 @@ begin
 
 
                     when WEIGHT_DELAY =>
-                        if weight_valid = '1' then
+                        if weight_valid_sig = '1' then
                             -- new weight-matrix has started
                             w_next_state <= WEIGHT_COUNT;
 
@@ -332,7 +347,7 @@ begin
     begin
         if (rising_edge(clk)) then
             if (rst = '1') then
-                i_curr_state <= I_IDLE;
+                --i_curr_state <= I_IDLE;
 
 
                 input_ringcounter  <= (0 => '1', others => '0');
@@ -343,14 +358,14 @@ begin
 
 
             else
-                i_curr_state <= i_next_state;
+                --i_curr_state <= i_next_state;
                 input_is_loaded <= input_is_loaded_v;
                 start_new_input <= start_new_input_v;
 
                 case i_next_state is
                     when I_IDLE =>
                         -- IDLE does nothing and waits for next input-matrix and a loaded weight-matrix
-                        if (input_valid = '1' and weight_is_loaded = '1') then
+                        if (input_valid_sig = '1' and weight_is_loaded = '1') then
                             -- start counting input_valid signals
                             i_next_state <= INPUT_COUNT;
 
@@ -401,7 +416,7 @@ begin
                             enough_o_delay          <= '0';
                             output_delay_counter <= (0 => '1', others => '0');
 
-                        elsif (input_valid = '1' and enough_input_valids = '0') then
+                        elsif (input_valid_sig = '1' and enough_input_valids = '0') then
                             -- stay in current state during counting
                             i_next_state <= INPUT_COUNT;
 
@@ -419,7 +434,7 @@ begin
                             output_en_PE_sig        <= '1';
                             enable_output_mem_sig   <= '1';
                         
-                        elsif (input_valid = '0' and enough_input_valids = '1') then
+                        elsif (input_valid_sig = '0' and enough_input_valids = '1') then
                             -- recieved all input_valids and prolong enable signals
                             i_next_state <= INPUT_DELAY;
                             input_delay_counter <= input_delay_counter(input_delay_counter'high -1 downto input_delay_counter'low) & '1';
@@ -431,7 +446,7 @@ begin
                             output_en_PE_sig        <= '1';
                             enable_output_mem_sig   <= '1';
 
-                        elsif (input_valid = '1' and enough_input_valids = '1') then
+                        elsif (input_valid_sig = '1' and enough_input_valids = '1') then
                             -- continue recieving input_valids after fist input-matrix
                             i_next_state <= INPUT_COUNT_DELAY;
                             input_is_loaded_v      := '1';
@@ -490,7 +505,7 @@ begin
                             enough_o_delay          <= '0';
                             output_delay_counter <= (0 => '1', others => '0');
 
-                        elsif (input_valid = '1') then
+                        elsif (input_valid_sig = '1') then
                             -- stay in current state during counting
                             i_next_state <= INPUT_COUNT_DELAY;
                             start_new_input_v      := '0';
@@ -511,7 +526,7 @@ begin
                             output_en_PE_sig        <= '1';
                             enable_output_mem_sig   <= '1';
                         
-                        elsif (input_valid = '0' and enough_input_valids = '1') then
+                        elsif (input_valid_sig = '0' and enough_input_valids = '1') then
                             -- recieved all input_valids and prolong enable signals
                             i_next_state <= INPUT_DELAY;
                             input_delay_counter <= input_delay_counter(input_delay_counter'high -1 downto input_delay_counter'low) & '1';
@@ -556,7 +571,7 @@ begin
                             enough_o_delay          <= '0';
                             output_delay_counter <= (0 => '1', others => '0');
 
-                        elsif input_valid = '1' then
+                        elsif input_valid_sig = '1' then
                             i_next_state <= INPUT_COUNT_DELAY;
                             start_new_input_v      := '0';
                             input_is_loaded_v      := '1';
@@ -609,7 +624,7 @@ begin
                             enough_o_delay          <= '0';
                             output_delay_counter <= (0 => '1', others => '0');
 
-                        elsif input_valid = '1' then
+                        elsif input_valid_sig = '1' then
                             -- new input-matrix has started
                             i_next_state <= INPUT_COUNT_DELAY;
                             start_new_input_v      := '1';
@@ -681,7 +696,7 @@ begin
                             enough_o_delay          <= '0';
                             output_delay_counter <= (0 => '1', others => '0');
                         
-                        elsif (input_valid = '1' and weight_is_loaded = '1') then
+                        elsif (input_valid_sig = '1' and weight_is_loaded = '1') then
                             -- start counting input_valid signals
                             i_next_state <= INPUT_COUNT;
 
@@ -699,7 +714,7 @@ begin
                             enough_o_delay          <= '0';
                             output_delay_counter <= (0 => '1', others => '0');
 
-                        elsif input_valid = '0' and enough_o_delay = '0' then
+                        elsif input_valid_sig = '0' and enough_o_delay = '0' then
                             i_next_state <= OUTPUT_DELAY;
                             output_sr <= output_sr(output_sr'high-1 downto output_sr'low) & '0';
                             output_valid_sig        <= output_sr(output_sr'high);
