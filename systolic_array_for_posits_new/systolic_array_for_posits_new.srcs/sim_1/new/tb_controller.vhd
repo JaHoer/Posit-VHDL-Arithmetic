@@ -163,6 +163,46 @@ begin
         
         wait for CLOCK_PERIOD;
         
+
+        weight_valid_tb <= '1';
+        data_weight_in_tb <= X"01010101";        
+        wait for CLOCK_PERIOD;
+        weight_valid_tb <= '1';
+        data_weight_in_tb <= X"01010101";
+        wait for CLOCK_PERIOD;
+        weight_valid_tb <= '1';
+        data_weight_in_tb <= X"01010101";
+        wait for CLOCK_PERIOD;
+        weight_valid_tb <= '1';
+        data_weight_in_tb <= X"01010101";
+        wait for CLOCK_PERIOD;
+
+        weight_valid_tb <= '1';
+        data_weight_in_tb <= X"02020202";        
+        wait for CLOCK_PERIOD;
+        weight_valid_tb <= '1';
+        data_weight_in_tb <= X"03030303";
+        wait for CLOCK_PERIOD;
+        weight_valid_tb <= '1';
+        data_weight_in_tb <= X"02020202";
+        wait for CLOCK_PERIOD;
+        weight_valid_tb <= '1';
+        data_weight_in_tb <= X"03030303";
+        wait for CLOCK_PERIOD;
+        
+        
+        weight_valid_tb <= '0';
+        data_weight_in_tb <= X"05050505";
+        input_valid_tb <= '0';
+        data_input_in_tb <= X"02020202";
+        wait for CLOCK_PERIOD;
+
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+
+        --------------------------------------------
+
         weight_valid_tb <= '1';
         -- Data_in_weight_tb <= "00000001000000010000000100000001";
         data_weight_in_tb <= X"01010101";        
