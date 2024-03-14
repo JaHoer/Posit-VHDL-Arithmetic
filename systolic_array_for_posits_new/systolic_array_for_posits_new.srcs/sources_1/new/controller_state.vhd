@@ -454,7 +454,8 @@ begin
 
                         elsif (input_valid_sig = '1' and enough_input_valids = '1') then
                             -- continue recieving input_valids after fist input-matrix
-                            i_next_state <= INPUT_COUNT_DELAY;
+                            --i_next_state <= INPUT_COUNT_DELAY;
+                            i_next_state <= INPUT_COUNT;
                             input_en_PE_sig        <= '1';
                             enable_input_mem_sig   <= '1';
                             
@@ -490,111 +491,111 @@ begin
                         
 
 
-                    when INPUT_COUNT_DELAY =>
-                        -- start loading input-matrix 
-                        if weight_is_loaded = '0' then
-                            i_next_state <= I_IDLE;
-                            input_en_PE_sig         <= '0';
-                            enable_input_mem_sig    <= '0';
-                            enough_input_valids     <= '0';
-                            enough_i_delay          <= '0';
-                            input_ringcounter  <= (0 => '1', others => '0');
-                            input_delay_counter <= (0 => '1', others => '0');
-                            output_sr <= (others => '0');
-                            output_valid_sig        <= '0';
-                            output_en_PE_sig        <= '0';
-                            enable_output_mem_sig   <= '0';
-                            enough_o_delay          <= '0';
-                            output_delay_counter <= (0 => '1', others => '0');
+                    --when INPUT_COUNT_DELAY =>
+                    --    -- start loading input-matrix 
+                    --    if weight_is_loaded = '0' then
+                    --        i_next_state <= I_IDLE;
+                    --        input_en_PE_sig         <= '0';
+                    --        enable_input_mem_sig    <= '0';
+                    --        enough_input_valids     <= '0';
+                    --        enough_i_delay          <= '0';
+                    --        input_ringcounter  <= (0 => '1', others => '0');
+                    --        input_delay_counter <= (0 => '1', others => '0');
+                    --        output_sr <= (others => '0');
+                    --        output_valid_sig        <= '0';
+                    --        output_en_PE_sig        <= '0';
+                    --        enable_output_mem_sig   <= '0';
+                    --        enough_o_delay          <= '0';
+                    --        output_delay_counter <= (0 => '1', others => '0');
 
-                        elsif (input_valid_sig = '1') then
-                            -- stay in current state during counting
-                            i_next_state <= INPUT_COUNT_DELAY;
-                            input_en_PE_sig        <= '1';
-                            enable_input_mem_sig   <= '1';
-                            
-                            -- count input_valid -> shift ringcounter one position 
-                            input_ringcounter <= input_ringcounter(input_ringcounter'high -1 downto input_ringcounter'low) & input_ringcounter(input_ringcounter'high);
-                            -- marks second to last valid as preparation for delayed-enable
-                            -- holds '1' until last valid comes and resets after that
-                            enough_input_valids <= input_ringcounter(input_ringcounter'high);
+                    --    elsif (input_valid_sig = '1') then
+                    --        -- stay in current state during counting
+                    --        i_next_state <= INPUT_COUNT_DELAY;
+                    --        input_en_PE_sig        <= '1';
+                    --        enable_input_mem_sig   <= '1';
+                    --        
+                    --        -- count input_valid -> shift ringcounter one position 
+                    --        input_ringcounter <= input_ringcounter(input_ringcounter'high -1 downto input_ringcounter'low) & input_ringcounter(input_ringcounter'high);
+                    --        -- marks second to last valid as preparation for delayed-enable
+                    --        -- holds '1' until last valid comes and resets after that
+                    --        enough_input_valids <= input_ringcounter(input_ringcounter'high);
 
-                            input_delay_counter <= (0 => '1', others => '0');
-                            enough_i_delay <= '0';
-                            output_sr <= output_sr(output_sr'high-1 downto output_sr'low) & '1';
-                            output_valid_sig        <= output_sr(output_sr'high);
-                            output_en_PE_sig        <= '1';
-                            enable_output_mem_sig   <= '1';
+                    --        input_delay_counter <= (0 => '1', others => '0');
+                    --        enough_i_delay <= '0';
+                    --        output_sr <= output_sr(output_sr'high-1 downto output_sr'low) & '1';
+                    --        output_valid_sig        <= output_sr(output_sr'high);
+                    --        output_en_PE_sig        <= '1';
+                    --        enable_output_mem_sig   <= '1';
+                    --    
+                    --    elsif (input_valid_sig = '0' and enough_input_valids = '1') then
+                    --        -- recieved all input_valids and prolong enable signals
+                    --        i_next_state <= INPUT_DELAY;
+                    --        input_delay_counter <= input_delay_counter(input_delay_counter'high -1 downto input_delay_counter'low) & '1';
+                    --        enough_i_delay <= input_delay_counter(input_delay_counter'high);
+                    --        enough_input_valids     <= '0';
+                    --        output_sr <= output_sr(output_sr'high-1 downto output_sr'low) & '0';
+                    --        output_valid_sig        <= output_sr(output_sr'high);
+                    --        output_en_PE_sig        <= '1';
+                    --        enable_output_mem_sig   <= '1';
+                    --    
+                    --    else
+                    --        -- input_valid = '0'
+                    --        i_next_state <= I_IDLE_COUNT;
+                    --        input_en_PE_sig         <= '0';
+                    --        enable_input_mem_sig    <= '0';
+                    --        enough_input_valids     <= '0';
+                    --        enough_i_delay          <= '0';
+                    --        output_en_PE_sig        <= '0';
+                    --        enable_output_mem_sig   <= '0';
+                    --        output_valid_sig        <= '0';
+                    --    end if;
+
                         
-                        elsif (input_valid_sig = '0' and enough_input_valids = '1') then
-                            -- recieved all input_valids and prolong enable signals
-                            i_next_state <= INPUT_DELAY;
-                            input_delay_counter <= input_delay_counter(input_delay_counter'high -1 downto input_delay_counter'low) & '1';
-                            enough_i_delay <= input_delay_counter(input_delay_counter'high);
-                            enough_input_valids     <= '0';
-                            output_sr <= output_sr(output_sr'high-1 downto output_sr'low) & '0';
-                            output_valid_sig        <= output_sr(output_sr'high);
-                            output_en_PE_sig        <= '1';
-                            enable_output_mem_sig   <= '1';
-                        
-                        else
-                            -- input_valid = '0'
-                            i_next_state <= I_IDLE_COUNT;
-                            input_en_PE_sig         <= '0';
-                            enable_input_mem_sig    <= '0';
-                            enough_input_valids     <= '0';
-                            enough_i_delay          <= '0';
-                            output_en_PE_sig        <= '0';
-                            enable_output_mem_sig   <= '0';
-                            output_valid_sig        <= '0';
-                        end if;
-
-                        
 
 
-                    when I_IDLE_COUNT =>
-                        if weight_is_loaded = '0' then
-                            i_next_state <= I_IDLE;
-                            input_en_PE_sig         <= '0';
-                            enable_input_mem_sig    <= '0';
-                            enough_input_valids     <= '0';
-                            enough_i_delay          <= '0';
-                            input_ringcounter  <= (0 => '1', others => '0');
-                            input_delay_counter <= (0 => '1', others => '0');
-                            output_sr <= (others => '0');
-                            output_valid_sig        <= '0';
-                            output_en_PE_sig        <= '0';
-                            enable_output_mem_sig   <= '0';
-                            enough_o_delay          <= '0';
-                            output_delay_counter <= (0 => '1', others => '0');
+                    --when I_IDLE_COUNT =>
+                    --    if weight_is_loaded = '0' then
+                    --        i_next_state <= I_IDLE;
+                    --        input_en_PE_sig         <= '0';
+                    --        enable_input_mem_sig    <= '0';
+                    --        enough_input_valids     <= '0';
+                    --        enough_i_delay          <= '0';
+                    --        input_ringcounter  <= (0 => '1', others => '0');
+                    --        input_delay_counter <= (0 => '1', others => '0');
+                    --        output_sr <= (others => '0');
+                    --        output_valid_sig        <= '0';
+                    --        output_en_PE_sig        <= '0';
+                    --        enable_output_mem_sig   <= '0';
+                    --        enough_o_delay          <= '0';
+                    --        output_delay_counter <= (0 => '1', others => '0');
 
-                        elsif input_valid_sig = '1' then
-                            i_next_state <= INPUT_COUNT_DELAY;
-                            input_en_PE_sig        <= '1';
-                            enable_input_mem_sig   <= '1';
-                            
-                            -- count input_valid -> shift ringcounter one position 
-                            input_ringcounter <= input_ringcounter(input_ringcounter'high -1 downto input_ringcounter'low) & input_ringcounter(input_ringcounter'high);
-                            -- marks second to last valid as preparation for delayed-enable
-                            -- holds '1' until last valid comes and resets after that
-                            enough_input_valids <= input_ringcounter(input_ringcounter'high);
+                    --    elsif input_valid_sig = '1' then
+                    --        i_next_state <= INPUT_COUNT_DELAY;
+                    --        input_en_PE_sig        <= '1';
+                    --        enable_input_mem_sig   <= '1';
+                    --        
+                    --        -- count input_valid -> shift ringcounter one position 
+                    --        input_ringcounter <= input_ringcounter(input_ringcounter'high -1 downto input_ringcounter'low) & input_ringcounter(input_ringcounter'high);
+                    --        -- marks second to last valid as preparation for delayed-enable
+                    --        -- holds '1' until last valid comes and resets after that
+                    --        enough_input_valids <= input_ringcounter(input_ringcounter'high);
 
-                            input_delay_counter <= (0 => '1', others => '0');
-                            enough_i_delay <= '0';
-                            output_sr <= output_sr(output_sr'high-1 downto output_sr'low) & '1';
-                            output_valid_sig        <= output_sr(output_sr'high);
-                            output_en_PE_sig        <= '1';
-                            enable_output_mem_sig   <= '1';
-                            
-                        else    
-                            input_en_PE_sig         <= '0';
-                            enable_input_mem_sig    <= '0';
-                            enough_input_valids     <= '0';
-                            enough_i_delay          <= '0';
-                            output_en_PE_sig        <= '0';
-                            enable_output_mem_sig   <= '0';
-                            output_valid_sig        <= '0';
-                        end if;
+                    --        input_delay_counter <= (0 => '1', others => '0');
+                    --        enough_i_delay <= '0';
+                    --        output_sr <= output_sr(output_sr'high-1 downto output_sr'low) & '1';
+                    --        output_valid_sig        <= output_sr(output_sr'high);
+                    --        output_en_PE_sig        <= '1';
+                    --        enable_output_mem_sig   <= '1';
+                    --        
+                    --    else    
+                    --        input_en_PE_sig         <= '0';
+                    --        enable_input_mem_sig    <= '0';
+                    --        enough_input_valids     <= '0';
+                    --        enough_i_delay          <= '0';
+                    --        output_en_PE_sig        <= '0';
+                    --        enable_output_mem_sig   <= '0';
+                    --        output_valid_sig        <= '0';
+                    --    end if;
 
                         
 
@@ -618,7 +619,8 @@ begin
 
                         elsif input_valid_sig = '1' then
                             -- new input-matrix has started
-                            i_next_state <= INPUT_COUNT_DELAY;
+                            --i_next_state <= INPUT_COUNT_DELAY;
+                            i_next_state <= INPUT_COUNT;
                             input_en_PE_sig        <= '1';
                             enable_input_mem_sig   <= '1';
                             
