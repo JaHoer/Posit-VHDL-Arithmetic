@@ -39,7 +39,7 @@ entity PE is
         es : integer := 2
         --inst_length : integer := 6
     );
-    Port ( 
+    port ( 
         clk : in std_logic;
         --w_en : in std_logic;
         comp_en : in std_logic;
@@ -56,16 +56,6 @@ entity PE is
         weight_out : out STD_LOGIC_VECTOR (N-1 downto 0);
         input_out : out STD_LOGIC_VECTOR (N-1 downto 0);
         psum_out : out STD_LOGIC_VECTOR (N-1 downto 0)
-        --weight_w_en_out : out std_logic
-        --instr_out : out STD_LOGIC_VECTOR (N-1 downto 0)
-        
-        
-        --bebug
---        ;
---        weight_mem_o : out std_logic_vector(N-1 downto 0);
---        input_reg_o : out STD_LOGIC_VECTOR (N-1 downto 0);
---        psum_reg_o : out STD_LOGIC_VECTOR (N-1 downto 0);
---        product_out_o : out std_logic_vector(N-1 downto 0)
         
         
     );
@@ -184,11 +174,6 @@ begin
     
     
     
-    
-    -- Debug    
---    weight_mem_o <= weight_mem;
---    input_reg_o <= input;
---    psum_reg_o <= psum_old;
---    product_out_o <= product_out;
+
 
 end Behavioral;

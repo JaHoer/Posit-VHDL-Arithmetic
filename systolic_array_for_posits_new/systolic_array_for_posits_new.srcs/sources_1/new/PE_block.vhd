@@ -40,7 +40,7 @@ entity PE_block is
         array_width : integer := 4
         
     );
-    Port ( 
+    port ( 
         clk : in std_logic;
         comp_en : in std_logic;
         weight_en : in std_logic;
@@ -120,13 +120,6 @@ begin
             psum_out => intermediate_psum((i+1)*N-1 downto (i)*N)
             --weight_w_en_out => intermediate_w_write(i)
             
-            
-            -- Debug
---            ,
---            weight_mem_o => internal_weight_mem((i+2)*N-1 downto (i+1)*N),
---            input_reg_o => internal_input_mem((i+2)*N-1 downto (i+1)*N),
---            psum_reg_o => internal_psum_mem((i+2)*N-1 downto (i+1)*N),
---            product_out_o => product_out((i+1)*N-1 downto i*N)
         );
 
 
@@ -147,12 +140,6 @@ begin
         end if;
     end process;
     
-    
-    
-    -- Debug
-    
---    intermediate_weight_o <= intermediate_weight;
---    intermediate_psum_o <= intermediate_psum;
-    
+
 
 end Behavioral;

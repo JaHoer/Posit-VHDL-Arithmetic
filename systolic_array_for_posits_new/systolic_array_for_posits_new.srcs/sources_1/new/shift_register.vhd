@@ -37,7 +37,7 @@ entity shift_register is
         data_width : integer := 8
 
     );
-    Port ( 
+    port ( 
         clk : in std_logic;
         enable : in std_logic;
         data_in : in std_logic_vector(data_width-1 downto 0);

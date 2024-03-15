@@ -47,7 +47,7 @@ entity output_mem is
         -- number of parallel shift register
         mem_width : integer := 4
     );
-    Port ( 
+    port ( 
         clk : in std_logic;
         rst : in std_logic;
         w_en : in std_logic;

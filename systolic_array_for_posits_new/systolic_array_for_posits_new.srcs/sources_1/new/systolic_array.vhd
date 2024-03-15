@@ -48,7 +48,7 @@ entity systolic_array is
         
         
     );
-    Port ( 
+    port ( 
         clk : in std_logic;
         rst : in std_logic;
         
@@ -61,27 +61,6 @@ entity systolic_array is
         Data_out_output : out std_logic_vector(array_width*N -1 downto 0);
         output_valid : out std_logic;
         output_ready : in std_logic
-        
-        
-        -- Debug
-        
---        out_vector_input_o : out std_logic_vector(N * array_width-1 downto 0);
---        out_vector_weight_o : out std_logic_vector(N * array_width-1 downto 0);
---        weight_write_en_o : out std_logic_vector(array_width downto 0);
---        weight_en_o : out std_logic;
---        comp_en_PEs_o : out std_logic;
---        
---        in_vector_output_o : out std_logic_vector(N * array_width-1 downto 0);
---        --PE_intermediate_psum_o : out std_logic_vector(N * array_width-1 downto 0);
---        --PE_intermediate_input_o : out std_logic_vector(N * array_width-1 downto 0);
---        --PE_intermediate_weight_o : out std_logic_vector(N * array_width-1 downto 0)
---        
---        -- from PE_Block
---        intermediate_weight_o : out std_logic_vector((array_width+1)* N * array_width -1 downto 0);
---        internal_weight_mem : out std_logic_vector((array_width+1)* N * array_width -1 downto 0);
---        internal_input_mem : out std_logic_vector((array_width+1)* N * array_width -1 downto 0);
---        internal_psum_mem : out std_logic_vector((array_width+1)* N * array_width -1 downto 0)
-        
     );
 end systolic_array;
 
@@ -120,18 +99,6 @@ architecture Behavioral of systolic_array is
     signal comp_en_PEs : std_logic;
     
 
-
-
-    -- PE signals
-    --signal w_en_PE : std_logic;
-    --signal inst_in_PE : std_logic_vector (5 downto 0);
-    --signal weight_in_PE : STD_LOGIC_VECTOR (N-1 downto 0);
-    --signal input_in_PE : STD_LOGIC_VECTOR (N-1 downto 0);
-    --signal psum_in_PE : STD_LOGIC_VECTOR (N-1 downto 0); 
-    --signal inst_out_PE : std_logic_vector (5 downto 0);  
-    --signal weight_out_PE : STD_LOGIC_VECTOR (N-1 downto 0);
-    --signal input_out_PE : STD_LOGIC_VECTOR (N-1 downto 0);
-    --signal psum_out_PE : STD_LOGIC_VECTOR (N-1 downto 0);
     
     -- input_mem signals
     signal enable_input_mem : std_logic;
@@ -291,34 +258,10 @@ begin
             psum_out => in_vector_output ((i+1)*N-1 downto (i)*N),
             weight_w_en_out => weight_write_en(i)
             
-            
-            -- Debug
-            --,
-            -- from PE_blocks
-            --((array_width+1)*N-1 * array_width downto 0);
-            --intermediate_weight_o => intermediate_weight_o((array_width+1)*N * (i+1) -1 downto (array_width+1)*N * (i)),
-            --internal_weight_mem => internal_weight_mem((array_width+1)*N * (i+1) -1 downto (array_width+1)*N * (i)),
-            --internal_input_mem => internal_input_mem((array_width+1)*N * (i+1) -1 downto (array_width+1)*N * (i)),
-            --internal_psum_mem => internal_psum_mem((array_width+1)*N * (i+1) -1 downto (array_width+1)*N * (i))
+        
         );
     
     end generate;
-    
-
-    
-    
-    
-    
-
-    
-    
-    -- Debug
---    out_vector_input_o <= out_vector_input;
---    out_vector_weight_o <= out_vector_weight;
---    weight_write_en_o <= weight_write_en;
---    weight_en_o <= weight_en;
---    comp_en_PEs_o <= comp_en_PEs;
---    in_vector_output_o <= in_vector_output;
     
     
 

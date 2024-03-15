@@ -37,7 +37,7 @@ entity test_mem is
         width : integer := 4;
         length : integer := 20
     );
-    Port ( 
+    port ( 
         clk : in STD_LOGIC;
         rst : in STD_LOGIC;
         enable : in std_logic;

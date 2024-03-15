@@ -42,7 +42,7 @@ entity controller_state is
         
 
     );
-    Port (
+    port (
         clk : in std_logic;
         rst : in std_logic;
         

@@ -50,7 +50,7 @@ entity weight_mem is
         mem_width : integer := 4
         
     );
-    Port (
+    port (
         clk : in std_logic;
         rst : in std_logic;
         w_en : in std_logic;
