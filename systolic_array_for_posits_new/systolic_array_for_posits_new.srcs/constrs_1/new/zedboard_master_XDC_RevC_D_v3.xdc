@@ -133,12 +133,12 @@ set_property PACKAGE_PIN Y9 [get_ports {GCLK}];  # "GCLK"
 # ----------------------------------------------------------------------------
 # OLED Display - Bank 13
 # ---------------------------------------------------------------------------- 
-set_property PACKAGE_PIN U10  [get_ports {OLED_DC}];  # "OLED-DC"
-set_property PACKAGE_PIN U9   [get_ports {OLED_RES}];  # "OLED-RES"
-set_property PACKAGE_PIN AB12 [get_ports {OLED_SCLK}];  # "OLED-SCLK"
-set_property PACKAGE_PIN AA12 [get_ports {OLED_SDIN}];  # "OLED-SDIN"
-set_property PACKAGE_PIN U11  [get_ports {OLED_VBAT}];  # "OLED-VBAT"
-set_property PACKAGE_PIN U12  [get_ports {OLED_VDD}];  # "OLED-VDD"
+#set_property PACKAGE_PIN U10  [get_ports {OLED_DC}];  # "OLED-DC"
+#set_property PACKAGE_PIN U9   [get_ports {OLED_RES}];  # "OLED-RES"
+#set_property PACKAGE_PIN AB12 [get_ports {OLED_SCLK}];  # "OLED-SCLK"
+#set_property PACKAGE_PIN AA12 [get_ports {OLED_SDIN}];  # "OLED-SDIN"
+#set_property PACKAGE_PIN U11  [get_ports {OLED_VBAT}];  # "OLED-VBAT"
+#set_property PACKAGE_PIN U12  [get_ports {OLED_VDD}];  # "OLED-VDD"
 
 # ----------------------------------------------------------------------------
 # HDMI Output - Bank 33
@@ -184,34 +184,34 @@ set_property PACKAGE_PIN U14 [get_ports {LD7}];  # "LD7"
 # ----------------------------------------------------------------------------
 # VGA Output - Bank 33
 # ---------------------------------------------------------------------------- 
-set_property PACKAGE_PIN Y21  [get_ports {VGA_B1}];  # "VGA-B1"
-set_property PACKAGE_PIN Y20  [get_ports {VGA_B2}];  # "VGA-B2"
-set_property PACKAGE_PIN AB20 [get_ports {VGA_B3}];  # "VGA-B3"
-set_property PACKAGE_PIN AB19 [get_ports {VGA_B4}];  # "VGA-B4"
-set_property PACKAGE_PIN AB22 [get_ports {VGA_G1}];  # "VGA-G1"
-set_property PACKAGE_PIN AA22 [get_ports {VGA_G2}];  # "VGA-G2"
-set_property PACKAGE_PIN AB21 [get_ports {VGA_G3}];  # "VGA-G3"
-set_property PACKAGE_PIN AA21 [get_ports {VGA_G4}];  # "VGA-G4"
-set_property PACKAGE_PIN AA19 [get_ports {VGA_HS}];  # "VGA-HS"
-set_property PACKAGE_PIN V20  [get_ports {VGA_R1}];  # "VGA-R1"
-set_property PACKAGE_PIN U20  [get_ports {VGA_R2}];  # "VGA-R2"
-set_property PACKAGE_PIN V19  [get_ports {VGA_R3}];  # "VGA-R3"
-set_property PACKAGE_PIN V18  [get_ports {VGA_R4}];  # "VGA-R4"
-set_property PACKAGE_PIN Y19  [get_ports {VGA_VS}];  # "VGA-VS"
+#set_property PACKAGE_PIN Y21  [get_ports {VGA_B1}];  # "VGA-B1"
+#set_property PACKAGE_PIN Y20  [get_ports {VGA_B2}];  # "VGA-B2"
+#set_property PACKAGE_PIN AB20 [get_ports {VGA_B3}];  # "VGA-B3"
+#set_property PACKAGE_PIN AB19 [get_ports {VGA_B4}];  # "VGA-B4"
+#set_property PACKAGE_PIN AB22 [get_ports {VGA_G1}];  # "VGA-G1"
+#set_property PACKAGE_PIN AA22 [get_ports {VGA_G2}];  # "VGA-G2"
+#set_property PACKAGE_PIN AB21 [get_ports {VGA_G3}];  # "VGA-G3"
+#set_property PACKAGE_PIN AA21 [get_ports {VGA_G4}];  # "VGA-G4"
+#set_property PACKAGE_PIN AA19 [get_ports {VGA_HS}];  # "VGA-HS"
+#set_property PACKAGE_PIN V20  [get_ports {VGA_R1}];  # "VGA-R1"
+#set_property PACKAGE_PIN U20  [get_ports {VGA_R2}];  # "VGA-R2"
+#set_property PACKAGE_PIN V19  [get_ports {VGA_R3}];  # "VGA-R3"
+#set_property PACKAGE_PIN V18  [get_ports {VGA_R4}];  # "VGA-R4"
+#set_property PACKAGE_PIN Y19  [get_ports {VGA_VS}];  # "VGA-VS"
 
 # ----------------------------------------------------------------------------
 # User Push Buttons - Bank 34
 # ---------------------------------------------------------------------------- 
-set_property PACKAGE_PIN P16 [get_ports {BTNC}];  # "BTNC"
-set_property PACKAGE_PIN R16 [get_ports {BTND}];  # "BTND"
-set_property PACKAGE_PIN N15 [get_ports {BTNL}];  # "BTNL"
-set_property PACKAGE_PIN R18 [get_ports {BTNR}];  # "BTNR"
-set_property PACKAGE_PIN T18 [get_ports {BTNU}];  # "BTNU"
+#set_property PACKAGE_PIN P16 [get_ports {BTNC}];  # "BTNC"
+#set_property PACKAGE_PIN R16 [get_ports {BTND}];  # "BTND"
+#set_property PACKAGE_PIN N15 [get_ports {BTNL}];  # "BTNL"
+#set_property PACKAGE_PIN R18 [get_ports {BTNR}];  # "BTNR"
+#set_property PACKAGE_PIN T18 [get_ports {BTNU}];  # "BTNU"
 
 # ----------------------------------------------------------------------------
 # USB OTG Reset - Bank 34
 # ---------------------------------------------------------------------------- 
-set_property PACKAGE_PIN L16 [get_ports {OTG_VBUSOC}];  # "OTG-VBUSOC"
+#set_property PACKAGE_PIN L16 [get_ports {OTG_VBUSOC}];  # "OTG-VBUSOC"
 
 # ----------------------------------------------------------------------------
 # XADC GIO - Bank 34
