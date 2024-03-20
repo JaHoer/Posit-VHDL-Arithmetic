@@ -26,7 +26,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 -- arithmetic functions with Signed or Unsigned values
 use IEEE.NUMERIC_STD.ALL;
 
---use ieee.math_real.all;
+use ieee.math_real.all;
 
 use ieee.std_logic_misc.all;
 
@@ -38,7 +38,7 @@ use ieee.std_logic_misc.all;
 entity posit_multiplier is
     generic (
         N : integer := 8;
-        Bs : integer := 3;  -- log2(N)
+        --Bs : integer := 3;  -- log2(N)
         es : integer := 2
     );
     port ( 
@@ -56,6 +56,8 @@ entity posit_multiplier is
 end posit_multiplier;
 
 architecture Behavioral of posit_multiplier is
+
+    constant Bs : integer := integer(sqrt(real(N)));
 
     signal start0 : std_logic;
     signal s1 : std_logic;

@@ -96,7 +96,7 @@ begin
     posit_multiplier_entity : entity work.posit_multiplier
     generic map (
         N => N,
-        Bs => Bs,
+        --Bs => Bs,
         es => es
     )
     port map (
@@ -113,10 +113,11 @@ begin
     posit_adder_entity : entity work.posit_adder
     generic map (
         N => N,
-        Bs => Bs,
+        --Bs => Bs,
         es => es
     )
     port map (
+        clk => clk,
         in1 => product_out,
         in2 => psum_old,
         start => comp_en,   -- does nothing

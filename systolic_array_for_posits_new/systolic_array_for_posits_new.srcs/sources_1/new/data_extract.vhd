@@ -46,14 +46,8 @@ entity data_extract is
     in_val : in std_logic_vector(N-1 downto 0);
     rc : out std_logic;
     regime : out std_logic_vector(Bs-1 downto 0);
-    Lshift : out std_logic_vector(Bs-1 downto 0);
     exp : out std_logic_vector(es-1 downto 0);
     mant : out std_logic_vector(N-es-1 downto 0)
-    
-    -- Debug
-    --xin_r_o : out std_logic_vector(N-1 downto 0);
-    --k_o : out std_logic_vector(Bs-1 downto 0);
-    --xin_tmp_o : out std_logic_vector(N-1 downto 0)
     
   );
 
@@ -113,19 +107,12 @@ begin
     -- from PACoGen 
     regime <= std_logic_vector(unsigned(k) - 1) when rc_tmp = '1' else k;
 
-    
-    -- Regime Left Shift Amount: Lshift ? RC1 ? K1+1 : K0
-    --Lshift <= k0 when rc = '0' else std_logic_vector(unsigned(k1) + 1);
-
 
     -- To extract the exponent and mantissa, the respective XIN is dynamically left shifted by Lshift to push-out the entire regime
     -- bits and align exponent and mantissa at MSB. Now the MSB ES bit will act as the exponent and remaining bit would be mantissa bits
         
     -- from PACoGen
     xin_tmp <= std_logic_vector(shift_left(unsigned(xin(N-3 downto 0) & "00"), to_integer(unsigned(k))));
-        
-        
-    --xin_tmp_o <= xin_tmp;
 
     exp <= xin_tmp(N-1 downto N-es);
     mant <= xin_tmp(N-es-1 downto 0);
