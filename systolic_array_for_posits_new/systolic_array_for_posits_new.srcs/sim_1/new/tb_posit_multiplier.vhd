@@ -47,7 +47,7 @@ architecture Behavioral of tb_posit_multiplier is
     constant CLOCK_PERIOD : time := 1000 ns;
 
     signal clk_tb  : std_logic;
-
+    signal enable  : std_logic;
     signal in1_tb : std_logic_vector(N_tb-1 downto 0);
     signal in2_tb : std_logic_vector(N_tb-1 downto 0);
     signal start_tb : std_logic;
@@ -70,7 +70,7 @@ begin
     )
     port map (
         clk => clk_tb,
-    
+        enable => enable,
         in1 => in1_tb,
         in2 => in2_tb,
         start => start_tb,
@@ -97,6 +97,8 @@ begin
     
         
         wait for CLOCK_PERIOD;
+        enable <= '1';
+
         -- 0.25 * 8
         in1_tb <= "00110000";
         in2_tb <= "01011000";

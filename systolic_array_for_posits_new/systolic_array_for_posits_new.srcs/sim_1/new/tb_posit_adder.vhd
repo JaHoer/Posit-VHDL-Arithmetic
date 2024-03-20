@@ -49,7 +49,7 @@ architecture Behavioral of tb_posit_adder is
     constant CLOCK_PERIOD : time := 1000 ns;
 
     signal clk  : std_logic;
-
+    signal enable : std_logic;
     signal in1_tb : std_logic_vector(N_tb-1 downto 0);
     signal in2_tb : std_logic_vector(N_tb-1 downto 0);
     signal start_tb : std_logic;
@@ -73,6 +73,7 @@ begin
     )
     port map (
         clk => clk,
+        enable => enable,
         in1 => in1_tb,
         in2 => in2_tb,
         start => start_tb,
@@ -102,6 +103,8 @@ begin
         
         
         wait for CLOCK_PERIOD;
+        enable <= '1';
+
         -- 2 + 4
         in1_tb <= "01001000";
         in2_tb <= "01010000";

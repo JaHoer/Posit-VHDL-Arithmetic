@@ -44,6 +44,7 @@ entity posit_multiplier is
     );
     port ( 
         clk : in std_logic;
+        enable : in std_logic;
         in1 : in std_logic_vector(N-1 downto 0);
         in2 : in std_logic_vector(N-1 downto 0);
         start : in std_logic;
@@ -229,7 +230,7 @@ begin
     
         pipe_1_proc : process(clk)
         begin
-            if rising_edge(clk) then
+            if rising_edge(clk) and enable = '1' then
             rc1_p2 <= rc1;
             rc2_p2 <= rc2;
             regime1_p2 <= regime1;
@@ -295,7 +296,7 @@ begin
     
         pipe_1_proc : process(clk)
         begin
-            if rising_edge(clk) then
+            if rising_edge(clk) and enable = '1' then
             mult_m_p3 <= mult_m;
             r1e1_p3 <= r1e1;
             r2e2_p3 <= r2e2;
@@ -351,7 +352,7 @@ begin
     
         pipe_1_proc : process(clk)
         begin
-            if rising_edge(clk) then
+            if rising_edge(clk) and enable = '1' then
             mult_e_p4 <= mult_e;
             mult_mN_p4 <= mult_mN;
 

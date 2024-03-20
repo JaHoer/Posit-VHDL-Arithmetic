@@ -40,7 +40,9 @@ entity tb_systolic_array_post_synth is
 
         -- number of parallel shift register
         -- doubles as systolic array dimentions
-        array_width_tb : integer := 4
+        array_width_tb : integer := 4;
+        
+        pipeline_num : integer := 3
     );
 
 --  Port ( );
@@ -71,30 +73,6 @@ architecture Behavioral of tb_systolic_array_post_synth is
     signal input_ready_tb : std_logic;
     
     
---    signal weight_en_tb : std_logic;
---    signal weight_write_en_tb : std_logic_vector(array_width_tb downto 0);
---    signal out_vector_weight_tb : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
---    signal comp_en_PEs_tb : std_logic;
---    signal out_vector_input_tb : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
---    signal enable_output_mem_tb : std_logic;
---    signal in_vector_output_tb : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
-
-    
-    --signal intermediate_weight_PE_3 : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
-    --signal intermediate_weight_PE_2 : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
-    --signal intermediate_weight_PE_1 : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
-    --signal intermediate_weight_PE_0 : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
-    
-    --signal intermediate_psum_PE_3 : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
-    --signal intermediate_psum_PE_2 : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
-    --signal intermediate_psum_PE_1 : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
-    --signal intermediate_psum_PE_0 : std_logic_vector((array_width_tb+1)*N_tb-1 downto 0);
-    
-    -- from PE_blocks
---    signal intermediate_weight_o : std_logic_vector((array_width_tb+1)* N_tb * array_width_tb -1 downto 0);
---    signal internal_weight_mem : std_logic_vector((array_width_tb+1)* N_tb * array_width_tb -1 downto 0);
---    signal internal_input_mem : std_logic_vector((array_width_tb+1)* N_tb * array_width_tb -1 downto 0);
---    signal internal_psum_mem : std_logic_vector((array_width_tb+1)* N_tb * array_width_tb -1 downto 0);
 
         
 begin
@@ -113,18 +91,6 @@ begin
         Data_out_output => Data_out_output_tb,
         output_valid => output_valid_tb,
         output_ready => output_ready_tb
-        
---        out_vector_input_o => out_vector_input_tb,
---        out_vector_weight_o => out_vector_weight_tb,
---        weight_write_en_o => weight_write_en_tb,
---        weight_en_o => weight_en_tb,
---        comp_en_PEs_o => comp_en_PEs_tb,
---        in_vector_output_o => in_vector_output_tb,
---        
---        intermediate_weight_o => intermediate_weight_o,
---        internal_weight_mem => internal_weight_mem,
---        internal_input_mem => internal_input_mem,
---        internal_psum_mem => internal_psum_mem
     );
 
     
@@ -319,6 +285,34 @@ begin
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        
 
         
         wait for CLOCK_PERIOD;
@@ -398,6 +392,36 @@ begin
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        
         
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
@@ -467,6 +491,36 @@ begin
         wait for CLOCK_PERIOD;
         
         
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
+        wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;
         wait for CLOCK_PERIOD;

@@ -37,7 +37,9 @@ entity PE_block is
         --Bs : integer := 3; -- log2(N)
         es : integer := 2;
         
-        array_width : integer := 4
+        array_width : integer := 4;
+        
+        pipeline_num : integer := 3
         
     );
     port ( 
@@ -87,7 +89,8 @@ begin
         generic map(
             N => N,
             --Bs => Bs, -- log2(N)
-            es => es
+            es => es,
+            pipeline_num => pipeline_num
         )
         port map( 
             clk => clk,

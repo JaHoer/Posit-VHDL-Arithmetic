@@ -41,7 +41,10 @@ entity input_mem is
         
         -- Mem Size
         -- number of parallel shift register
-        mem_width : integer := 4
+        mem_width : integer := 4;
+        
+        -- needs longer delay when PEs work with pipelining
+        pipeline_num : integer := 3
     );
     port ( 
         clk : in std_logic;
@@ -68,7 +71,8 @@ begin
         
         register_entity : entity work.shift_register
             generic map(
-                length => k,
+                -- each PE has a delay of 2*pipeline_num from posit calculations + 1 from register
+                length => ((k-1) * (2*pipeline_num +1)) +1,
                 data_width => N
             )
             port map(

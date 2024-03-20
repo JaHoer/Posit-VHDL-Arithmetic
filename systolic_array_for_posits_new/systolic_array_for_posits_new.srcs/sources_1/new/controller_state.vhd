@@ -38,7 +38,10 @@ entity controller_state is
         --Bs : integer := 3; -- log2(N)
         es : integer := 2;
         
-        array_width : integer := 4
+        array_width : integer := 4;
+        
+        -- needs longer delays when PEs work with pipelining
+        pipeline_num : integer := 3
         
 
     );
@@ -109,18 +112,21 @@ architecture Behavioral of controller_state is
 
     signal input_ringcounter : std_logic_vector(array_width-1 downto 0) := (0 => '1', others => '0');
     signal enough_input_valids : std_logic := '0';
-    signal input_delay_counter : std_logic_vector(array_width-1 downto 0) := (0 => '1', others => '0');
+    --signal input_delay_counter : std_logic_vector(array_width-1 downto 0) := (0 => '1', others => '0');
+    signal input_delay_counter : std_logic_vector(((array_width-1)* (2* pipeline_num +1) +1)-1 downto 0) := (0 => '1', others => '0');
     signal enough_i_delay : std_logic := '0';
 
-    signal output_ringcounter : std_logic_vector(array_width-1 downto 0) := (0 => '1', others => '0');
-    signal enough_output_wait : std_logic := '0';
-    signal output_delay_counter : std_logic_vector(array_width-1 downto 0) := (0 => '1', others => '0');
+    --signal output_ringcounter : std_logic_vector(array_width-1 downto 0) := (0 => '1', others => '0');
+    --signal enough_output_wait : std_logic := '0';
+
+    --signal output_delay_counter : std_logic_vector(array_width-1 downto 0) := (0 => '1', others => '0');
+    signal output_delay_counter : std_logic_vector(((array_width-1) + (2* pipeline_num +1)) -1 downto 0) := (0 => '1', others => '0');
     signal enough_o_delay : std_logic := '0';
 
     --signal save_output_rc : std_logic_vector(array_width-1 downto 0) := (0 => '1', others => '0');
     --signal enough_save_o_rc : std_logic := '0';
 
-    signal output_sr : std_logic_vector(2*array_width-1 downto 0) := (others => '0');
+    signal output_sr : std_logic_vector((( 2*pipeline_num * array_width ) + 2*array_width)-1 downto 0) := (others => '0');
 
 
 begin

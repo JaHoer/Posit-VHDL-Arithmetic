@@ -45,9 +45,12 @@ begin
     generic map (
         N => 8,
         Bs => 3,
-        es => 2
+        es => 2,
+        pipeline_num => 0
     )
     port map (
+        clk => '0',
+        enable => '1',
         in1 => x"48",
         in2 => input_sig,
         start => '1',

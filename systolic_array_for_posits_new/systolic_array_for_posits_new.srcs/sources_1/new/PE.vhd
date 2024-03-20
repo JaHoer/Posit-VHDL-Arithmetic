@@ -97,6 +97,7 @@ begin
     )
     port map (
         clk => clk,
+        enable => comp_en,
         in1 => input,
         in2 => weight_mem,
         start => comp_en,   -- does nothing
@@ -116,6 +117,7 @@ begin
     )
     port map (
         clk => clk,
+        enable => comp_en,
         in1 => product_out,
         in2 => psum_old_p4,
         start => comp_en,   -- does nothing
@@ -139,7 +141,7 @@ begin
                 
                 input <= input_in;
                 psum_old <= psum_in;
-                psum_old_p2 <= psum_old;
+                
                 
                 
             end if;
@@ -167,7 +169,9 @@ begin
         sync1 : process(clk)
         begin
             if rising_edge(clk) then
-                psum_old_p2 <= psum_old;
+                if comp_en = '1' then
+                    psum_old_p2 <= psum_old;
+                end if;
             end if;
         end process;
     end generate;
@@ -179,7 +183,9 @@ begin
         sync1 : process(clk)
         begin
             if rising_edge(clk) then
-                psum_old_p3 <= psum_old_p2;
+                if comp_en = '1' then
+                    psum_old_p3 <= psum_old_p2;
+                end if;
             end if;
         end process;
     end generate;
@@ -191,7 +197,9 @@ begin
         sync1 : process(clk)
         begin
             if rising_edge(clk) then
-                psum_old_p4 <= psum_old_p3;
+                if comp_en = '1' then
+                    psum_old_p4 <= psum_old_p3;
+                end if;
             end if;
         end process;
     end generate;

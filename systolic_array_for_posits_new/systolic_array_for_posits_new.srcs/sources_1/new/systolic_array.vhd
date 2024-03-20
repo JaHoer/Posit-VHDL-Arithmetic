@@ -41,7 +41,9 @@ entity systolic_array is
         -- Mem Size
         -- number of parallel shift register
         -- doubles as systolic array dimentions
-        array_width : integer := 4
+        array_width : integer := 4;
+        
+        pipeline_num : integer := 3
     );
     port ( 
         clk : in std_logic;
@@ -125,7 +127,8 @@ begin
         N => N,
         --Bs => Bs,
         es => es,
-        array_width => array_width
+        array_width => array_width,
+        pipeline_num => pipeline_num
     )
     port map(
         clk => clk,
@@ -164,7 +167,8 @@ begin
         N => N,
         --Bs => Bs,
         es => es,
-        mem_width => array_width
+        mem_width => array_width,
+        pipeline_num => pipeline_num
     )
     port map(
         clk => clk,
@@ -229,7 +233,8 @@ begin
             N => N,
             --Bs => Bs, -- log2(N)
             es => es,
-            array_width => array_width    
+            array_width => array_width,
+            pipeline_num => pipeline_num
         )
         port map(
             clk => clk,

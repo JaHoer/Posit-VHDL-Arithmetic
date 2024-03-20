@@ -67,7 +67,7 @@ begin
     uut : entity work.weight_mem
     generic map (
         N => N_tb,
-        Bs => Bs_tb,
+        --Bs => Bs_tb,
         es => es_tb,
         mem_width => mem_width_tb
     )
@@ -76,10 +76,8 @@ begin
         rst => rst_tb,
         w_en => w_en_tb,
         input_vektor => input_vektor_tb,
-        diagonal_output_vector => output_vector_tb,
-        load_cooldown => load_cooldown_tb
---        ,
---        enable_out => enable_out_tb
+        diagonal_output_vector => output_vector_tb
+
     );
     
     

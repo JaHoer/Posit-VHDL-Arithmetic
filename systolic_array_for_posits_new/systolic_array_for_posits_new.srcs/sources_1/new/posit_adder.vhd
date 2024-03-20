@@ -48,6 +48,7 @@ entity posit_adder is
   );
   port (
     clk : in std_logic;
+    enable : in std_logic;
     in1 : in std_logic_vector(N-1 downto 0);
     in2 : in std_logic_vector(N-1 downto 0);
     start : in std_logic;
@@ -261,7 +262,7 @@ begin
     
         pipe_1_proc : process(clk)
         begin
-            if rising_edge(clk) then
+            if rising_edge(clk) and enable = '1'then
             rc1_p2 <= rc1;
             rc2_p2 <= rc2;
             regime1_p2 <= regime1;
@@ -422,7 +423,7 @@ begin
     
         pipe_1_proc : process(clk)
         begin
-            if rising_edge(clk) then
+            if rising_edge(clk) and enable = '1' then
             DSR_right_out_p2 <= DSR_right_out;
             add_m_in1_p2 <= add_m_in1;
            
@@ -502,7 +503,7 @@ begin
     
         pipe_1_proc : process(clk)
         begin
-            if rising_edge(clk) then
+            if rising_edge(clk) and enable = '1' then
             add_m_p4 <= add_m;
             mant_ovf_p4 <= mant_ovf;
             left_shift_val_p4 <= left_shift_val;
