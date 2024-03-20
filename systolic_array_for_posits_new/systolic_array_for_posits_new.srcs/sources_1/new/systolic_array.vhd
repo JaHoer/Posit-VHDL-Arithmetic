@@ -35,18 +35,13 @@ entity systolic_array is
     generic (
         -- Posit Values
         N : integer := 8;
-        Bs : integer := 3; -- log2(N)
+        --Bs : integer := 3; -- log2(N)
         es : integer := 2;
-
         
         -- Mem Size
         -- number of parallel shift register
         -- doubles as systolic array dimentions
         array_width : integer := 4
-        
-
-        
-        
     );
     port ( 
         clk : in std_logic;
@@ -103,23 +98,19 @@ architecture Behavioral of systolic_array is
     -- input_mem signals
     signal enable_input_mem : std_logic;
     signal rst_input : std_logic;
-    --signal w_en_input : std_logic;
     signal in_vector_input : std_logic_vector(INTERNAL_DATA_WIDTH -1 downto 0);
     signal out_vector_input : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
     
     -- weight_mem signals
     signal enable_weight_mem : std_logic;
     signal rst_weight : std_logic;
-    --signal w_en_weight : std_logic;
     signal in_vector_weight : std_logic_vector(INTERNAL_DATA_WIDTH -1 downto 0);
     signal out_vector_weight : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
     
     -- output_mem signals
     signal enable_output_mem : std_logic;
     signal rst_output : std_logic;
-    --signal w_en_output : std_logic;
     signal in_vector_output : std_logic_vector(INTERNAL_DATA_WIDTH -1 downto 0);
-    --signal out_vector_output : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
     signal out_diagonal_vector_output : std_logic_vector(INTERNAL_DATA_WIDTH-1 downto 0);
     
 
@@ -132,7 +123,7 @@ begin
     controller : entity work.controller_state
     generic map (
         N => N,
-        Bs => Bs,
+        --Bs => Bs,
         es => es,
         array_width => array_width
     )
@@ -171,7 +162,7 @@ begin
     input_mem : entity work.input_mem
     generic map (
         N => N,
-        Bs => Bs,
+        --Bs => Bs,
         es => es,
         mem_width => array_width
     )
@@ -186,7 +177,7 @@ begin
     weight_mem : entity work.weight_mem
     generic map (
         N => N,
-        Bs => Bs,
+        --Bs => Bs,
         es => es,
         mem_width => array_width
     )
@@ -195,14 +186,13 @@ begin
         rst => rst_weight,
         w_en => enable_weight_mem,
         input_vektor => in_vector_weight,
-        diagonal_output_vector => out_vector_weight,
-        load_cooldown => weight_write_en(array_width)
+        diagonal_output_vector => out_vector_weight
     );
     
     output_mem : entity work.output_mem
     generic map (
         N => N,
-        Bs => Bs,
+        --Bs => Bs,
         es => es,
 
         mem_width => array_width
@@ -237,7 +227,7 @@ begin
         PE_block_entity : entity work.PE_block
         generic map(
             N => N,
-            Bs => Bs, -- log2(N)
+            --Bs => Bs, -- log2(N)
             es => es,
             array_width => array_width    
         )

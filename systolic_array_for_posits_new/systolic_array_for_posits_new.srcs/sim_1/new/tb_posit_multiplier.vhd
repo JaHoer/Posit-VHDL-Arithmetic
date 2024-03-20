@@ -35,8 +35,8 @@ entity tb_posit_multiplier is
     generic (
         N_tb : integer := 8;
         Bs_tb : integer := 3;   -- log2(N)
-        es_tb : integer := 2    -- fuer Wertetabelle = 4
-        
+        es_tb : integer := 2;    -- fuer Wertetabelle = 4
+        pipeline_num : integer := 0
     );
 
 --  Port ( );
@@ -65,10 +65,11 @@ begin
     generic map (
         N => N_tb,
         --Bs => Bs_tb,
-        es => es_tb
+        es => es_tb,
+        pipeline_num => pipeline_num
     )
     port map (
-        --clk => clk_tb,
+        clk => clk_tb,
     
         in1 => in1_tb,
         in2 => in2_tb,

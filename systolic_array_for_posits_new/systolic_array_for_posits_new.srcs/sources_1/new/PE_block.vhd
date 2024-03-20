@@ -34,7 +34,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 entity PE_block is
     generic(
         N : integer := 8;
-        Bs : integer := 3; -- log2(N)
+        --Bs : integer := 3; -- log2(N)
         es : integer := 2;
         
         array_width : integer := 4
@@ -55,17 +55,6 @@ entity PE_block is
         psum_out : out STD_LOGIC_VECTOR (N-1 downto 0);
         weight_w_en_out : out std_logic
         
-        
-        -- Debug
---        ;
---        intermediate_weight_o : out std_logic_vector((array_width+1)*N-1 downto 0);
---        intermediate_psum_o : out std_logic_vector((array_width+1)*N-1 downto 0);
---        internal_weight_mem : out std_logic_vector((array_width+1)*N-1 downto 0);
---        internal_input_mem : out std_logic_vector((array_width+1)*N-1 downto 0);
---        internal_psum_mem : out std_logic_vector((array_width+1)*N-1 downto 0);
---        product_out : out std_logic_vector(array_width*N-1 downto 0)
-        
-        
     );
 end PE_block;
 
@@ -85,8 +74,6 @@ architecture Behavioral of PE_block is
 
 begin
 
-
-    --intermediate_w_write(array_width) <= weight_w_en_in;
     
     
     intermediate_psum((array_width+1)*N-1 downto (array_width)*N) <= psum_in;
@@ -99,13 +86,12 @@ begin
         PE_entity : entity work.PE
         generic map(
             N => N,
-            Bs => Bs, -- log2(N)
+            --Bs => Bs, -- log2(N)
             es => es
         )
         port map( 
             clk => clk,
             comp_en => comp_en,
-            --weight_en => weight_en_tmp,
             weight_en => weight_en,
             
             --weight_in => weight_in((i+1)*N-1 downto i*N),
@@ -114,11 +100,10 @@ begin
             psum_in => intermediate_psum((i+2)*N-1 downto (i+1)*N),
             weight_w_en_in => weight_w_en_in,
 
-            --weight_out => weight_out((i+1)*N-1 downto i*N),
             weight_out => intermediate_weight((i+1)*N-1 downto (i)*N),
             input_out => input_out((i+1)*N-1 downto i*N),
             psum_out => intermediate_psum((i+1)*N-1 downto (i)*N)
-            --weight_w_en_out => intermediate_w_write(i)
+
             
         );
 
@@ -128,15 +113,8 @@ begin
     w_mem : process (clk)
     begin
         if rising_edge(clk) then
-            --weigth_write_mem <= weight_w_en_in;
             weight_w_en_out <= weight_w_en_in;
-            --weight_en_tmp <= weight_en;
-            
-            --weight_en_out <= weight_en;
-            
---            if weight_en = '1' then
---                intermediate_weight((array_width+1)*N-1 downto (array_width)*N) <= weight_in;
---            end if;
+
         end if;
     end process;
     

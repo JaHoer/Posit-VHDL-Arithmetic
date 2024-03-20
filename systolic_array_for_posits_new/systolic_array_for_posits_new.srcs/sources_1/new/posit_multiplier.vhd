@@ -39,10 +39,11 @@ entity posit_multiplier is
     generic (
         N : integer := 8;
         --Bs : integer := 3;  -- log2(N)
-        es : integer := 2
+        es : integer := 2;
+        pipeline_num : integer := 3
     );
     port ( 
-    
+        clk : in std_logic;
         in1 : in std_logic_vector(N-1 downto 0);
         in2 : in std_logic_vector(N-1 downto 0);
         start : in std_logic;
@@ -58,8 +59,11 @@ end posit_multiplier;
 architecture Behavioral of posit_multiplier is
 
     constant Bs : integer := integer(sqrt(real(N)));
-
+    
     signal start0 : std_logic;
+    signal start0_p2 : std_logic;
+    signal start0_p3 : std_logic;
+    signal start0_p4 : std_logic;
     signal s1 : std_logic;
     signal s2 : std_logic;
     signal zero_tmp1 : std_logic;
@@ -69,13 +73,25 @@ architecture Behavioral of posit_multiplier is
     signal zero1 : std_logic;
     signal zero2 : std_logic;
     signal inf_sig : std_logic;
+    signal inf_sig_p2 : std_logic;
+    signal inf_sig_p3 : std_logic;
+    signal inf_sig_p4 : std_logic;
     signal zero_sig : std_logic;
+    signal zero_sig_p2 : std_logic;
+    signal zero_sig_p3 : std_logic;
+    signal zero_sig_p4 : std_logic;
+    
+    
     
     -- Data Extraction
     signal rc1, rc2 : std_logic;
-    signal regime1, regime2, Lshift1, Lshift2 : std_logic_vector(Bs-1 downto 0);
+    signal regime1, regime2 : std_logic_vector(Bs-1 downto 0);
     signal e1, e2 : std_logic_vector(es-1 downto 0);
     signal mant1, mant2 : std_logic_vector(N-es-1 downto 0);
+    
+    signal rc1_p2, rc2_p2 : std_logic;
+    signal regime1_p2, regime2_p2 : std_logic_vector(Bs-1 downto 0);
+    signal e1_p2, e2_p2 : std_logic_vector(es-1 downto 0);
     
     
     signal xin1 : std_logic_vector(N-1 downto 0);
@@ -92,7 +108,6 @@ architecture Behavioral of posit_multiplier is
             in_val : in std_logic_vector(N-1 downto 0);
             rc : out std_logic;
             regime : out std_logic_vector(Bs-1 downto 0);
-            Lshift : out std_logic_vector(Bs-1 downto 0);
             exp : out std_logic_vector(es-1 downto 0);
             mant : out std_logic_vector(N-es-1 downto 0)
         );
@@ -100,12 +115,19 @@ architecture Behavioral of posit_multiplier is
     
     
     signal m1, m2 : std_logic_vector(N-es downto 0);
+    signal m1_p2, m2_p2 : std_logic_vector(N-es downto 0);      -- for 2nd pipeline stage
     signal mult_s : std_logic;
+    signal mult_s_p2 : std_logic;
+    signal mult_s_p3 : std_logic;
+    signal mult_s_p4 : std_logic;
     
     signal mult_m : std_logic_vector(2*(N-es)+1 downto 0);
+    signal mult_m_p3 : std_logic_vector(2*(N-es)+1 downto 0);   -- for 3rd pipeline stage
+    
     signal mult_m_ovf : std_logic;
     signal mult_m_ovf_v : std_logic_vector(0 downto 0);
     signal mult_mN : std_logic_vector(2*(N-es)+1 downto 0);
+    signal mult_mN_p4 : std_logic_vector(2*(N-es)+1 downto 0);     -- for 4th pipeline stage
     
     signal regime1_long_inv : std_logic_vector(Bs+1 downto 0);
     signal regime2_long_inv : std_logic_vector(Bs+1 downto 0);
@@ -115,8 +137,11 @@ architecture Behavioral of posit_multiplier is
     
     signal r1e1 : std_logic_vector(Bs+es+1 downto 0);
     signal r2e2 : std_logic_vector(Bs+es+1 downto 0);
+    signal r1e1_p3 : std_logic_vector(Bs+es+1 downto 0);    -- for 3rd pipeline stage
+    signal r2e2_p3 : std_logic_vector(Bs+es+1 downto 0);    -- for 3rd pipeline stage
     
     signal mult_e : std_logic_vector(Bs+es+1 downto 0);
+    signal mult_e_p4 : std_logic_vector(Bs+es+1 downto 0);  -- for 4th pipeline stage
     
     signal mult_eN : std_logic_vector(es+Bs downto 0);
     signal e_o : std_logic_vector(es-1 downto 0);
@@ -172,7 +197,6 @@ begin
             in_val => xin1,
             rc => rc1,
             regime => regime1,
-            Lshift => Lshift1,
             exp => e1,
             mant => mant1
         );
@@ -187,7 +211,6 @@ begin
             in_val => xin2,
             rc => rc2,
             regime => regime2,
-            Lshift => Lshift2,
             exp => e2,
             mant => mant2
         );
@@ -199,52 +222,191 @@ begin
     
     mult_s <= s1 xor s2;
     
-    mult_m <= std_logic_vector(unsigned(m1) * unsigned(m2));
     
-    -- check for overflow
-    mult_m_ovf <= mult_m(2*(N-es)+1);
     
-    mult_mN <= std_logic_vector(shift_left(unsigned(mult_m), 1)) when mult_m_ovf = '0' else mult_m;
     
-    regime1_long_inv <= std_logic_vector(resize(unsigned(regime1), Bs + 2));  -- r1'length
-    regime2_long_inv <= std_logic_vector(resize(unsigned(regime2), Bs + 2));  -- r2'length
+    pipe_1 : if pipeline_num > 1 generate
     
+        pipe_1_proc : process(clk)
+        begin
+            if rising_edge(clk) then
+            rc1_p2 <= rc1;
+            rc2_p2 <= rc2;
+            regime1_p2 <= regime1;
+            regime2_p2 <= regime2;
+            e1_p2 <= e1;
+            e2_p2 <= e2;
+            
+            m1_p2 <= m1;
+            m2_p2 <= m2;
+            
+            start0_p2 <= start0;
+            mult_s_p2 <= mult_s;
+            inf_sig_p2 <= inf_sig;
+            zero_sig_p2 <= zero_sig;
+            end if;
+        
+        end process;
+    
+    end generate;
+    
+    pipe_1_not : if pipeline_num <= 1 generate
+    
+        rc1_p2 <= rc1;
+        rc2_p2 <= rc2;
+        regime1_p2 <= regime1;
+        regime2_p2 <= regime2;
+        e1_p2 <= e1;
+        e2_p2 <= e2;
+        
+        m1_p2 <= m1;
+        m2_p2 <= m2;
+           
+        start0_p2 <= start0;
+        mult_s_p2 <= mult_s;
+        inf_sig_p2 <= inf_sig;
+        zero_sig_p2 <= zero_sig;
+ 
+    end generate;
+    
+    
+    
+    
+    
+    mult_m <= std_logic_vector(unsigned(m1_p2) * unsigned(m2_p2));
 
-    r1 <= ("00" & regime1) when rc1 = '1' else std_logic_vector(- signed(regime1_long_inv));
-    r2 <= ("00" & regime2) when rc2 = '1' else std_logic_vector(- signed(regime2_long_inv));
+    regime1_long_inv <= std_logic_vector(resize(unsigned(regime1_p2), Bs + 2));  -- r1'length
+    regime2_long_inv <= std_logic_vector(resize(unsigned(regime2_p2), Bs + 2));  -- r2'length
+
+    r1 <= ("00" & regime1_p2) when rc1_p2 = '1' else std_logic_vector(- signed(regime1_long_inv));
+    r2 <= ("00" & regime2_p2) when rc2_p2 = '1' else std_logic_vector(- signed(regime2_long_inv));
     
+    r1e1 <= r1 & e1_p2;
+    r2e2 <= r2 & e2_p2;
+    
+    
+    
+    
+    
+    
+    
+    
+    pipe_2 : if pipeline_num > 0 generate
+    
+        pipe_1_proc : process(clk)
+        begin
+            if rising_edge(clk) then
+            mult_m_p3 <= mult_m;
+            r1e1_p3 <= r1e1;
+            r2e2_p3 <= r2e2;
+            
+            start0_p3 <= start0_p2;
+            mult_s_p3 <= mult_s_p2;
+            inf_sig_p3 <= inf_sig_p2;
+            zero_sig_p3 <= zero_sig_p2;
+            end if;
+        end process;
+    
+    end generate;
+    
+    pipe_2_not : if pipeline_num <= 0 generate
+        mult_m_p3 <= mult_m;
+        r1e1_p3 <= r1e1;
+        r2e2_p3 <= r2e2;
+        
+        start0_p3 <= start0_p2;
+        mult_s_p3 <= mult_s_p2;
+        inf_sig_p3 <= inf_sig_p2;
+        zero_sig_p3 <= zero_sig_p2;
+ 
+    end generate;
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+        -- check for overflow
+    mult_m_ovf <= mult_m_p3(2*(N-es)+1);
     mult_m_ovf_v(0) <= mult_m_ovf;
     
-    r1e1 <= r1 & e1;
-    r2e2 <= r2 & e2;
+    mult_mN <= std_logic_vector(shift_left(unsigned(mult_m_p3), 1)) when mult_m_ovf = '0' else mult_m_p3;
     
  
-    mult_e <= std_logic_vector(unsigned(r1e1) + unsigned(r2e2) + unsigned( mult_m_ovf_v));
+    mult_e <= std_logic_vector(unsigned(r1e1_p3) + unsigned(r2e2_p3) + unsigned( mult_m_ovf_v));
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    pipe_3 : if pipeline_num > 2 generate
+    
+        pipe_1_proc : process(clk)
+        begin
+            if rising_edge(clk) then
+            mult_e_p4 <= mult_e;
+            mult_mN_p4 <= mult_mN;
+
+            start0_p4 <= start0_p3;
+            mult_s_p4 <= mult_s_p3;
+            inf_sig_p4 <= inf_sig_p3;
+            zero_sig_p4 <= zero_sig_p3;
+            end if;
+        end process;
+    
+    end generate;
+    
+    pipe_3_not : if pipeline_num <= 2 generate
+        mult_e_p4 <= mult_e;
+        mult_mN_p4 <= mult_mN;
+
+        start0_p4 <= start0_p3;
+        mult_s_p4 <= mult_s_p3;
+        inf_sig_p4 <= inf_sig_p3;
+        zero_sig_p4 <= zero_sig_p3;
+ 
+    end generate;
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     -- Exponent and Regime Computation
     
-    mult_eN <= std_logic_vector(- signed(mult_e(es+Bs downto 0))) when mult_e(es+Bs+1) = '1' else mult_e(es+Bs downto 0);
+    mult_eN <= std_logic_vector(- signed(mult_e_p4(es+Bs downto 0))) when mult_e_p4(es+Bs+1) = '1' else mult_e_p4(es+Bs downto 0);
     
     -- IF (Exp[E]&(|ExpN[ES-1:0]))
   
     --      EO[ES-1:0] ? 2's complement of ExpN[ES-1:0]     else EO[ES-1:0] ? ExpN[ES-1:0]
-    e_o <= mult_e(es-1 downto 0) when mult_e(es+Bs+1) = '1' and OR_REDUCE(mult_eN(es-1 downto 0)) = '1' else mult_eN(es-1 downto 0);
+    e_o <= mult_e_p4(es-1 downto 0) when mult_e_p4(es+Bs+1) = '1' and OR_REDUCE(mult_eN(es-1 downto 0)) = '1' else mult_eN(es-1 downto 0);
     
     
     -- IF (!Exp[E]||(Exp[E]&(|ExpN[ES-1:0])))
     --      RO[E -ES-1:0] ? ExpN[E -1 : ES] +1      else RO[E -ES-1:0] ? ExpN[E -1 : ES]
-    r_o <= std_logic_vector(unsigned(mult_eN(es+Bs downto es)) + 1) when mult_e(es+Bs+1) = '0' or (mult_e(es+Bs+1)= '1' and OR_REDUCE(mult_eN(es-1 downto 0)) = '1') else mult_eN(es+Bs downto es); 
+    r_o <= std_logic_vector(unsigned(mult_eN(es+Bs downto es)) + 1) when mult_e_p4(es+Bs+1) = '0' or (mult_e_p4(es+Bs+1)= '1' and OR_REDUCE(mult_eN(es-1 downto 0)) = '1') else mult_eN(es+Bs downto es); 
     
     
     
     -- Exponent and Mantissa Packing
     
-    not_mult_e <= (others => not mult_e(es+Bs+1));
+    not_mult_e <= (others => not mult_e_p4(es+Bs+1));
     
     
     -- REM[2 ?N -1:0] ? {N{!Exp[E]},Exp[E],EO,MFP[N -2 : ES]}
-    tmp_o <= not_mult_e & mult_e(es+Bs+1) & e_o & mult_mN(2*(N-es) downto N-es+2);
+    tmp_o <= not_mult_e & mult_e_p4(es+Bs+1) & e_o & mult_mN_p4(2*(N-es) downto N-es+2);
     
     
     
@@ -260,17 +422,17 @@ begin
     
     -- Final Output
     -- If (SFP == 1): REM ? (2's complement of REM)
-    tmp1_oN <= std_logic_vector(- signed(tmp1_o)) when mult_s = '1' else tmp1_o;
+    tmp1_oN <= std_logic_vector(- signed(tmp1_o)) when mult_s_p4 = '1' else tmp1_o;
     
     out_zeros <= (others => '0');
     -- Combine SFP with LSB (N-1) bit of REM
     -- out_val <= inf_sig & out_zeros when (inf_sig = '1' or zero_sig = '1') or mult_mN(2*(N-es)+1) = '0' else mult_s & tmp1_oN(N-1 downto 1);
-    out_val <= inf_sig & out_zeros when (inf_sig = '1' or zero_sig = '1') or mult_mN(2*(N-es)+1) = '0' else mult_s & tmp1_oN(N-1 downto 1);
+    out_val <= inf_sig_p4 & out_zeros when (inf_sig_p4 = '1' or zero_sig_p4 = '1') or mult_mN_p4(2*(N-es)+1) = '0' else mult_s_p4 & tmp1_oN(N-1 downto 1);
     
-    inf <= inf_sig;
-    zero <= zero_sig;
+    inf <= inf_sig_p4;
+    zero <= zero_sig_p4;
     
-    done <= '1';
+    done <= start0_p4;
     
     
 

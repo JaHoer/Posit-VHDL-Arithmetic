@@ -33,17 +33,13 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity input_mem is
     generic(
-        --input_width : integer := 128;
-        --output_width : integer := 128;
     
         -- Posit Values
         N : integer := 8;
-        Bs : integer := 3; -- log2(N)
+        --Bs : integer := 3; -- log2(N)
         es : integer := 2;
         
         -- Mem Size
-        -- depth of shift register
-        --mem_depth : integer := 8;
         -- number of parallel shift register
         mem_width : integer := 4
     );
@@ -52,7 +48,6 @@ entity input_mem is
         rst : in std_logic;
         w_en : in std_logic;
         input_vektor : in std_logic_vector(mem_width*N-1 downto 0);
-        --output_vector : out std_logic_vector(output_width-1 downto 0);
         diagonal_output_vector : out std_logic_vector(mem_width*N-1 downto 0)
     );
 end input_mem;

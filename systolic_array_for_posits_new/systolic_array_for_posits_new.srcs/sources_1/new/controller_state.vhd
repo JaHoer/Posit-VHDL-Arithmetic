@@ -35,7 +35,7 @@ entity controller_state is
     generic(
         -- Posit Values
         N : integer := 8;
-        Bs : integer := 3; -- log2(N)
+        --Bs : integer := 3; -- log2(N)
         es : integer := 2;
         
         array_width : integer := 4
