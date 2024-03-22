@@ -59,7 +59,9 @@ end posit_multiplier;
 
 architecture Behavioral of posit_multiplier is
 
-    constant Bs : integer := integer(sqrt(real(N)));
+    constant Bs : integer := integer(log2(real(N)));
+    
+    
     
     signal start0 : std_logic;
     signal start0_p2 : std_logic;
@@ -326,11 +328,6 @@ begin
     
     
     
-    
-    
-    
-    
-    
         -- check for overflow
     mult_m_ovf <= mult_m_p3(2*(N-es)+1);
     mult_m_ovf_v(0) <= mult_m_ovf;
@@ -339,9 +336,6 @@ begin
     
  
     mult_e <= std_logic_vector(unsigned(r1e1_p3) + unsigned(r2e2_p3) + unsigned( mult_m_ovf_v));
-    
-    
-    
     
     
     
@@ -375,9 +369,6 @@ begin
         zero_sig_p4 <= zero_sig_p3;
  
     end generate;
-    
-    
-    
     
     
     

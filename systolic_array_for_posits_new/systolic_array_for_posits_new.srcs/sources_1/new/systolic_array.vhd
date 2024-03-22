@@ -153,8 +153,6 @@ begin
         enable_weight_mem => enable_weight_mem,
         enable_input_mem => enable_input_mem,
         enable_output_mem => enable_output_mem,
-        
-        --inst => inst_in,
         weight_write => weight_write_en(array_width)
         
         

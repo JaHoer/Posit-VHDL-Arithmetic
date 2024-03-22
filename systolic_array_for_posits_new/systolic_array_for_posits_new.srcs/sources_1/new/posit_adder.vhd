@@ -64,7 +64,7 @@ end posit_adder;
 
 architecture Behavioral of posit_adder is
 
-    constant Bs : integer := integer(sqrt(real(N)));
+    constant Bs : integer := integer(log2(real(N)));
   
     signal start0 : std_logic;
     signal start0_p2 : std_logic;
@@ -253,9 +253,7 @@ begin
     ls <= s1 when in1_gt_in2 = '1' else s2;
     op <= s1 xnor s2;
     
-    -- wire in1_gt_in2 = xin1[N-2:0] >= xin2[N-2:0] ? 1'b1 : 1'b0;
-    in1_gt_in2 <= '1' when xin1(N-2 downto 0) >= xin2(N-2 downto 0)
-            else '0';
+    in1_gt_in2 <= '1' when xin1(N-2 downto 0) >= xin2(N-2 downto 0) else '0';
     
     
     pipe_1 : if pipeline_num > 1 generate
@@ -329,7 +327,6 @@ begin
     
     
     
-    -- lr_N = lrc ? {1'b0,lr} : -{1'b0,lr}
     lr_N <= '0' & lr when lrc = '1' else std_logic_vector( - signed('0' & lr));
     -- {(LRC ? LR : -LR),LE}
     lr_N_le <= lr_n & le;
@@ -451,15 +448,6 @@ begin
         zero_sig_p3 <= zero_sig_p2;
  
     end generate;
-
-
-
-
-
-
-
-
-
 
 
 
@@ -589,7 +577,6 @@ begin
   
     -- Output
     -- out = inf|zero|(~DSR_left_out[N-1]) ? {inf,{N-1{1'b0}}} : {ls, tmp1_oN[N-1:1]}
-    -- out_val <= tmp1_oN(2*N-1 downto N);
     out_zeros <= (others => '0');
     out_val <= inf_sig_p4 & out_zeros when (inf_sig_p4 = '1' or zero_sig_p4 = '1') or (DSR_left_out(N-1) = '0') else ls_p4 & tmp1_oN(N-1 downto 1);
   

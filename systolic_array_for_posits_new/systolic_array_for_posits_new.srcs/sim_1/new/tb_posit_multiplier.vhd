@@ -26,6 +26,8 @@ use IEEE.STD_LOGIC_1164.ALL;
 -- arithmetic functions with Signed or Unsigned values
 --use IEEE.NUMERIC_STD.ALL;
 
+use ieee.math_real.all;
+
 -- Uncomment the following library declaration if instantiating
 -- any Xilinx leaf cells in this code.
 --library UNISIM;
@@ -45,6 +47,7 @@ end tb_posit_multiplier;
 architecture Behavioral of tb_posit_multiplier is
 
     constant CLOCK_PERIOD : time := 1000 ns;
+    
 
     signal clk_tb  : std_logic;
     signal enable  : std_logic;
