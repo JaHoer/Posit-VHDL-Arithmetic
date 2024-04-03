@@ -88,7 +88,7 @@ begin
     psum_out <= psum_new;
     
     
-    posit_multiplier_entity : entity work.posit_multiplier
+    posit_multiplier_entity : entity work.posit_multiplier_r
     generic map (
         N => N,
         --Bs => Bs,
@@ -108,7 +108,7 @@ begin
     );
     
     
-    posit_adder_entity : entity work.posit_adder
+    posit_adder_entity : entity work.posit_adder_r
     generic map (
         N => N,
         --Bs => Bs,

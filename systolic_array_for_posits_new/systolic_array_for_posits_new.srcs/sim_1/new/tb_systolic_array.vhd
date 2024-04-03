@@ -42,7 +42,7 @@ entity tb_systolic_array is
         -- doubles as systolic array dimentions
         array_width_tb : integer := 4;
         
-        pipeline_num : integer := 0
+        pipeline_num : integer := 3
     );
 
 --  Port ( );

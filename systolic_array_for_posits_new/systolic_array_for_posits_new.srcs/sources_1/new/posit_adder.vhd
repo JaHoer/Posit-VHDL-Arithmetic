@@ -475,7 +475,7 @@ begin
     add_m <= add_m1 when op_p3 = '1' else add_m2;
   
     -- check for Overflow of Mant
-    mant_ovf <= add_m(N) & add_m(N-1);
+    mant_ovf <= add_m(add_m'high) & add_m(add_m'high-1);
   
     -- Add_M is checked for mantissa overflow (Movf) by checking its MSB and shifted 1-bit to left
     -- accordingly if found false, which requires an N-1 bit 2:1 MUX (Line 32-33)
@@ -483,7 +483,7 @@ begin
   
   
     -- LOD of mantissa addition result
-    LOD_in <= ((add_m(N) or add_m(N-1)) & add_m(N-2 downto 0));
+    LOD_in <= ((add_m(add_m'high) or add_m(add_m'high-1)) & add_m(add_m'high-2 downto 0));
 
     l2 : entity work.LOD_N
         generic map (
@@ -537,12 +537,12 @@ begin
 
   
     -- DSR Left Shifting of mantissa result
-    DSR_left_out_t <= std_logic_vector(shift_left(unsigned(add_m_p4(N+2 downto 1)), to_integer(unsigned(left_shift_val_p4))));
+    DSR_left_out_t <= std_logic_vector(shift_left(unsigned(add_m_p4(N downto 1)), to_integer(unsigned(left_shift_val_p4))));
     
   
   -- Extra Left Shift
 --  DSR_left_out <= DSR_left_out_t when mant_ovf = '0' else DSR_left_out_t(N-1) & DSR_left_out_t(N-1 downto 1);
-    DSR_left_out <= DSR_left_out_t(N+1 downto 0) when DSR_left_out_t(DSR_left_out_t'high) = '1' else DSR_left_out_t(N downto 0) & '0';
+    DSR_left_out <= DSR_left_out_t(N-1 downto 0) when DSR_left_out_t(DSR_left_out_t'high) = '1' else DSR_left_out_t(N-2 downto 0) & '0';
   
   
   -- Regime Alignment
@@ -578,7 +578,7 @@ begin
 
     -- Mantissa Bits
     not_le_o <= (others => not le_o(es+Bs)); 
-    tmp_o <= not_le_o & le_o(es + Bs) & e_o & DSR_left_out(N downto es+2);
+    tmp_o <= not_le_o & le_o(es + Bs) & e_o & DSR_left_out(N-2 downto es);
   
     tmp1_o <= std_logic_vector(shift_right(unsigned(tmp_o), to_integer(unsigned(r_o))));
 

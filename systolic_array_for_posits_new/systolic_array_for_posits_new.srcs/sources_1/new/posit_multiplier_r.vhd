@@ -150,16 +150,26 @@ architecture Behavioral of posit_multiplier_r is
     signal e_o : std_logic_vector(es-1 downto 0);
     signal r_o : std_logic_vector(Bs downto 0);
     
-    signal not_mult_e : std_logic_vector(N-1 downto 0);
-    signal tmp_o : std_logic_vector(2*N-1 downto 0);
-    
-    signal tmp1_o : std_logic_vector(2*N-1 downto 0);
     signal r_o_dsr_tmp : std_logic_vector(Bs downto 0);
     signal r_o_dsr : std_logic_vector(Bs downto 0);
+    signal not_mult_e : std_logic_vector(N-1 downto 0);
+    signal tmp_o : std_logic_vector(2*N+1 downto 0);        -- longer for rounding bits +2
+    signal tmp1_o : std_logic_vector(2*N+1 downto 0);       -- longer for rounding bits +2
+    signal tmp2_o : std_logic_vector(2*N-1 downto 0);
     
     signal tmp1_oN : std_logic_vector(2*N-1 downto 0);
     
     signal out_zeros : std_logic_vector(N-2 downto 0);
+    
+    signal lsb_bit    : std_logic;
+    signal guard_bit  : std_logic;
+    signal round_bit  : std_logic;
+    signal sticky_bit : std_logic;
+    signal edge_case  : std_logic;
+    signal round      : std_logic;
+
+    
+
     
     
 
@@ -179,12 +189,8 @@ begin
     inf_sig <= inf1 or inf2;
     zero_sig <= zero1 and zero2;
 
-    -- For true sign bit, operands undergo 2's complement conversion which produces XIN1 and XIN2, each of N-1 bits (except the respective sign bit)
-    -- XIN1 ? S1 ? -IN1[N -2 : 0] : IN1[N -2 : 0]
 
-    -- xin1 = s1 ? -in1 : in1;
     xin1 <= std_logic_vector( - signed(in1(N-1 downto 0))) when s1 = '1' else in1(N-1 downto 0);
-    
     xin2 <= std_logic_vector( - signed(in2(N-1 downto 0))) when s2 = '1' else in2(N-1 downto 0);
     
     
@@ -379,15 +385,9 @@ begin
     -- Exponent and Regime Computation
     
     mult_eN <= std_logic_vector(- signed(mult_e_p4(es+Bs downto 0))) when mult_e_p4(es+Bs+1) = '1' else mult_e_p4(es+Bs downto 0);
-    
-    -- IF (Exp[E]&(|ExpN[ES-1:0]))
   
-    --      EO[ES-1:0] ? 2's complement of ExpN[ES-1:0]     else EO[ES-1:0] ? ExpN[ES-1:0]
     e_o <= mult_e_p4(es-1 downto 0) when mult_e_p4(es+Bs+1) = '1' and OR_REDUCE(mult_eN(es-1 downto 0)) = '1' else mult_eN(es-1 downto 0);
     
-    
-    -- IF (!Exp[E]||(Exp[E]&(|ExpN[ES-1:0])))
-    --      RO[E -ES-1:0] ? ExpN[E -1 : ES] +1      else RO[E -ES-1:0] ? ExpN[E -1 : ES]
     r_o <= std_logic_vector(unsigned(mult_eN(es+Bs downto es)) + 1) when mult_e_p4(es+Bs+1) = '0' or (mult_e_p4(es+Bs+1)= '1' and OR_REDUCE(mult_eN(es-1 downto 0)) = '1') else mult_eN(es+Bs downto es); 
     
     
@@ -398,7 +398,7 @@ begin
     
     
     -- REM[2 ?N -1:0] ? {N{!Exp[E]},Exp[E],EO,MFP[N -2 : ES]}
-    tmp_o <= not_mult_e & mult_e_p4(es+Bs+1) & e_o & mult_mN_p4(2*(N-es) downto N-es+2);
+    tmp_o <= not_mult_e & mult_e_p4(es+Bs+1) & e_o & mult_mN_p4(2*(N-es) downto N-es);
     
     
     
@@ -407,18 +407,30 @@ begin
     r_o_dsr_tmp <= (others => '1') when r_o(Bs) = '1' else r_o;
     r_o_dsr <= '0' & r_o_dsr_tmp(Bs-1 downto 0);
     
-        
+    tmp1_o <= std_logic_vector(shift_right(unsigned(tmp_o), to_integer(unsigned(r_o_dsr))));  
     
-    tmp1_o <= std_logic_vector(shift_right(unsigned(tmp_o), to_integer(unsigned(r_o_dsr_tmp))));  
+    
+    -- Rounding
+    lsb_bit    <= tmp1_o(3);
+    guard_bit  <= tmp1_o(2);
+    round_bit  <= tmp1_o(1);
+    sticky_bit <= tmp1_o(0);
+    edge_case <= or_reduce(tmp1_o(N+1 downto 3));  -- check if result would be rounded to zero
+    round      <= (guard_bit and (lsb_bit or round_bit or sticky_bit)) or (not edge_case);
+
+
+
+    tmp2_o <= std_logic_vector(unsigned(tmp1_o(2*N+1 downto 2)) + 1) when round = '1' 
+              else tmp1_o(2*N+1 downto 2);
+    -- end Rounding
     
     
     -- Final Output
     -- If (SFP == 1): REM ? (2's complement of REM)
-    tmp1_oN <= std_logic_vector(- signed(tmp1_o)) when mult_s_p4 = '1' else tmp1_o;
+    tmp1_oN <= std_logic_vector(- signed(tmp2_o)) when mult_s_p4 = '1' else tmp2_o;
     
     out_zeros <= (others => '0');
     -- Combine SFP with LSB (N-1) bit of REM
-    -- out_val <= inf_sig & out_zeros when (inf_sig = '1' or zero_sig = '1') or mult_mN(2*(N-es)+1) = '0' else mult_s & tmp1_oN(N-1 downto 1);
     out_val <= inf_sig_p4 & out_zeros when (inf_sig_p4 = '1' or zero_sig_p4 = '1') or mult_mN_p4(2*(N-es)+1) = '0' else mult_s_p4 & tmp1_oN(N-1 downto 1);
     
     inf <= inf_sig_p4;

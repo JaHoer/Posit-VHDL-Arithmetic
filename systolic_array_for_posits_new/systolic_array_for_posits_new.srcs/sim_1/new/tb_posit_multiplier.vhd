@@ -64,7 +64,7 @@ architecture Behavioral of tb_posit_multiplier is
 begin
 
 
-    uut : entity work.posit_multiplier
+    uut : entity work.posit_multiplier_r
     generic map (
         N => N_tb,
         --Bs => Bs_tb,
@@ -150,6 +150,68 @@ begin
         assert out_val_tb = "10000000" report "Should be 10000000";
         start_tb <= '0';
         wait for CLOCK_PERIOD;
+
+
+        -- for ES = 2
+
+        -- very large * very large
+        in1_tb <= "01111111";
+        in2_tb <= "01111111";
+        out_referenz <= "01111111";
+        start_tb <= '1';
+        wait for CLOCK_PERIOD;
+        assert done_tb = '1' report "Done Should be 1";
+        assert out_val_tb = "01111111" report "Should be 01111111";
+        start_tb <= '0';
+        wait for CLOCK_PERIOD;
+
+        -- -very small * -very small
+        in1_tb <= "10000001";
+        in2_tb <= "10000001";
+        out_referenz <= "01111111";
+        start_tb <= '1';
+        wait for CLOCK_PERIOD;
+        assert done_tb = '1' report "Done Should be 1";
+        assert out_val_tb = "01111111" report "Should be 01111111";
+        start_tb <= '0';
+        wait for CLOCK_PERIOD;
+
+        -- -close to zero * -close to zero
+        in1_tb <= "11111111";
+        in2_tb <= "11111111";
+        out_referenz <= "00000001";
+        start_tb <= '1';
+        wait for CLOCK_PERIOD;
+        assert done_tb = '1' report "Done Should be 1";
+        assert out_val_tb = "00000001" report "Should be 00000001";
+        start_tb <= '0';
+        wait for CLOCK_PERIOD;
+
+        -- +close to zero * +close to zero
+        in1_tb <= "00000001";
+        in2_tb <= "00000001";
+        out_referenz <= "00000001";
+        start_tb <= '1';
+        wait for CLOCK_PERIOD;
+        assert done_tb = '1' report "Done Should be 1";
+        assert out_val_tb = "00000001" report "Should be 00000001";
+        start_tb <= '0';
+        wait for CLOCK_PERIOD;
+
+        -- +close to zero * -close to zero
+        in1_tb <= "00000001";
+        in2_tb <= "11111111";
+        out_referenz <= "11111111";
+        start_tb <= '1';
+        wait for CLOCK_PERIOD;
+        assert done_tb = '1' report "Done Should be 1";
+        assert out_val_tb = "11111111" report "Should be 11111111";
+        start_tb <= '0';
+        wait for CLOCK_PERIOD;
+
+
+
+
         
         
         -- Zeile 5
