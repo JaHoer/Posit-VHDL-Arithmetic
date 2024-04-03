@@ -1,5 +1,234 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
 ------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2022.1 (win64) Build 3526262 Mon Apr 18 15:48:16 MDT 2022
+| Date         : Wed Apr  3 09:09:11 2024
+| Host         : PC-Jan running 64-bit major release  (build 9200)
+| Command      : upgrade_ip
+| Device       : xc7z020clg484-1
+------------------------------------------------------------------------------------
+
+Upgrade Log for IP 'sys_simple_test_systolic_array_0_0'
+
+1. Summary
+----------
+
+SUCCESS in the conversion of sys_simple_test_systolic_array_0_0 (xilinx.com:user:systolic_array:1.0 (Rev. 2)) to Vivado generation flows.
+
+
+
+
+
+
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2022.1 (win64) Build 3526262 Mon Apr 18 15:48:16 MDT 2022
+| Date         : Wed Apr  3 09:09:11 2024
+| Host         : PC-Jan running 64-bit major release  (build 9200)
+| Command      : upgrade_ip
+| Device       : xc7z020clg484-1
+------------------------------------------------------------------------------------
+
+Upgrade Log for IP 'sys_simple_test_rst_clk_wiz_1_100M_0'
+
+1. Summary
+----------
+
+SUCCESS in the conversion of sys_simple_test_rst_clk_wiz_1_100M_0 (xilinx.com:ip:proc_sys_reset:5.0 (Rev. 13)) to Vivado generation flows.
+
+
+
+
+
+
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2022.1 (win64) Build 3526262 Mon Apr 18 15:48:16 MDT 2022
+| Date         : Wed Apr  3 09:09:11 2024
+| Host         : PC-Jan running 64-bit major release  (build 9200)
+| Command      : upgrade_ip
+| Device       : xc7z020clg484-1
+------------------------------------------------------------------------------------
+
+Upgrade Log for IP 'sys_simple_test_microblaze_0_0'
+
+1. Summary
+----------
+
+SUCCESS in the conversion of sys_simple_test_microblaze_0_0 (xilinx.com:ip:microblaze:11.0 (Rev. 9)) to Vivado generation flows.
+
+
+
+
+
+
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2022.1 (win64) Build 3526262 Mon Apr 18 15:48:16 MDT 2022
+| Date         : Wed Apr  3 09:09:11 2024
+| Host         : PC-Jan running 64-bit major release  (build 9200)
+| Command      : upgrade_ip
+| Device       : xc7z020clg484-1
+------------------------------------------------------------------------------------
+
+Upgrade Log for IP 'sys_simple_test_mdm_1_1'
+
+1. Summary
+----------
+
+SUCCESS in the conversion of sys_simple_test_mdm_1_1 (xilinx.com:ip:mdm:3.2 (Rev. 23)) to Vivado generation flows.
+
+2. Upgrade messages
+-------------------
+
+Set parameter C_M_AXIS_ID_WIDTH to value 7 (source 'default')
+
+
+
+
+
+
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2022.1 (win64) Build 3526262 Mon Apr 18 15:48:16 MDT 2022
+| Date         : Wed Apr  3 09:09:11 2024
+| Host         : PC-Jan running 64-bit major release  (build 9200)
+| Command      : upgrade_ip
+| Device       : xc7z020clg484-1
+------------------------------------------------------------------------------------
+
+Upgrade Log for IP 'sys_simple_test_lmb_bram_1'
+
+1. Summary
+----------
+
+SUCCESS in the conversion of sys_simple_test_lmb_bram_1 (xilinx.com:ip:blk_mem_gen:8.4 (Rev. 5)) to Vivado generation flows.
+
+
+
+
+
+
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2022.1 (win64) Build 3526262 Mon Apr 18 15:48:16 MDT 2022
+| Date         : Wed Apr  3 09:09:11 2024
+| Host         : PC-Jan running 64-bit major release  (build 9200)
+| Command      : upgrade_ip
+| Device       : xc7z020clg484-1
+------------------------------------------------------------------------------------
+
+Upgrade Log for IP 'sys_simple_test_ilmb_v10_1'
+
+1. Summary
+----------
+
+SUCCESS in the conversion of sys_simple_test_ilmb_v10_1 (xilinx.com:ip:lmb_v10:3.0 (Rev. 12)) to Vivado generation flows.
+
+
+
+
+
+
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2022.1 (win64) Build 3526262 Mon Apr 18 15:48:16 MDT 2022
+| Date         : Wed Apr  3 09:09:11 2024
+| Host         : PC-Jan running 64-bit major release  (build 9200)
+| Command      : upgrade_ip
+| Device       : xc7z020clg484-1
+------------------------------------------------------------------------------------
+
+Upgrade Log for IP 'sys_simple_test_ilmb_bram_if_cntlr_1'
+
+1. Summary
+----------
+
+SUCCESS in the conversion of sys_simple_test_ilmb_bram_if_cntlr_1 (xilinx.com:ip:lmb_bram_if_cntlr:4.0 (Rev. 21)) to Vivado generation flows.
+
+2. Upgrade messages
+-------------------
+
+Set parameter C_MASK1 to value 0x0000000000800000 (source 'default')
+Set parameter C_MASK2 to value 0x0000000000800000 (source 'default')
+Set parameter C_MASK3 to value 0x0000000000800000 (source 'default')
+
+
+
+
+
+
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2022.1 (win64) Build 3526262 Mon Apr 18 15:48:16 MDT 2022
+| Date         : Wed Apr  3 09:09:11 2024
+| Host         : PC-Jan running 64-bit major release  (build 9200)
+| Command      : upgrade_ip
+| Device       : xc7z020clg484-1
+------------------------------------------------------------------------------------
+
+Upgrade Log for IP 'sys_simple_test_dlmb_v10_1'
+
+1. Summary
+----------
+
+SUCCESS in the conversion of sys_simple_test_dlmb_v10_1 (xilinx.com:ip:lmb_v10:3.0 (Rev. 12)) to Vivado generation flows.
+
+
+
+
+
+
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2022.1 (win64) Build 3526262 Mon Apr 18 15:48:16 MDT 2022
+| Date         : Wed Apr  3 09:09:11 2024
+| Host         : PC-Jan running 64-bit major release  (build 9200)
+| Command      : upgrade_ip
+| Device       : xc7z020clg484-1
+------------------------------------------------------------------------------------
+
+Upgrade Log for IP 'sys_simple_test_dlmb_bram_if_cntlr_1'
+
+1. Summary
+----------
+
+SUCCESS in the conversion of sys_simple_test_dlmb_bram_if_cntlr_1 (xilinx.com:ip:lmb_bram_if_cntlr:4.0 (Rev. 21)) to Vivado generation flows.
+
+2. Upgrade messages
+-------------------
+
+Set parameter C_MASK1 to value 0x0000000000800000 (source 'default')
+Set parameter C_MASK2 to value 0x0000000000800000 (source 'default')
+Set parameter C_MASK3 to value 0x0000000000800000 (source 'default')
+
+
+
+
+
+
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2022.1 (win64) Build 3526262 Mon Apr 18 15:48:16 MDT 2022
+| Date         : Wed Apr  3 09:09:11 2024
+| Host         : PC-Jan running 64-bit major release  (build 9200)
+| Command      : upgrade_ip
+| Device       : xc7z020clg484-1
+------------------------------------------------------------------------------------
+
+Upgrade Log for IP 'sys_simple_test_clk_wiz_1_0'
+
+1. Summary
+----------
+
+SUCCESS in the conversion of sys_simple_test_clk_wiz_1_0 (xilinx.com:ip:clk_wiz:6.0 (Rev. 10)) to Vivado generation flows.
+
+
+
+
+
+
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2022.1 (lin64) Build 3526262 Mon Apr 18 15:47:01 MDT 2022
 | Date         : Tue Mar 19 11:30:38 2024
 | Host         : gnarf-laptop running 64-bit Ubuntu 22.04.4 LTS

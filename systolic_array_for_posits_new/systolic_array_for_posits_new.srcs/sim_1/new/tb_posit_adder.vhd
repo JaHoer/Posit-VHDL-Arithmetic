@@ -36,7 +36,7 @@ entity tb_posit_adder is
         N_tb : integer := 8;
         Bs_tb : integer := 3; -- log2(N)
         es_tb : integer := 2;
-        pipeline_num : integer := 3
+        pipeline_num : integer := 0
     );
 
 --  Port ( );
@@ -63,7 +63,7 @@ architecture Behavioral of tb_posit_adder is
 
 begin
 
-    UUT : entity work.posit_adder
+    UUT : entity work.posit_adder_r
     generic map (
         N => N_tb,
         --Bs => Bs_tb,

@@ -2,7 +2,7 @@
   "design": {
     "design_info": {
       "boundary_crc": "0x0",
-      "device": "xc7z020clg484-3",
+      "device": "xc7z020clg484-1",
       "gen_directory": "../../../../systolic_array_for_posits_new.gen/sources_1/bd/sys_simple_test",
       "name": "sys_simple_test",
       "rev_ctrl_bd_flag": "RevCtrlBdOff",
@@ -10,7 +10,6 @@
       "tool_version": "2022.1"
     },
     "design_tree": {
-      "systolic_array_0": "",
       "microblaze_0_local_memory": {
         "dlmb_bram_if_cntlr": "",
         "dlmb_v10": "",
@@ -21,7 +20,8 @@
       "clk_wiz_1": "",
       "mdm_1": "",
       "microblaze_0": "",
-      "rst_clk_wiz_1_100M": ""
+      "rst_clk_wiz_1_100M": "",
+      "systolic_array_0": ""
     },
     "ports": {
       "LD0": {
@@ -82,12 +82,6 @@
       }
     },
     "components": {
-      "systolic_array_0": {
-        "vlnv": "xilinx.com:user:systolic_array:1.0",
-        "xci_name": "sys_simple_test_systolic_array_0_0",
-        "xci_path": "ip/sys_simple_test_systolic_array_0_0/sys_simple_test_systolic_array_0_0.xci",
-        "inst_hier_path": "systolic_array_0"
-      },
       "microblaze_0_local_memory": {
         "interface_ports": {
           "DLMB": {
@@ -115,7 +109,7 @@
           "dlmb_bram_if_cntlr": {
             "vlnv": "xilinx.com:ip:lmb_bram_if_cntlr:4.0",
             "xci_name": "sys_simple_test_dlmb_bram_if_cntlr_1",
-            "xci_path": "ip/sys_simple_test_dlmb_bram_if_cntlr_1/sys_simple_test_dlmb_bram_if_cntlr_1.xci",
+            "xci_path": "ip\\sys_simple_test_dlmb_bram_if_cntlr_1\\sys_simple_test_dlmb_bram_if_cntlr_1.xci",
             "inst_hier_path": "microblaze_0_local_memory/dlmb_bram_if_cntlr",
             "parameters": {
               "C_ECC": {
@@ -126,7 +120,7 @@
           "dlmb_v10": {
             "vlnv": "xilinx.com:ip:lmb_v10:3.0",
             "xci_name": "sys_simple_test_dlmb_v10_1",
-            "xci_path": "ip/sys_simple_test_dlmb_v10_1/sys_simple_test_dlmb_v10_1.xci",
+            "xci_path": "ip\\sys_simple_test_dlmb_v10_1\\sys_simple_test_dlmb_v10_1.xci",
             "inst_hier_path": "microblaze_0_local_memory/dlmb_v10",
             "interface_ports": {
               "LMB_M": {
@@ -141,7 +135,7 @@
           "ilmb_bram_if_cntlr": {
             "vlnv": "xilinx.com:ip:lmb_bram_if_cntlr:4.0",
             "xci_name": "sys_simple_test_ilmb_bram_if_cntlr_1",
-            "xci_path": "ip/sys_simple_test_ilmb_bram_if_cntlr_1/sys_simple_test_ilmb_bram_if_cntlr_1.xci",
+            "xci_path": "ip\\sys_simple_test_ilmb_bram_if_cntlr_1\\sys_simple_test_ilmb_bram_if_cntlr_1.xci",
             "inst_hier_path": "microblaze_0_local_memory/ilmb_bram_if_cntlr",
             "parameters": {
               "C_ECC": {
@@ -152,7 +146,7 @@
           "ilmb_v10": {
             "vlnv": "xilinx.com:ip:lmb_v10:3.0",
             "xci_name": "sys_simple_test_ilmb_v10_1",
-            "xci_path": "ip/sys_simple_test_ilmb_v10_1/sys_simple_test_ilmb_v10_1.xci",
+            "xci_path": "ip\\sys_simple_test_ilmb_v10_1\\sys_simple_test_ilmb_v10_1.xci",
             "inst_hier_path": "microblaze_0_local_memory/ilmb_v10",
             "interface_ports": {
               "LMB_M": {
@@ -167,7 +161,7 @@
           "lmb_bram": {
             "vlnv": "xilinx.com:ip:blk_mem_gen:8.4",
             "xci_name": "sys_simple_test_lmb_bram_1",
-            "xci_path": "ip/sys_simple_test_lmb_bram_1/sys_simple_test_lmb_bram_1.xci",
+            "xci_path": "ip\\sys_simple_test_lmb_bram_1\\sys_simple_test_lmb_bram_1.xci",
             "inst_hier_path": "microblaze_0_local_memory/lmb_bram",
             "parameters": {
               "Enable_B": {
@@ -256,7 +250,7 @@
       "clk_wiz_1": {
         "vlnv": "xilinx.com:ip:clk_wiz:6.0",
         "xci_name": "sys_simple_test_clk_wiz_1_0",
-        "xci_path": "ip/sys_simple_test_clk_wiz_1_0/sys_simple_test_clk_wiz_1_0.xci",
+        "xci_path": "ip\\sys_simple_test_clk_wiz_1_0\\sys_simple_test_clk_wiz_1_0.xci",
         "inst_hier_path": "clk_wiz_1",
         "parameters": {
           "PRIM_SOURCE": {
@@ -267,13 +261,13 @@
       "mdm_1": {
         "vlnv": "xilinx.com:ip:mdm:3.2",
         "xci_name": "sys_simple_test_mdm_1_1",
-        "xci_path": "ip/sys_simple_test_mdm_1_1/sys_simple_test_mdm_1_1.xci",
+        "xci_path": "ip\\sys_simple_test_mdm_1_1\\sys_simple_test_mdm_1_1.xci",
         "inst_hier_path": "mdm_1"
       },
       "microblaze_0": {
         "vlnv": "xilinx.com:ip:microblaze:11.0",
         "xci_name": "sys_simple_test_microblaze_0_0",
-        "xci_path": "ip/sys_simple_test_microblaze_0_0/sys_simple_test_microblaze_0_0.xci",
+        "xci_path": "ip\\sys_simple_test_microblaze_0_0\\sys_simple_test_microblaze_0_0.xci",
         "inst_hier_path": "microblaze_0",
         "parameters": {
           "C_DEBUG_ENABLED": {
@@ -337,8 +331,14 @@
       "rst_clk_wiz_1_100M": {
         "vlnv": "xilinx.com:ip:proc_sys_reset:5.0",
         "xci_name": "sys_simple_test_rst_clk_wiz_1_100M_0",
-        "xci_path": "ip/sys_simple_test_rst_clk_wiz_1_100M_0/sys_simple_test_rst_clk_wiz_1_100M_0.xci",
+        "xci_path": "ip\\sys_simple_test_rst_clk_wiz_1_100M_0\\sys_simple_test_rst_clk_wiz_1_100M_0.xci",
         "inst_hier_path": "rst_clk_wiz_1_100M"
+      },
+      "systolic_array_0": {
+        "vlnv": "xilinx.com:user:systolic_array:1.0",
+        "xci_name": "sys_simple_test_systolic_array_0_0",
+        "xci_path": "ip\\sys_simple_test_systolic_array_0_0\\sys_simple_test_systolic_array_0_0.xci",
+        "inst_hier_path": "systolic_array_0"
       }
     },
     "interface_nets": {
@@ -378,9 +378,9 @@
         "ports": [
           "clk_wiz_1/clk_out1",
           "microblaze_0_local_memory/LMB_Clk",
-          "systolic_array_0/clk",
           "microblaze_0/Clk",
-          "rst_clk_wiz_1_100M/slowest_sync_clk"
+          "rst_clk_wiz_1_100M/slowest_sync_clk",
+          "systolic_array_0/clk"
         ]
       },
       "rst_clk_wiz_1_100M_bus_struct_reset": {
@@ -392,8 +392,8 @@
       "rst_clk_wiz_1_100M_mb_reset": {
         "ports": [
           "rst_clk_wiz_1_100M/mb_reset",
-          "systolic_array_0/rst",
-          "microblaze_0/Reset"
+          "microblaze_0/Reset",
+          "systolic_array_0/rst"
         ]
       }
     },

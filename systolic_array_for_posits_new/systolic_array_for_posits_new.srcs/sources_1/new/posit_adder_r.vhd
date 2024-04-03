@@ -2,9 +2,9 @@
 -- Company: FAU
 -- Engineer: Jan Hoertig
 -- 
--- Create Date: 26.02.2024 09:16:45
+-- Create Date: 29.03.2024 09:38:01
 -- Design Name: 
--- Module Name: posit_adder - Behavioral
+-- Module Name: posit_adder_r - Behavioral
 -- Project Name: 
 -- Target Devices: 
 -- Tool Versions: 
@@ -37,7 +37,7 @@ use ieee.std_logic_misc.all;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity posit_adder is
+entity posit_adder_r is
 
   generic (
     N : integer := 8;
@@ -60,9 +60,9 @@ entity posit_adder is
   );
 
 
-end posit_adder;
+end posit_adder_r;
 
-architecture Behavioral of posit_adder is
+architecture Behavioral of posit_adder_r is
 
     constant Bs : integer := integer(log2(real(N)));
   
@@ -145,22 +145,24 @@ architecture Behavioral of posit_adder is
   signal diff : std_logic_vector(es+Bs+1 downto 0);
   signal diff_eig : std_logic_vector(es downto 0);
   signal exp_diff : std_logic_vector(Bs-1 downto 0);
-  signal DSR_right_in : std_logic_vector(N-1 downto 0);
-  signal DSR_right_out : std_logic_vector(N-1 downto 0);
-  signal DSR_right_out_p2 : std_logic_vector(N-1 downto 0); -- for 2nd Pipeline stage
+  signal DSR_right_in_t : std_logic_vector(N-1 downto 0);
+  signal DSR_right_in : std_logic_vector(N+1 downto 0);     -- longer for rounding bits +2
+  signal DSR_right_out : std_logic_vector(N+1 downto 0);    -- longer
+  signal DSR_right_out_p2 : std_logic_vector(N+1 downto 0); -- for 2nd Pipeline stage   -- longer
   signal DSR_e_diff : std_logic_vector(Bs-1 downto 0);
-  signal add_m_in1 : std_logic_vector(N-1 downto 0);
-  signal add_m_in1_p2 : std_logic_vector(N-1 downto 0);
-  signal add_m1, add_m2 : std_logic_vector(N downto 0);
-  signal add_m : std_logic_vector(N downto 0);
-  signal add_m_p4 : std_logic_vector(N downto 0);       -- for 4th Pipeline stage
+  signal add_m_in1_t : std_logic_vector(N-1 downto 0);
+  signal add_m_in1 : std_logic_vector(N+1 downto 0);        -- longer for rounding bits +2
+  signal add_m_in1_p2 : std_logic_vector(N+1 downto 0);     -- longer
+  signal add_m1, add_m2 : std_logic_vector(N+2 downto 0);   -- longer
+  signal add_m : std_logic_vector(N+2 downto 0);            -- longer
+  signal add_m_p4 : std_logic_vector(N+2 downto 0);       -- for 4th Pipeline stage     -- longer
   signal mant_ovf : std_logic_vector(1 downto 0);
   signal mant_ovf_p4 : std_logic_vector(1 downto 0);    -- for 4th Pipeline stage
   signal LOD_in : std_logic_vector(N-1 downto 0);
   signal left_shift_val : std_logic_vector(Bs-1 downto 0);
   signal left_shift_val_p4 : std_logic_vector(Bs-1 downto 0);   -- for 4th Pipeline stage
-  signal DSR_left_out_t : std_logic_vector(N-1 downto 0);
-  signal DSR_left_out : std_logic_vector(N-1 downto 0);
+  signal DSR_left_out_t : std_logic_vector(N+1 downto 0);   -- longer for rounding bits +2
+  signal DSR_left_out : std_logic_vector(N+1 downto 0);     -- longer
   signal lr_N : std_logic_vector(Bs downto 0);
   signal le_o_tmp, le_o : std_logic_vector(es+Bs+1 downto 0);
   signal le_oN : std_logic_vector(es+Bs downto 0);
@@ -178,11 +180,11 @@ architecture Behavioral of posit_adder is
     signal lr_N_le_p4 : std_logic_vector(es+Bs downto 0);     -- for 4th Pipeline stage
     signal left_shift_extended : std_logic_vector(es + Bs downto 0);
 
-    alias DSR_right_in_up is DSR_right_in(N-1 downto es-1);
-    alias DSR_right_in_low is DSR_right_in(es -2 downto 0);
+    alias DSR_right_in_up is DSR_right_in_t(N-1 downto es-1);
+    alias DSR_right_in_low is DSR_right_in_t(es -2 downto 0);
     
-    alias add_m_in1_up is add_m_in1(N-1 downto es-1);
-    alias add_m_in1_low is add_m_in1(es -2 downto 0);
+    alias add_m_in1_up is add_m_in1_t(N-1 downto es-1);
+    alias add_m_in1_low is add_m_in1_t(es -2 downto 0);
     
     signal not_le_o : std_logic_vector(N-1 downto 0);
     
@@ -391,14 +393,15 @@ begin
     gen_DSR_right_in_else: if es = 1 generate
         -- else case
         -- assign DSR_right_in = sm;   
-        DSR_right_in <= sm;
+        DSR_right_in_t <= sm;
     end generate;
     
     gen_DSR_right_in_else2: if es = 0 generate
         -- when es = 0 -> sm has length N+1 -> take most significant bits
-        DSR_right_in <= sm(N downto 1);
+        DSR_right_in_t <= sm(N downto 1);
     end generate;
     
+    DSR_right_in <= DSR_right_in_t & "00";
   
   
     DSR_e_diff <= exp_diff(Bs-1 downto 0);
@@ -414,17 +417,15 @@ begin
   
     gen_add_m_in1_else: if es = 1 generate
         -- else case
-        add_m_in1 <= lm;
+        add_m_in1_t <= lm;
     end generate;
     
     gen_add_m_in1_else2: if es = 0 generate
         -- when es = 0 -> lm has length N+1 -> take most significant bits
-        add_m_in1 <= lm(N downto 1);
+        add_m_in1_t <= lm(N downto 1);
     end generate;
 
-
-
-
+    add_m_in1 <= add_m_in1_t & "00";
 
 
 
@@ -475,7 +476,7 @@ begin
     add_m <= add_m1 when op_p3 = '1' else add_m2;
   
     -- check for Overflow of Mant
-    mant_ovf <= add_m(N) & add_m(N-1);
+    mant_ovf <= add_m(add_m'high) & add_m(add_m'high-1);
   
     -- Add_M is checked for mantissa overflow (Movf) by checking its MSB and shifted 1-bit to left
     -- accordingly if found false, which requires an N-1 bit 2:1 MUX (Line 32-33)
