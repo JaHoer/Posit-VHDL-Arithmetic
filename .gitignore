@@ -5,3 +5,5 @@
 *.sim
 *.dcp
 *.xpr
+*.log
+*.xsa
