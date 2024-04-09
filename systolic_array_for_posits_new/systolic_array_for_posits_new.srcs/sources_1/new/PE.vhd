@@ -103,7 +103,7 @@ begin
         start => comp_en,   -- does nothing
         out_val => product_out,
         inf => mult_inf,
-        zero => mult_inf,
+        zero => mult_zero,
         done => mult_done
     );
     
