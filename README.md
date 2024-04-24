@@ -3,7 +3,7 @@
 This is a implementation of simple posit adder and multiplier components, which are used for a weight stationary systolic array. <br />
 
 The posit components can perform the operations '+', '-', and '*'.  <br />
-They perform simple RoundTiesToEven rounding as describen in the official posit standard (https://posithub.org/docs/posit_standard-2.pdf). <br />
+They perform simple RoundTiesToEven rounding as described in the official posit standard (https://posithub.org/docs/posit_standard-2.pdf). <br />
 
 The posit components are based on the Verilog Project "Posit-HDL-Arithmetic" by Manish Kumar Jaiswal. <br />
 You can find that Project here: https://github.com/manish-kj/Posit-HDL-Arithmetic
